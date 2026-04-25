@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Home Finances · Esther & Omero</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181c28;
+  --surface2: #1f2336;
+  --border: #2a2f48;
+  --border2: #363c5a;
+  --gold: #c9a84c;
+  --gold-light: #e0c070;
+  --gold-dim: rgba(201,168,76,0.12);
+  --gold-dim2: rgba(201,168,76,0.25);
+  --text: #eae8e2;
+  --text-dim: #8890a8;
+  --text-muted: #50566e;
+  --green: #4db885;
+  --green-dim: rgba(77,184,133,0.12);
+  --red: #e05c5c;
+  --red-dim: rgba(224,92,92,0.12);
+  --blue: #5b8dee;
+  --blue-dim: rgba(91,141,238,0.12);
+  --esther: #c06bc0;
+  --esther-dim: rgba(192,107,192,0.12);
+  --omero: #5b8dee;
+  --omero-dim: rgba(91,141,238,0.12);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;-webkit-tap-highlight-color:transparent;}
+button,input,select,textarea{font-family:inherit;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* HEADER */
+.app-header{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+  gap:10px;
+}
+.app-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold);letter-spacing:0.02em;white-space:nowrap;}
+.app-subtitle{color:var(--text-muted);font-size:12px;font-weight:300;margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.lang-toggle{display:flex;background:var(--bg);border-radius:20px;border:1px solid var(--border);overflow:hidden;}
+.lang-btn{padding:5px 13px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;letter-spacing:0.05em;}
+.lang-btn.active{background:var(--gold);color:#0f1117;}
+.drive-status{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);cursor:pointer;padding:5px 10px;border-radius:20px;border:1px solid var(--border);transition:all 0.2s;white-space:nowrap;}
+.drive-status:hover{border-color:var(--gold-light);color:var(--gold-light);}
+.drive-status.connected{color:var(--green);border-color:rgba(77,184,133,0.4);}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--text-muted);}
+.dot.green{background:var(--green);}
+
+/* NAV */
+.nav-tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;padding:0 10px;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{padding:11px 14px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.nav-tab:hover:not(.active){color:var(--text);}
+
+/* CONTENT */
+.content{padding:16px;max-width:860px;margin:0 auto;}
+.section{display:none;}
+.section.active{display:block;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;}
+.card-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--gold-light);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card-title .icon{font-size:18px;}
+
+/* SUMMARY GRID */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;}
+.stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;}
+.stat-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.stat-value{font-size:22px;font-weight:600;color:var(--text);}
+.stat-value.gold{color:var(--gold);}
+.stat-value.green{color:var(--green);}
+.stat-value.red{color:var(--red);}
+.stat-sub{font-size:11px;color:var(--text-dim);margin-top:3px;}
+
+/* PERSON CARDS */
+.person-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.person-card{border-radius:var(--radius-sm);padding:14px;border:1px solid;}
+.person-card.esther{background:var(--esther-dim);border-color:rgba(192,107,192,0.3);}
+.person-card.omero{background:var(--omero-dim);border-color:rgba(91,141,238,0.3);}
+.person-name{font-weight:600;font-size:14px;margin-bottom:4px;}
+.person-card.esther .person-name{color:var(--esther);}
+.person-card.omero .person-name{color:var(--omero);}
+.person-amount{font-size:20px;font-weight:600;}
+.person-sub{font-size:11px;color:var(--text-dim);margin-top:3px;}
+
+/* BALANCE BADGE */
+.balance-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;}
+.balance-badge.owed{background:var(--red-dim);color:var(--red);border:1px solid rgba(224,92,92,0.3);}
+.balance-badge.clear{background:var(--green-dim);color:var(--green);border:1px solid rgba(77,184,133,0.3);}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-grid.three{grid-template-columns:1fr 1fr 1fr;}
+@media(max-width:600px){.form-grid,.form-grid.three{grid-template-columns:1fr;}}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/-1;}
+label{font-size:12px;color:var(--text-dim);font-weight:500;text-transform:uppercase;letter-spacing:0.06em;}
+input,select,textarea{
+  background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius-sm);
+  color:var(--text);padding:10px 12px;font-size:14px;outline:none;transition:border 0.2s;
+  -webkit-appearance:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);}
+select option{background:var(--surface2);}
+textarea{resize:vertical;min-height:60px;}
+.form-row{display:flex;gap:10px;align-items:flex-end;}
+
+/* BUTTONS */
+.btn{padding:10px 20px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.btn-gold{background:var(--gold);color:#0f1117;}
+.btn-gold:hover{background:var(--gold-light);}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text-dim);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.btn-danger{background:var(--red-dim);border:1px solid rgba(224,92,92,0.3);color:var(--red);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-green{background:var(--green-dim);border:1px solid rgba(77,184,133,0.3);color:var(--green);}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--surface2);color:var(--text-dim);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.07em;padding:10px 12px;text-align:left;white-space:nowrap;}
+td{padding:10px 12px;border-top:1px solid var(--border);vertical-align:middle;}
+tr:hover td{background:var(--surface2);}
+.amount-credit{color:var(--green);font-weight:600;}
+.amount-debit{color:var(--red);font-weight:600;}
+.amount-neutral{color:var(--gold);font-weight:600;}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.tag-esther{background:var(--esther-dim);color:var(--esther);}
+.tag-omero{background:var(--omero-dim);color:var(--omero);}
+.tag-joint{background:var(--gold-dim);color:var(--gold);}
+.tag-reno{background:rgba(255,165,80,0.12);color:#ffaa50;}
+.category-pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;background:var(--surface2);color:var(--text-dim);}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:40px 20px;color:var(--text-muted);}
+.empty-icon{font-size:36px;margin-bottom:10px;}
+.empty p{font-size:14px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:24px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow);}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold-light);margin-bottom:18px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.section-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--text);}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.filter-bar select,.filter-bar input{font-size:13px;padding:7px 10px;}
+
+/* REPORT */
+.report-section{margin-bottom:20px;}
+.report-title{font-size:13px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.bar-label{font-size:13px;color:var(--text-dim);width:160px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-track{flex:1;background:var(--surface2);border-radius:4px;height:8px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;background:var(--gold);transition:width 0.5s;}
+.bar-amount{font-size:13px;font-weight:600;color:var(--text);min-width:80px;text-align:right;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;z-index:999;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 18px;font-size:13px;color:var(--text);box-shadow:var(--shadow);transform:translateY(80px);opacity:0;transition:all 0.3s;max-width:300px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(77,184,133,0.5);color:var(--green);}
+.toast.error{border-color:rgba(224,92,92,0.5);color:var(--red);}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:14px 0;}
+
+/* BACKUP REMINDER */
+.backup-banner{background:var(--gold-dim);border:1px solid var(--gold-dim2);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--gold-light);display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;}
+
+/* LOAN TAG */
+.loan-status{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.loan-open{background:rgba(255,165,80,0.12);color:#ffaa50;}
+.loan-settled{background:var(--green-dim);color:var(--green);}
+
+/* PERSON SELECTOR */
+.person-selector{display:flex;gap:8px;}
+.person-opt{flex:1;padding:9px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:transparent;cursor:pointer;text-align:center;font-size:13px;font-weight:600;transition:all 0.2s;color:var(--text-dim);}
+.person-opt.esther-sel{border-color:var(--esther);background:var(--esther-dim);color:var(--esther);}
+.person-opt.omero-sel{border-color:var(--omero);background:var(--omero-dim);color:var(--omero);}
+.person-opt.joint-sel{border-color:var(--gold);background:var(--gold-dim);color:var(--gold);}
+
+@media(max-width:480px){
+  .app-title{font-size:15px;}
+  .person-grid{grid-template-columns:1fr 1fr;}
+  .summary-grid{grid-template-columns:1fr 1fr;}
+  .content{padding:12px;}
+  .card{padding:14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div>
+    <div class="app-title">🏡 Home Finances</div>
+    <div class="app-subtitle" id="hdr-sub">Esther & Omero</div>
+  </div>
+  <div class="header-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('it')">IT</button>
+    </div>
+    <div class="drive-status" id="driveBtn" onclick="handleDriveClick()">
+      <div class="dot" id="driveDot"></div>
+      <span id="driveLabel">Google Drive</span>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showSection('dashboard')" data-tab="dashboard" data-en="Dashboard" data-it="Pannello">Dashboard</button>
+  <button class="nav-tab" onclick="showSection('add')" data-tab="add" data-en="Add Entry" data-it="Aggiungi">Add Entry</button>
+  <button class="nav-tab" onclick="showSection('ledger')" data-tab="ledger" data-en="Ledger" data-it="Registro">Ledger</button>
+  <button class="nav-tab" onclick="showSection('renovation')" data-tab="renovation" data-en="Renovation" data-it="Ristrutturazione">Renovation</button>
+  <button class="nav-tab" onclick="showSection('loans')" data-tab="loans" data-en="Loans" data-it="Prestiti">Loans</button>
+  <button class="nav-tab" onclick="showSection('reports')" data-tab="reports" data-en="Reports" data-it="Report">Reports</button>
+  <button class="nav-tab" onclick="showSection('settings')" data-tab="settings" data-en="Settings" data-it="Impostazioni">Settings</button>
+</div>
+
+<div class="content">
+
+<!-- BACKUP BANNER -->
+<div class="backup-banner" id="backupBanner" style="display:none;">
+  <span id="backupMsg">⚠️ No backup in 7+ days. Save your data.</span>
+  <button class="btn btn-sm btn-outline" onclick="backupNow()" id="backupNowBtn">Backup Now</button>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="section active" id="sec-dashboard">
+  <div class="section-header">
+    <div class="section-title" data-en="Dashboard" data-it="Pannello">Dashboard</div>
+    <div style="font-size:12px;color:var(--text-muted)" id="dash-date"></div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="stat-card">
+      <div class="stat-label" data-en="Joint Balance" data-it="Saldo Conto">Joint Balance</div>
+      <div class="stat-value gold" id="dash-balance">€0.00</div>
+      <div class="stat-sub" data-en="Total funds available" data-it="Fondi disponibili">Total funds available</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-en="This Month Out" data-it="Uscite Mese">This Month Out</div>
+      <div class="stat-value red" id="dash-month-out">€0.00</div>
+      <div class="stat-sub" data-en="Total expenses" data-it="Spese totali">Total expenses</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-en="This Month In" data-it="Entrate Mese">This Month In</div>
+      <div class="stat-value green" id="dash-month-in">€0.00</div>
+      <div class="stat-sub" data-en="Total contributions" data-it="Contributi totali">Total contributions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-en="Reno Spent" data-it="Ristrutturazione">Reno Spent</div>
+      <div class="stat-value" id="dash-reno" style="color:#ffaa50">€0.00</div>
+      <div class="stat-sub" data-en="Total renovation costs" data-it="Costi totali">Total renovation costs</div>
+    </div>
+  </div>
+
+  <div class="person-grid">
+    <div class="person-card esther">
+      <div class="person-name">Esther</div>
+      <div class="person-amount" id="dash-esther-total" style="color:var(--esther)">€0.00</div>
+      <div class="person-sub" data-en="contributed" data-it="contribuito">contributed</div>
+    </div>
+    <div class="person-card omero">
+      <div class="person-name">Omero</div>
+      <div class="person-amount" id="dash-omero-total" style="color:var(--omero)">€0.00</div>
+      <div class="person-sub" data-en="contributed" data-it="contribuito">contributed</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">⚖️</span><span data-en="Contribution Balance" data-it="Equilibrio Contributi">Contribution Balance</span></div>
+    <div id="dash-balance-detail" style="font-size:14px;color:var(--text-dim);line-height:1.8;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span><span data-en="Recent Transactions" data-it="Transazioni Recenti">Recent Transactions</span></div>
+    <div id="dash-recent"></div>
+  </div>
+</div>
+
+<!-- ===== ADD ENTRY ===== -->
+<div class="section" id="sec-add">
+  <div class="section-header">
+    <div class="section-title" data-en="Add Entry" data-it="Aggiungi Voce">Add Entry</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💳</span><span data-en="Transaction Type" data-it="Tipo Transazione">Transaction Type</span></div>
+    <div class="person-selector" style="margin-bottom:14px;">
+      <button class="person-opt" id="opt-joint" onclick="selectPayer('joint')" data-en="Joint Account" data-it="Conto Comune">Joint Account</button>
+      <button class="person-opt" id="opt-esther" onclick="selectPayer('esther')">Esther</button>
+      <button class="person-opt" id="opt-omero" onclick="selectPayer('omero')">Omero</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label data-en="Date" data-it="Data">Date</label>
+        <input type="date" id="entry-date">
+      </div>
+      <div class="form-group">
+        <label data-en="Amount (€)" data-it="Importo (€)">Amount (€)</label>
+        <input type="number" id="entry-amount" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <div class="form-group">
+        <label data-en="Category" data-it="Categoria">Category</label>
+        <select id="entry-category"></select>
+      </div>
+      <div class="form-group">
+        <label data-en="Type" data-it="Tipo">Type</label>
+        <select id="entry-type">
+          <option value="expense" data-en="Expense" data-it="Spesa">Expense</option>
+          <option value="income" data-en="Income / Contribution" data-it="Entrata / Contributo">Income / Contribution</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label data-en="Description" data-it="Descrizione">Description</label>
+        <input type="text" id="entry-desc" placeholder="e.g. Electricity bill">
+      </div>
+      <div class="form-group full">
+        <label data-en="Notes (optional)" data-it="Note (opzionali)">Notes (optional)</label>
+        <textarea id="entry-notes" rows="2" placeholder="Any additional notes..."></textarea>
+      </div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:10px;">
+      <button class="btn btn-gold" onclick="addEntry()" id="addEntryBtn" data-en="Add Entry" data-it="Aggiungi Voce">Add Entry</button>
+      <button class="btn btn-outline" onclick="clearEntryForm()" data-en="Clear" data-it="Cancella">Clear</button>
+    </div>
+  </div>
+
+  <!-- QUICK CONTRIBUTION -->
+  <div class="card">
+    <div class="card-title"><span class="icon">💰</span><span data-en="Quick Contribution" data-it="Contributo Rapido">Quick Contribution</span></div>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:12px;" data-en="Record a deposit into the joint account." data-it="Registra un versamento nel conto comune.">Record a deposit into the joint account.</p>
+    <div class="form-grid">
+      <div class="form-group">
+        <label data-en="Who is paying?" data-it="Chi paga?">Who is paying?</label>
+        <select id="contrib-person">
+          <option value="esther">Esther</option>
+          <option value="omero">Omero</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label data-en="Amount (€)" data-it="Importo (€)">Amount (€)</label>
+        <input type="number" id="contrib-amount" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <div class="form-group full">
+        <label data-en="Note" data-it="Nota">Note</label>
+        <input type="text" id="contrib-note" placeholder="Monthly contribution, catch-up payment...">
+      </div>
+    </div>
+    <button class="btn btn-green" style="margin-top:12px;" onclick="addContribution()" data-en="Record Contribution" data-it="Registra Contributo">Record Contribution</button>
+  </div>
+</div>
+
+<!-- ===== LEDGER ===== -->
+<div class="section" id="sec-ledger">
+  <div class="section-header">
+    <div class="section-title" data-en="Transaction Ledger" data-it="Registro Transazioni">Transaction Ledger</div>
+    <button class="btn btn-outline btn-sm" onclick="exportCSV()" data-en="Export CSV" data-it="Esporta CSV">Export CSV</button>
+  </div>
+
+  <div class="filter-bar">
+    <select id="filter-person" onchange="renderLedger()" style="flex:1;min-width:120px;">
+      <option value="all" data-en="All People" data-it="Tutti">All People</option>
+      <option value="joint" data-en="Joint" data-it="Comune">Joint</option>
+      <option value="esther">Esther</option>
+      <option value="omero">Omero</option>
+    </select>
+    <select id="filter-type" onchange="renderLedger()" style="flex:1;min-width:120px;">
+      <option value="all" data-en="All Types" data-it="Tutti i Tipi">All Types</option>
+      <option value="expense" data-en="Expenses" data-it="Spese">Expenses</option>
+      <option value="income" data-en="Income" data-it="Entrate">Income</option>
+    </select>
+    <select id="filter-category" onchange="renderLedger()" style="flex:1;min-width:120px;">
+      <option value="all" data-en="All Categories" data-it="Tutte le Categorie">All Categories</option>
+    </select>
+    <select id="filter-month" onchange="renderLedger()" style="flex:1;min-width:120px;"></select>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-en="Date" data-it="Data">Date</th>
+            <th data-en="Description" data-it="Descrizione">Description</th>
+            <th data-en="Category" data-it="Categoria">Category</th>
+            <th data-en="Account" data-it="Conto">Account</th>
+            <th data-en="Type" data-it="Tipo">Type</th>
+            <th data-en="Amount" data-it="Importo">Amount</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </div>
+  <div style="font-size:13px;color:var(--text-dim);margin-top:8px;" id="ledger-summary"></div>
+</div>
+
+<!-- ===== RENOVATION ===== -->
+<div class="section" id="sec-renovation">
+  <div class="section-header">
+    <div class="section-title" data-en="Renovation Tracker" data-it="Ristrutturazione">Renovation Tracker</div>
+    <button class="btn btn-outline btn-sm" onclick="exportRenoCSV()" data-en="Export CSV" data-it="Esporta">Export CSV</button>
+  </div>
+
+  <div class="summary-grid">
+    <div class="stat-card">
+      <div class="stat-label" data-en="Total Spent" data-it="Totale Speso">Total Spent</div>
+      <div class="stat-value" id="reno-total" style="color:#ffaa50">€0.00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-en="Budget" data-it="Budget">Budget</div>
+      <div class="stat-value gold" id="reno-budget-display">€0.00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-en="Remaining" data-it="Rimanente">Remaining</div>
+      <div class="stat-value" id="reno-remaining">€0.00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-en="No. of Items" data-it="N. Voci">No. of Items</div>
+      <div class="stat-value" id="reno-count">0</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔨</span><span data-en="Add Renovation Expense" data-it="Aggiungi Spesa">Add Renovation Expense</span></div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label data-en="Date" data-it="Data">Date</label>
+        <input type="date" id="reno-date">
+      </div>
+      <div class="form-group">
+        <label data-en="Amount (€)" data-it="Importo (€)">Amount (€)</label>
+        <input type="number" id="reno-amount" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <div class="form-group">
+        <label data-en="Sub-category" data-it="Sotto-categoria">Sub-category</label>
+        <select id="reno-subcat">
+          <option value="Materials" data-en="Materials" data-it="Materiali">Materials</option>
+          <option value="Labour" data-en="Labour" data-it="Manodopera">Labour</option>
+          <option value="Tools" data-en="Tools" data-it="Utensili">Tools</option>
+          <option value="Permits" data-en="Permits / Admin" data-it="Permessi / Pratiche">Permits / Admin</option>
+          <option value="Fixtures" data-en="Fixtures & Fittings" data-it="Arredi & Finiture">Fixtures & Fittings</option>
+          <option value="Other" data-en="Other" data-it="Altro">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label data-en="Paid by" data-it="Pagato da">Paid by</label>
+        <select id="reno-paidby">
+          <option value="joint" data-en="Joint Account" data-it="Conto Comune">Joint Account</option>
+          <option value="esther">Esther</option>
+          <option value="omero">Omero</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label data-en="Description" data-it="Descrizione">Description</label>
+        <input type="text" id="reno-desc" placeholder="e.g. Bathroom tiles, plumber...">
+      </div>
+    </div>
+    <button class="btn btn-gold" style="margin-top:12px;" onclick="addRenoEntry()" data-en="Add Renovation Item" data-it="Aggiungi Voce">Add Renovation Item</button>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-en="Date" data-it="Data">Date</th>
+            <th data-en="Description" data-it="Descrizione">Description</th>
+            <th data-en="Category" data-it="Categoria">Category</th>
+            <th data-en="Paid by" data-it="Pagato da">Paid by</th>
+            <th data-en="Amount" data-it="Importo">Amount</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="reno-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LOANS ===== -->
+<div class="section" id="sec-loans">
+  <div class="section-header">
+    <div class="section-title" data-en="Between Us Loans" data-it="Prestiti tra Noi">Between Us Loans</div>
+  </div>
+
+  <div class="summary-grid" style="grid-template-columns:1fr 1fr;">
+    <div class="stat-card">
+      <div class="stat-label" data-en="Esther owes Omero" data-it="Esther deve a Omero">Esther owes Omero</div>
+      <div class="stat-value" id="esther-owes" style="color:var(--esther)">€0.00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" data-en="Omero owes Esther" data-it="Omero deve a Esther">Omero owes Esther</div>
+      <div class="stat-value" id="omero-owes" style="color:var(--omero)">€0.00</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🤝</span><span data-en="Record a Loan" data-it="Registra un Prestito">Record a Loan</span></div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label data-en="Date" data-it="Data">Date</label>
+        <input type="date" id="loan-date">
+      </div>
+      <div class="form-group">
+        <label data-en="Amount (€)" data-it="Importo (€)">Amount (€)</label>
+        <input type="number" id="loan-amount" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <div class="form-group">
+        <label data-en="Lender" data-it="Prestatore">Lender</label>
+        <select id="loan-lender">
+          <option value="esther">Esther</option>
+          <option value="omero">Omero</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label data-en="Borrower" data-it="Debitore">Borrower</label>
+        <select id="loan-borrower">
+          <option value="omero">Omero</option>
+          <option value="esther">Esther</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label data-en="Reason" data-it="Motivo">Reason</label>
+        <input type="text" id="loan-reason" placeholder="e.g. Renovation materials advance">
+      </div>
+    </div>
+    <button class="btn btn-gold" style="margin-top:12px;" onclick="addLoan()" data-en="Record Loan" data-it="Registra Prestito">Record Loan</button>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-en="Date" data-it="Data">Date</th>
+            <th data-en="From" data-it="Da">From</th>
+            <th data-en="To" data-it="A">To</th>
+            <th data-en="Reason" data-it="Motivo">Reason</th>
+            <th data-en="Amount" data-it="Importo">Amount</th>
+            <th data-en="Status" data-it="Stato">Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="loans-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REPORTS ===== -->
+<div class="section" id="sec-reports">
+  <div class="section-header">
+    <div class="section-title" data-en="Reports" data-it="Report">Reports</div>
+    <div style="display:flex;gap:8px;">
+      <select id="report-month" onchange="renderReports()" style="font-size:13px;padding:6px 10px;"></select>
+      <button class="btn btn-outline btn-sm" onclick="exportAllCSV()" data-en="Export All" data-it="Esporta Tutto">Export All</button>
+    </div>
+  </div>
+
+  <!-- Joint Account Summary -->
+  <div class="card report-section">
+    <div class="report-title" data-en="Joint Account Summary" data-it="Sommario Conto Comune">Joint Account Summary</div>
+    <div class="summary-grid">
+      <div class="stat-card">
+        <div class="stat-label" data-en="Total In" data-it="Totale Entrate">Total In</div>
+        <div class="stat-value green" id="rep-total-in">€0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" data-en="Total Out" data-it="Totale Uscite">Total Out</div>
+        <div class="stat-value red" id="rep-total-out">€0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label" data-en="Net Balance" data-it="Saldo Netto">Net Balance</div>
+        <div class="stat-value gold" id="rep-net">€0.00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contribution Balance -->
+  <div class="card report-section">
+    <div class="report-title" data-en="Contribution Balance" data-it="Equilibrio Contributi">Contribution Balance</div>
+    <div id="rep-contrib-detail" style="font-size:14px;color:var(--text-dim);line-height:2;"></div>
+  </div>
+
+  <!-- Expenses by Category -->
+  <div class="card report-section">
+    <div class="report-title" data-en="Expenses by Category" data-it="Spese per Categoria">Expenses by Category</div>
+    <div id="rep-by-category"></div>
+  </div>
+
+  <!-- Renovation Report -->
+  <div class="card report-section">
+    <div class="report-title" data-en="Renovation Breakdown" data-it="Dettaglio Ristrutturazione">Renovation Breakdown</div>
+    <div id="rep-reno"></div>
+  </div>
+
+  <!-- Loans Summary -->
+  <div class="card report-section">
+    <div class="report-title" data-en="Outstanding Loans" data-it="Prestiti in Sospeso">Outstanding Loans</div>
+    <div id="rep-loans"></div>
+  </div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div class="section" id="sec-settings">
+  <div class="section-header">
+    <div class="section-title" data-en="Settings" data-it="Impostazioni">Settings</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">☁️</span><span data-en="Google Drive Backup" data-it="Backup Google Drive">Google Drive Backup</span></div>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px;" data-en="Back up all your data to the shared Home Finances folder on Google Drive. Both Esther and Omero can restore from the same backup." data-it="Salva tutti i tuoi dati nella cartella Home Finances su Google Drive. Sia Esther che Omero possono ripristinare dallo stesso backup.">Back up all your data to the shared Home Finances folder on Google Drive.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="backupNow()" id="settingBackupBtn" data-en="Backup to Google Drive" data-it="Salva su Google Drive">Backup to Google Drive</button>
+      <button class="btn btn-outline" onclick="restoreFromDrive()" data-en="Restore from Drive" data-it="Ripristina da Drive">Restore from Drive</button>
+      <button class="btn btn-outline" onclick="localBackup()" data-en="Download JSON" data-it="Scarica JSON">Download JSON</button>
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--text-muted);" id="last-backup-label"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📦</span><span data-en="Renovation Budget" data-it="Budget Ristrutturazione">Renovation Budget</span></div>
+    <div class="form-row">
+      <div class="form-group" style="flex:1;">
+        <label data-en="Set Total Budget (€)" data-it="Imposta Budget Totale (€)">Set Total Budget (€)</label>
+        <input type="number" id="reno-budget-input" placeholder="e.g. 25000" step="100">
+      </div>
+      <button class="btn btn-gold" onclick="saveRenoBudget()" data-en="Save" data-it="Salva">Save</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏷️</span><span data-en="Manage Categories" data-it="Gestisci Categorie">Manage Categories</span></div>
+    <div id="cat-list" style="margin-bottom:12px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+    <div class="form-row">
+      <input type="text" id="new-cat-name" placeholder="New category name..." style="flex:1;">
+      <button class="btn btn-gold" onclick="addCategory()" data-en="Add" data-it="Aggiungi">Add</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">⚠️</span><span data-en="Danger Zone" data-it="Zona Pericolosa">Danger Zone</span></div>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:12px;" data-en="This will permanently delete all data. Make a backup first." data-it="Questo eliminerà tutti i dati in modo permanente. Fai prima un backup.">This will permanently delete all data. Make a backup first.</p>
+    <button class="btn btn-danger" onclick="clearAllData()" data-en="Clear All Data" data-it="Cancella Tutti i Dati">Clear All Data</button>
+  </div>
+</div>
+
+</div><!-- end content -->
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-title" data-en="Confirm Delete" data-it="Conferma Eliminazione">Confirm Delete</div>
+    <p style="color:var(--text-dim);font-size:14px;" data-en="Are you sure you want to delete this entry? This cannot be undone." data-it="Sei sicuro di voler eliminare questa voce? Non può essere annullato.">Are you sure you want to delete this entry?</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('deleteModal')" data-en="Cancel" data-it="Annulla">Cancel</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn" data-en="Delete" data-it="Elimina">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTLE LOAN MODAL -->
+<div class="modal-overlay" id="settleModal">
+  <div class="modal">
+    <div class="modal-title" data-en="Settle Loan" data-it="Salda Prestito">Settle Loan</div>
+    <p style="color:var(--text-dim);font-size:14px;margin-bottom:14px;" data-en="Mark this loan as fully repaid?" data-it="Segnare questo prestito come completamente rimborsato?">Mark this loan as fully repaid?</p>
+    <div class="form-group">
+      <label data-en="Repayment date" data-it="Data rimborso">Repayment date</label>
+      <input type="date" id="settle-date">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('settleModal')" data-en="Cancel" data-it="Annulla">Cancel</button>
+      <button class="btn btn-green" id="confirmSettleBtn" data-en="Mark Settled" data-it="Segna Saldato">Mark Settled</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ==============================
+// STATE
+// ==============================
+let lang = 'en';
+let state = {
+  entries: [],        // main ledger
+  renoEntries: [],    // renovation
+  loans: [],          // inter-spouse loans
+  categories: [
+    'Electricity','Gas','Water','Internet','Phone','TV / Streaming',
+    'Council Rates / IMU','Insurance','Maintenance','Cleaning','Garden',
+    'Groceries','Dining Out','Pharmacy','Petrol / Transport','Children',
+    'Miscellaneous','Other'
+  ],
+  renoBudget: 0,
+  lastBackup: null,
+  selectedPayer: 'joint'
+};
+
+const CLIENT_ID = '824648067602-7b2n754fq1n7vl5jak895h3dlj1cppvu.apps.googleusercontent.com';
+const FOLDER_ID = '1FcJKSQQyzCWox5j8YME4732qYa3v0gq4';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+let tokenClient = null;
+let accessToken = null;
+let driveConnected = false;
+
+const T = {
+  en: {
+    contributed: 'contributed', balance_clear: 'Contributions are equal ✓',
+    esther_ahead: 'Esther is ahead by', omero_ahead: 'Omero is ahead by',
+    esther_owes: 'Omero should contribute', omero_owes: 'Esther should contribute',
+    to_equalise: 'to equalise',
+    no_tx: 'No transactions yet', no_reno: 'No renovation items yet', no_loans: 'No loans recorded yet',
+    deleted: 'Entry deleted', added: 'Entry added', saved: 'Saved',
+    backup_ok: 'Backup saved to Google Drive ✓', backup_fail: 'Backup failed. Try again.',
+    restore_ok: 'Data restored from Google Drive ✓', restore_fail: 'Restore failed.',
+    sign_in: 'Sign in to Google Drive first.',
+    loan_settled: 'Loan marked as settled ✓', loan_added: 'Loan recorded ✓',
+    reno_added: 'Renovation item added ✓', contrib_added: 'Contribution recorded ✓',
+    confirm_clear: 'Type DELETE to confirm clearing all data:',
+    cleared: 'All data cleared.',
+    lender: 'Lender', borrower: 'Borrower', settled: 'Settled', open: 'Open',
+    settle: 'Settle', all_time: 'All Time',
+    no_backup: 'No backup yet',
+    last_backup: 'Last backup:',
+    drive_connected: 'Drive connected',
+    connect_drive: 'Connect Drive',
+    budget_saved: 'Budget saved',
+    cat_added: 'Category added',
+    fill_all: 'Please fill all required fields.',
+    lender_borrower_same: 'Lender and borrower must be different people.',
+  },
+  it: {
+    contributed: 'contribuito', balance_clear: 'I contributi sono uguali ✓',
+    esther_ahead: 'Esther è in anticipo di', omero_ahead: 'Omero è in anticipo di',
+    esther_owes: 'Omero dovrebbe contribuire', omero_owes: 'Esther dovrebbe contribuire',
+    to_equalise: 'per pareggiare',
+    no_tx: 'Nessuna transazione', no_reno: 'Nessuna voce di ristrutturazione', no_loans: 'Nessun prestito registrato',
+    deleted: 'Voce eliminata', added: 'Voce aggiunta', saved: 'Salvato',
+    backup_ok: 'Backup salvato su Google Drive ✓', backup_fail: 'Backup fallito. Riprova.',
+    restore_ok: 'Dati ripristinati da Google Drive ✓', restore_fail: 'Ripristino fallito.',
+    sign_in: 'Accedi prima a Google Drive.',
+    loan_settled: 'Prestito segnato come saldato ✓', loan_added: 'Prestito registrato ✓',
+    reno_added: 'Voce ristrutturazione aggiunta ✓', contrib_added: 'Contributo registrato ✓',
+    confirm_clear: 'Scrivi ELIMINA per confermare la cancellazione di tutti i dati:',
+    cleared: 'Tutti i dati cancellati.',
+    lender: 'Prestatore', borrower: 'Debitore', settled: 'Saldato', open: 'Aperto',
+    settle: 'Salda', all_time: 'Sempre',
+    no_backup: 'Nessun backup',
+    last_backup: 'Ultimo backup:',
+    drive_connected: 'Drive connesso',
+    connect_drive: 'Connetti Drive',
+    budget_saved: 'Budget salvato',
+    cat_added: 'Categoria aggiunta',
+    fill_all: 'Compila tutti i campi obbligatori.',
+    lender_borrower_same: 'Prestatore e debitore devono essere persone diverse.',
+  }
+};
+
+function t(key){ return T[lang][key] || T.en[key] || key; }
+
+// ==============================
+// INIT
+// ==============================
+window.onload = function(){
+  loadState();
+  setLang(localStorage.getItem('hf_lang') || 'en');
+  setTodayDates();
+  populateCategorySelects();
+  populateMonthFilters();
+  checkBackupBanner();
+  renderAll();
+  initGoogleDrive();
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString(lang === 'it' ? 'it-IT' : 'en-GB', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+};
+
+function loadState(){
+  const saved = localStorage.getItem('hf_state_v2');
+  if(saved){ try{ Object.assign(state, JSON.parse(saved)); }catch(e){} }
+}
+function saveState(){
+  localStorage.setItem('hf_state_v2', JSON.stringify(state));
+}
+
+// ==============================
+// LANGUAGE
+// ==============================
+function setLang(l){
+  lang = l;
+  localStorage.setItem('hf_lang', l);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === l.toUpperCase()));
+  document.querySelectorAll('[data-en]').forEach(el => {
+    if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA'){
+      el.placeholder = el.dataset[l] || el.dataset.en;
+    } else {
+      el.textContent = el.dataset[l] || el.dataset.en;
+    }
+  });
+  // update selects with translated options
+  document.querySelectorAll('option[data-en]').forEach(opt => {
+    opt.textContent = opt.dataset[l] || opt.dataset.en;
+  });
+  populateCategorySelects();
+  renderAll();
+}
+
+// ==============================
+// SECTION NAV
+// ==============================
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelector(`[data-tab="${id}"]`).classList.add('active');
+  if(id === 'reports') renderReports();
+  if(id === 'ledger') renderLedger();
+  if(id === 'renovation') renderReno();
+  if(id === 'loans') renderLoans();
+  if(id === 'dashboard') renderDashboard();
+  if(id === 'settings') renderSettings();
+}
+
+// ==============================
+// PAYER SELECTOR
+// ==============================
+function selectPayer(p){
+  state.selectedPayer = p;
+  document.getElementById('opt-joint').className = 'person-opt' + (p==='joint'?' joint-sel':'');
+  document.getElementById('opt-esther').className = 'person-opt' + (p==='esther'?' esther-sel':'');
+  document.getElementById('opt-omero').className = 'person-opt' + (p==='omero'?' omero-sel':'');
+}
+selectPayer('joint');
+
+// ==============================
+// CATEGORIES
+// ==============================
+function populateCategorySelects(){
+  const cats = state.categories;
+  ['entry-category','filter-category'].forEach(id => {
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    const cur = sel.value;
+    if(id === 'filter-category'){
+      sel.innerHTML = `<option value="all" data-en="All Categories" data-it="Tutte le Categorie">${lang==='it'?'Tutte le Categorie':'All Categories'}</option>`;
+    } else {
+      sel.innerHTML = '';
+    }
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c; opt.textContent = c;
+      sel.appendChild(opt);
+    });
+    if(cur) sel.value = cur;
+  });
+}
+
+function renderSettings(){
+  const list = document.getElementById('cat-list');
+  list.innerHTML = '';
+  state.categories.forEach((c,i) => {
+    const pill = document.createElement('div');
+    pill.style.cssText = 'display:inline-flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:3px 10px;font-size:12px;';
+    pill.innerHTML = `<span>${c}</span><span style="cursor:pointer;color:var(--text-muted);" onclick="removeCategory(${i})">✕</span>`;
+    list.appendChild(pill);
+  });
+  const rb = document.getElementById('reno-budget-input');
+  if(rb) rb.value = state.renoBudget || '';
+  updateLastBackupLabel();
+}
+
+function addCategory(){
+  const name = document.getElementById('new-cat-name').value.trim();
+  if(!name) return;
+  state.categories.push(name);
+  saveState(); populateCategorySelects(); renderSettings();
+  document.getElementById('new-cat-name').value = '';
+  showToast(t('cat_added'),'success');
+}
+function removeCategory(i){
+  state.categories.splice(i,1);
+  saveState(); populateCategorySelects(); renderSettings();
+}
+function saveRenoBudget(){
+  state.renoBudget = parseFloat(document.getElementById('reno-budget-input').value) || 0;
+  saveState(); renderReno(); renderDashboard();
+  showToast(t('budget_saved'),'success');
+}
+
+// ==============================
+// MONTH FILTERS
+// ==============================
+function populateMonthFilters(){
+  const months = getMonthOptions();
+  ['filter-month','report-month'].forEach(id => {
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    sel.innerHTML = `<option value="all">${t('all_time')}</option>`;
+    months.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.value; opt.textContent = m.label;
+      sel.appendChild(opt);
+    });
+  });
+}
+function getMonthOptions(){
+  const opts = [];
+  const now = new Date();
+  for(let i=0;i<18;i++){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    opts.push({value: `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`, label: d.toLocaleDateString(lang==='it'?'it-IT':'en-GB',{month:'long',year:'numeric'})});
+  }
+  return opts;
+}
+
+// ==============================
+// ADD ENTRY
+// ==============================
+function setTodayDates(){
+  const today = new Date().toISOString().split('T')[0];
+  ['entry-date','reno-date','loan-date','settle-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = today;
+  });
+}
+
+function addEntry(){
+  const date = document.getElementById('entry-date').value;
+  const amount = parseFloat(document.getElementById('entry-amount').value);
+  const category = document.getElementById('entry-category').value;
+  const type = document.getElementById('entry-type').value;
+  const desc = document.getElementById('entry-desc').value.trim();
+  const notes = document.getElementById('entry-notes').value.trim();
+  const payer = state.selectedPayer;
+
+  if(!date || !amount || amount <= 0 || !desc){
+    showToast(t('fill_all'),'error'); return;
+  }
+
+  const entry = {
+    id: Date.now(),
+    date, amount, category, type, desc, notes,
+    payer,
+    isReno: category === 'Renovation'
+  };
+
+  state.entries.unshift(entry);
+  saveState(); renderAll();
+  clearEntryForm();
+  showToast(t('added'),'success');
+}
+
+function addContribution(){
+  const person = document.getElementById('contrib-person').value;
+  const amount = parseFloat(document.getElementById('contrib-amount').value);
+  const note = document.getElementById('contrib-note').value.trim();
+  if(!amount || amount <= 0){ showToast(t('fill_all'),'error'); return; }
+  const entry = {
+    id: Date.now(),
+    date: new Date().toISOString().split('T')[0],
+    amount, category: 'Contribution', type: 'income',
+    desc: note || (person.charAt(0).toUpperCase()+person.slice(1)) + ' contribution',
+    notes: '', payer: person, isReno: false
+  };
+  state.entries.unshift(entry);
+  saveState(); renderAll();
+  document.getElementById('contrib-amount').value = '';
+  document.getElementById('contrib-note').value = '';
+  showToast(t('contrib_added'),'success');
+}
+
+function clearEntryForm(){
+  document.getElementById('entry-amount').value = '';
+  document.getElementById('entry-desc').value = '';
+  document.getElementById('entry-notes').value = '';
+  selectPayer('joint');
+}
+
+// ==============================
+// RENOVATION
+// ==============================
+function addRenoEntry(){
+  const date = document.getElementById('reno-date').value;
+  const amount = parseFloat(document.getElementById('reno-amount').value);
+  const subcat = document.getElementById('reno-subcat').value;
+  const paidby = document.getElementById('reno-paidby').value;
+  const desc = document.getElementById('reno-desc').value.trim();
+  if(!date || !amount || amount <= 0 || !desc){ showToast(t('fill_all'),'error'); return; }
+  state.renoEntries.unshift({id:Date.now(),date,amount,subcat,paidby,desc});
+  saveState(); renderReno(); renderDashboard();
+  document.getElementById('reno-amount').value = '';
+  document.getElementById('reno-desc').value = '';
+  showToast(t('reno_added'),'success');
+}
+
+function renderReno(){
+  const total = state.renoEntries.reduce((s,e) => s+e.amount, 0);
+  const budget = state.renoBudget || 0;
+  const remaining = budget - total;
+  document.getElementById('reno-total').textContent = fmt(total);
+  document.getElementById('reno-budget-display').textContent = fmt(budget);
+  const remEl = document.getElementById('reno-remaining');
+  remEl.textContent = fmt(Math.abs(remaining));
+  remEl.style.color = remaining >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('reno-count').textContent = state.renoEntries.length;
+
+  const tbody = document.getElementById('reno-body');
+  if(!state.renoEntries.length){
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><div class="empty-icon">🔨</div><p>${t('no_reno')}</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = state.renoEntries.map(e => `
+    <tr>
+      <td>${fmtDate(e.date)}</td>
+      <td>${e.desc}</td>
+      <td><span class="category-pill">${e.subcat}</span></td>
+      <td>${payerTag(e.paidby)}</td>
+      <td class="amount-debit">${fmt(e.amount)}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteReno(${e.id})">✕</button></td>
+    </tr>`).join('');
+}
+
+function deleteReno(id){
+  showDeleteModal(() => {
+    state.renoEntries = state.renoEntries.filter(e => e.id !== id);
+    saveState(); renderReno(); renderDashboard();
+    showToast(t('deleted'));
+  });
+}
+
+// ==============================
+// LOANS
+// ==============================
+function addLoan(){
+  const date = document.getElementById('loan-date').value;
+  const amount = parseFloat(document.getElementById('loan-amount').value);
+  const lender = document.getElementById('loan-lender').value;
+  const borrower = document.getElementById('loan-borrower').value;
+  const reason = document.getElementById('loan-reason').value.trim();
+  if(!date || !amount || amount <= 0){ showToast(t('fill_all'),'error'); return; }
+  if(lender === borrower){ showToast(t('lender_borrower_same'),'error'); return; }
+  state.loans.unshift({id:Date.now(),date,amount,lender,borrower,reason,settled:false,settledDate:null});
+  saveState(); renderLoans(); renderDashboard();
+  document.getElementById('loan-amount').value = '';
+  document.getElementById('loan-reason').value = '';
+  showToast(t('loan_added'),'success');
+}
+
+function renderLoans(){
+  const eo = state.loans.filter(l => !l.settled && l.lender==='esther' && l.borrower==='omero').reduce((s,l)=>s+l.amount,0);
+  const oe = state.loans.filter(l => !l.settled && l.lender==='omero' && l.borrower==='esther').reduce((s,l)=>s+l.amount,0);
+  document.getElementById('esther-owes').textContent = fmt(oe);
+  document.getElementById('omero-owes').textContent = fmt(eo);
+
+  const tbody = document.getElementById('loans-body');
+  if(!state.loans.length){
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">🤝</div><p>${t('no_loans')}</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = state.loans.map(l => `
+    <tr>
+      <td>${fmtDate(l.date)}</td>
+      <td>${payerTag(l.lender)}</td>
+      <td>${payerTag(l.borrower)}</td>
+      <td style="color:var(--text-dim);font-size:13px;">${l.reason||'-'}</td>
+      <td class="amount-neutral">${fmt(l.amount)}</td>
+      <td><span class="loan-status ${l.settled?'loan-settled':'loan-open'}">${l.settled?t('settled'):t('open')}</span></td>
+      <td style="display:flex;gap:4px;">
+        ${!l.settled?`<button class="btn btn-sm btn-green" onclick="showSettleModal(${l.id})">${t('settle')}</button>`:''}
+        <button class="btn btn-sm btn-danger" onclick="deleteLoan(${l.id})">✕</button>
+      </td>
+    </tr>`).join('');
+}
+
+let pendingSettleId = null;
+function showSettleModal(id){
+  pendingSettleId = id;
+  document.getElementById('settle-date').value = new Date().toISOString().split('T')[0];
+  openModal('settleModal');
+  document.getElementById('confirmSettleBtn').onclick = () => {
+    const l = state.loans.find(x => x.id === pendingSettleId);
+    if(l){ l.settled = true; l.settledDate = document.getElementById('settle-date').value; }
+    saveState(); renderLoans(); renderDashboard();
+    closeModal('settleModal');
+    showToast(t('loan_settled'),'success');
+  };
+}
+
+function deleteLoan(id){
+  showDeleteModal(() => {
+    state.loans = state.loans.filter(l => l.id !== id);
+    saveState(); renderLoans(); renderDashboard();
+    showToast(t('deleted'));
+  });
+}
+
+// ==============================
+// DASHBOARD
+// ==============================
+function renderDashboard(){
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+
+  const allIn = state.entries.filter(e => e.type==='income').reduce((s,e)=>s+e.amount,0);
+  const allOut = state.entries.filter(e => e.type==='expense').reduce((s,e)=>s+e.amount,0);
+  const balance = allIn - allOut;
+
+  const mIn = state.entries.filter(e => e.type==='income' && e.date.startsWith(thisMonth)).reduce((s,e)=>s+e.amount,0);
+  const mOut = state.entries.filter(e => e.type==='expense' && e.date.startsWith(thisMonth)).reduce((s,e)=>s+e.amount,0);
+  const renoTotal = state.renoEntries.reduce((s,e)=>s+e.amount,0);
+
+  document.getElementById('dash-balance').textContent = fmt(balance);
+  document.getElementById('dash-balance').className = 'stat-value ' + (balance>=0?'gold':'red');
+  document.getElementById('dash-month-out').textContent = fmt(mOut);
+  document.getElementById('dash-month-in').textContent = fmt(mIn);
+  document.getElementById('dash-reno').textContent = fmt(renoTotal);
+
+  // Contributions
+  const estherIn = state.entries.filter(e => e.payer==='esther' && e.type==='income').reduce((s,e)=>s+e.amount,0);
+  const omeroIn = state.entries.filter(e => e.payer==='omero' && e.type==='income').reduce((s,e)=>s+e.amount,0);
+  document.getElementById('dash-esther-total').textContent = fmt(estherIn);
+  document.getElementById('dash-omero-total').textContent = fmt(omeroIn);
+
+  const diff = Math.abs(estherIn - omeroIn);
+  const ahead = estherIn > omeroIn ? 'esther' : (omeroIn > estherIn ? 'omero' : null);
+  const balDiv = document.getElementById('dash-balance-detail');
+  if(!ahead){
+    balDiv.innerHTML = `<span class="balance-badge clear">✓ ${t('balance_clear')}</span>`;
+  } else {
+    const who = ahead === 'esther' ? 'Esther' : 'Omero';
+    const other = ahead === 'esther' ? 'Omero' : 'Esther';
+    balDiv.innerHTML = `
+      <span class="balance-badge owed">⚠ ${who} ${lang==='it'?'è in anticipo di':'is ahead by'} <strong>${fmt(diff)}</strong></span>
+      <div style="margin-top:8px;font-size:13px;color:var(--text-dim);">${other} ${lang==='it'?'dovrebbe contribuire':'should contribute'} <strong style="color:var(--gold)">${fmt(diff)}</strong> ${t('to_equalise')}.</div>`;
+  }
+
+  // Recent
+  const recent = state.entries.slice(0,5);
+  const recDiv = document.getElementById('dash-recent');
+  if(!recent.length){
+    recDiv.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><p>${t('no_tx')}</p></div>`;
+  } else {
+    recDiv.innerHTML = `<div class="table-wrap"><table>
+      <thead><tr><th>${lang==='it'?'Data':'Date'}</th><th>${lang==='it'?'Descrizione':'Description'}</th><th>${lang==='it'?'Conto':'Account'}</th><th>${lang==='it'?'Importo':'Amount'}</th></tr></thead>
+      <tbody>${recent.map(e => `<tr>
+        <td>${fmtDate(e.date)}</td>
+        <td style="color:var(--text-dim);font-size:13px;">${e.desc}</td>
+        <td>${payerTag(e.payer)}</td>
+        <td class="${e.type==='income'?'amount-credit':'amount-debit'}">${e.type==='income'?'+':'−'}${fmt(e.amount)}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  }
+}
+
+// ==============================
+// LEDGER
+// ==============================
+function renderLedger(){
+  const personF = document.getElementById('filter-person').value;
+  const typeF = document.getElementById('filter-type').value;
+  const catF = document.getElementById('filter-category').value;
+  const monthF = document.getElementById('filter-month').value;
+
+  let entries = [...state.entries];
+  if(personF !== 'all') entries = entries.filter(e => e.payer === personF);
+  if(typeF !== 'all') entries = entries.filter(e => e.type === typeF);
+  if(catF !== 'all') entries = entries.filter(e => e.category === catF);
+  if(monthF !== 'all') entries = entries.filter(e => e.date.startsWith(monthF));
+
+  const tbody = document.getElementById('ledger-body');
+  if(!entries.length){
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><div class="empty-icon">📒</div><p>${t('no_tx')}</p></div></td></tr>`;
+    document.getElementById('ledger-summary').textContent = '';
+    return;
+  }
+
+  tbody.innerHTML = entries.map(e => `
+    <tr>
+      <td>${fmtDate(e.date)}</td>
+      <td><div style="font-size:13px;">${e.desc}</div>${e.notes?`<div style="font-size:11px;color:var(--text-muted);">${e.notes}</div>`:''}</td>
+      <td><span class="category-pill">${e.category}</span></td>
+      <td>${payerTag(e.payer)}</td>
+      <td><span class="tag ${e.type==='income'?'tag-joint':'tag-reno'}">${e.type==='income'?(lang==='it'?'Entrata':'Income'):(lang==='it'?'Spesa':'Expense')}</span></td>
+      <td class="${e.type==='income'?'amount-credit':'amount-debit'}">${e.type==='income'?'+':'−'}${fmt(e.amount)}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteEntry(${e.id})">✕</button></td>
+    </tr>`).join('');
+
+  const totalIn = entries.filter(e=>e.type==='income').reduce((s,e)=>s+e.amount,0);
+  const totalOut = entries.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amount,0);
+  document.getElementById('ledger-summary').textContent =
+    `${lang==='it'?'Mostrate':'Showing'} ${entries.length} ${lang==='it'?'voci':'entries'} · ${lang==='it'?'Entrate':'In'}: ${fmt(totalIn)} · ${lang==='it'?'Uscite':'Out'}: ${fmt(totalOut)} · ${lang==='it'?'Netto':'Net'}: ${fmt(totalIn-totalOut)}`;
+}
+
+function deleteEntry(id){
+  showDeleteModal(() => {
+    state.entries = state.entries.filter(e => e.id !== id);
+    saveState(); renderLedger(); renderDashboard();
+    showToast(t('deleted'));
+  });
+}
+
+// ==============================
+// REPORTS
+// ==============================
+function renderReports(){
+  const monthF = document.getElementById('report-month').value;
+  let entries = [...state.entries];
+  if(monthF !== 'all') entries = entries.filter(e => e.date.startsWith(monthF));
+
+  const totalIn = entries.filter(e=>e.type==='income').reduce((s,e)=>s+e.amount,0);
+  const totalOut = entries.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amount,0);
+  document.getElementById('rep-total-in').textContent = fmt(totalIn);
+  document.getElementById('rep-total-out').textContent = fmt(totalOut);
+  document.getElementById('rep-net').textContent = fmt(totalIn-totalOut);
+  document.getElementById('rep-net').className = 'stat-value ' + (totalIn-totalOut>=0?'green':'red');
+
+  // Contribution detail
+  const estherIn = entries.filter(e=>e.payer==='esther'&&e.type==='income').reduce((s,e)=>s+e.amount,0);
+  const omeroIn = entries.filter(e=>e.payer==='omero'&&e.type==='income').reduce((s,e)=>s+e.amount,0);
+  const diff = Math.abs(estherIn-omeroIn);
+  const ahead = estherIn>omeroIn?'esther':(omeroIn>estherIn?'omero':null);
+  const cd = document.getElementById('rep-contrib-detail');
+  cd.innerHTML = `
+    <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:140px;background:var(--esther-dim);border:1px solid rgba(192,107,192,0.3);border-radius:var(--radius-sm);padding:12px;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Esther</div>
+        <div style="font-size:20px;font-weight:600;color:var(--esther);">${fmt(estherIn)}</div>
+      </div>
+      <div style="flex:1;min-width:140px;background:var(--omero-dim);border:1px solid rgba(91,141,238,0.3);border-radius:var(--radius-sm);padding:12px;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Omero</div>
+        <div style="font-size:20px;font-weight:600;color:var(--omero);">${fmt(omeroIn)}</div>
+      </div>
+    </div>
+    ${!ahead?`<span class="balance-badge clear">✓ ${t('balance_clear')}</span>`:
+    `<span class="balance-badge owed">⚠ ${ahead==='esther'?'Esther':'Omero'} ${lang==='it'?'è avanti di':'is ahead by'} ${fmt(diff)}</span>`}`;
+
+  // By category
+  const expenses = entries.filter(e=>e.type==='expense');
+  const byCat = {};
+  expenses.forEach(e => { byCat[e.category] = (byCat[e.category]||0)+e.amount; });
+  const maxCat = Math.max(...Object.values(byCat),1);
+  const catDiv = document.getElementById('rep-by-category');
+  if(!Object.keys(byCat).length){
+    catDiv.innerHTML = `<div style="color:var(--text-muted);font-size:13px;">${t('no_tx')}</div>`;
+  } else {
+    catDiv.innerHTML = Object.entries(byCat).sort((a,b)=>b[1]-a[1]).map(([cat,amt]) => `
+      <div class="bar-row">
+        <div class="bar-label">${cat}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(amt/maxCat*100).toFixed(1)}%"></div></div>
+        <div class="bar-amount">${fmt(amt)}</div>
+      </div>`).join('');
+  }
+
+  // Renovation
+  const renoDiv = document.getElementById('rep-reno');
+  const renoEntries = monthF==='all'?state.renoEntries:state.renoEntries.filter(e=>e.date.startsWith(monthF));
+  const bySubcat = {};
+  renoEntries.forEach(e=>{ bySubcat[e.subcat]=(bySubcat[e.subcat]||0)+e.amount; });
+  const renoTotal = renoEntries.reduce((s,e)=>s+e.amount,0);
+  const maxReno = Math.max(...Object.values(bySubcat),1);
+  if(!renoEntries.length){
+    renoDiv.innerHTML = `<div style="color:var(--text-muted);font-size:13px;">${t('no_reno')}</div>`;
+  } else {
+    renoDiv.innerHTML = Object.entries(bySubcat).sort((a,b)=>b[1]-a[1]).map(([sub,amt]) => `
+      <div class="bar-row">
+        <div class="bar-label">${sub}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(amt/maxReno*100).toFixed(1)}%;background:#ffaa50;"></div></div>
+        <div class="bar-amount">${fmt(amt)}</div>
+      </div>`).join('') +
+      `<div style="margin-top:10px;font-size:13px;color:var(--text-dim);">${lang==='it'?'Totale ristrutturazione':'Total renovation'}: <strong style="color:#ffaa50">${fmt(renoTotal)}</strong>${state.renoBudget?` / ${fmt(state.renoBudget)} ${lang==='it'?'budget':'budget'}`:''}</div>`;
+  }
+
+  // Loans summary
+  const loansDiv = document.getElementById('rep-loans');
+  const openLoans = state.loans.filter(l=>!l.settled);
+  if(!openLoans.length){
+    loansDiv.innerHTML = `<div style="color:var(--green);font-size:13px;">✓ ${lang==='it'?'Nessun prestito in sospeso':'No outstanding loans'}</div>`;
+  } else {
+    loansDiv.innerHTML = openLoans.map(l => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:13px;">${payerTag(l.lender)} → ${payerTag(l.borrower)}</div>
+          <div style="font-size:12px;color:var(--text-muted);">${l.reason||''} · ${fmtDate(l.date)}</div>
+        </div>
+        <div class="amount-neutral">${fmt(l.amount)}</div>
+      </div>`).join('');
+  }
+}
+
+// ==============================
+// GOOGLE DRIVE
+// ==============================
+function initGoogleDrive(){
+  google.accounts.id.initialize({ client_id: CLIENT_ID });
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    callback: (resp) => {
+      if(resp.error){ showToast(t('backup_fail'),'error'); return; }
+      accessToken = resp.access_token;
+      driveConnected = true;
+      updateDriveUI();
+      if(pendingDriveAction){ pendingDriveAction(); pendingDriveAction = null; }
+    }
+  });
+  updateDriveUI();
+}
+
+let pendingDriveAction = null;
+
+function handleDriveClick(){
+  if(!driveConnected){
+    pendingDriveAction = null;
+    tokenClient.requestAccessToken({prompt:'consent'});
+  } else {
+    backupNow();
+  }
+}
+
+function updateDriveUI(){
+  const dot = document.getElementById('driveDot');
+  const label = document.getElementById('driveLabel');
+  if(driveConnected){
+    dot.className = 'dot green';
+    label.textContent = t('drive_connected');
+    document.getElementById('driveBtn').className = 'drive-status connected';
+  } else {
+    dot.className = 'dot';
+    label.textContent = t('connect_drive');
+    document.getElementById('driveBtn').className = 'drive-status';
+  }
+}
+
+async function backupNow(){
+  if(!driveConnected){
+    pendingDriveAction = backupNow;
+    tokenClient.requestAccessToken({prompt:''});
+    return;
+  }
+  const data = JSON.stringify(state, null, 2);
+  const filename = `home-finances-${new Date().toISOString().split('T')[0]}.json`;
+  try {
+    // search for existing backup file to update
+    const searchResp = await fetch(
+      `https://www.googleapis.com/drive/v3/files?q=name+contains+'home-finances'+and+'${FOLDER_ID}'+in+parents+and+trashed=false&fields=files(id,name)`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+    const searchData = await searchResp.json();
+    let fileId = null;
+    if(searchData.files && searchData.files.length > 0){
+      fileId = searchData.files[0].id;
+    }
+
+    const blob = new Blob([data], {type:'application/json'});
+    let resp;
+    if(fileId){
+      // update existing
+      resp = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,{
+        method:'PATCH',headers:{'Authorization':`Bearer ${accessToken}`,'Content-Type':'application/json'},body:blob
+      });
+    } else {
+      // create new with metadata
+      const meta = {name:filename,parents:[FOLDER_ID]};
+      const form = new FormData();
+      form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));
+      form.append('file',blob);
+      resp = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{
+        method:'POST',headers:{'Authorization':`Bearer ${accessToken}`},body:form
+      });
+    }
+    if(resp.ok){
+      state.lastBackup = new Date().toISOString();
+      saveState(); checkBackupBanner(); updateLastBackupLabel();
+      showToast(t('backup_ok'),'success');
+    } else {
+      showToast(t('backup_fail'),'error');
+    }
+  } catch(e){ showToast(t('backup_fail'),'error'); }
+}
+
+async function restoreFromDrive(){
+  if(!driveConnected){
+    pendingDriveAction = restoreFromDrive;
+    tokenClient.requestAccessToken({prompt:''});
+    return;
+  }
+  try {
+    const searchResp = await fetch(
+      `https://www.googleapis.com/drive/v3/files?q=name+contains+'home-finances'+and+'${FOLDER_ID}'+in+parents+and+trashed=false&orderBy=modifiedTime+desc&fields=files(id,name,modifiedTime)`,
+      {headers:{Authorization:`Bearer ${accessToken}`}}
+    );
+    const searchData = await searchResp.json();
+    if(!searchData.files || !searchData.files.length){
+      showToast(lang==='it'?'Nessun backup trovato su Drive':'No backup found on Drive','error'); return;
+    }
+    const latest = searchData.files[0];
+    const fileResp = await fetch(`https://www.googleapis.com/drive/v3/files/${latest.id}?alt=media`,{
+      headers:{Authorization:`Bearer ${accessToken}`}
+    });
+    const restored = await fileResp.json();
+    Object.assign(state, restored);
+    saveState(); populateCategorySelects(); populateMonthFilters(); renderAll();
+    showToast(t('restore_ok'),'success');
+  } catch(e){ showToast(t('restore_fail'),'error'); }
+}
+
+function localBackup(){
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `home-finances-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function checkBackupBanner(){
+  const banner = document.getElementById('backupBanner');
+  if(!state.lastBackup){
+    banner.style.display = 'flex';
+    document.getElementById('backupMsg').textContent = lang==='it'?'⚠ Nessun backup. Salva i tuoi dati.':'⚠ No backup yet. Save your data.';
+  } else {
+    const days = (Date.now() - new Date(state.lastBackup).getTime()) / 86400000;
+    if(days > 7){
+      banner.style.display = 'flex';
+      document.getElementById('backupMsg').textContent = lang==='it'?`⚠ Ultimo backup ${Math.floor(days)} giorni fa.`:`⚠ Last backup ${Math.floor(days)} days ago.`;
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+}
+
+function updateLastBackupLabel(){
+  const el = document.getElementById('last-backup-label');
+  if(!el) return;
+  if(!state.lastBackup){ el.textContent = t('no_backup'); return; }
+  el.textContent = t('last_backup') + ' ' + new Date(state.lastBackup).toLocaleString(lang==='it'?'it-IT':'en-GB');
+}
+
+// ==============================
+// EXPORT CSV
+// ==============================
+function exportCSV(){
+  const rows = [['Date','Description','Category','Account','Type','Amount']];
+  state.entries.forEach(e => rows.push([e.date,e.desc,e.category,e.payer,e.type,e.amount]));
+  downloadCSV(rows,'ledger');
+}
+function exportRenoCSV(){
+  const rows = [['Date','Description','Category','Paid By','Amount']];
+  state.renoEntries.forEach(e => rows.push([e.date,e.desc,e.subcat,e.paidby,e.amount]));
+  downloadCSV(rows,'renovation');
+}
+function exportAllCSV(){
+  exportCSV(); exportRenoCSV();
+}
+function downloadCSV(rows,name){
+  const csv = rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `home-finances-${name}-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ==============================
+// MODAL
+// ==============================
+let pendingDeleteFn = null;
+function showDeleteModal(fn){
+  pendingDeleteFn = fn;
+  openModal('deleteModal');
+  document.getElementById('confirmDeleteBtn').onclick = () => {
+    closeModal('deleteModal');
+    if(pendingDeleteFn) pendingDeleteFn();
+  };
+}
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+// ==============================
+// CLEAR ALL
+// ==============================
+function clearAllData(){
+  const word = lang==='it'?'ELIMINA':'DELETE';
+  const input = prompt(t('confirm_clear'));
+  if(input === word){
+    state = {entries:[],renoEntries:[],loans:[],categories:state.categories,renoBudget:0,lastBackup:null,selectedPayer:'joint'};
+    saveState(); renderAll();
+    showToast(t('cleared'),'success');
+  }
+}
+
+// ==============================
+// RENDER ALL
+// ==============================
+function renderAll(){
+  renderDashboard();
+  renderLedger();
+  renderReno();
+  renderLoans();
+  checkBackupBanner();
+  populateMonthFilters();
+}
+
+// ==============================
+// HELPERS
+// ==============================
+function fmt(n){ return '€' + (n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+function fmtDate(d){
+  if(!d) return '';
+  const [y,m,day] = d.split('-');
+  return lang==='it'?`${day}/${m}/${y}`:`${day}/${m}/${y}`;
+}
+function payerTag(p){
+  if(!p) return '';
+  if(p==='esther') return `<span class="tag tag-esther">Esther</span>`;
+  if(p==='omero') return `<span class="tag tag-omero">Omero</span>`;
+  return `<span class="tag tag-joint">${lang==='it'?'Comune':'Joint'}</span>`;
+}
+
+// TOAST
+function showToast(msg, type=''){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type?' '+type:'');
+  setTimeout(()=>t.className='toast',3000);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); });
+});
+
+// Loan lender/borrower sync
+document.getElementById('loan-lender').addEventListener('change', function(){
+  const other = this.value==='esther'?'omero':'esther';
+  document.getElementById('loan-borrower').value = other;
+});
+document.getElementById('loan-borrower').addEventListener('change', function(){
+  const other = this.value==='esther'?'omero':'esther';
+  document.getElementById('loan-lender').value = other;
+});
+</script>
+</body>
+</html>
