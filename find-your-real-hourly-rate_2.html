@@ -333,7 +333,7 @@ function buildT1(){
   function ar(lbl,rk,type,hint){var x=rrow(lbl,"",type,hint);root.appendChild(x.row);R[rk]=x.val;if(x.hint)R[rk+"H"]=x.hint;return x;}
 
   var w=el("div","welcome");
-  w.innerHTML='<h3>&#127912; Stop guessing your hourly rate</h3><p>Most decorators set their rate based on what others charge, or what feels right. This helps you work out what you <strong>actually need to charge</strong> \u2014 based on your real costs, your real working time, and what you want to take home.</p><p>It\u2019s not a one-off tool. Come back to it whenever your costs change, your workload shifts, or you\u2019re thinking about putting your rate up.</p><div class="welcome-note">Fill in the <strong>yellow boxes</strong> with your own figures. The <strong>white boxes</strong> calculate automatically. The <strong>green boxes</strong> are your key results. Start with Section A below.</div>';
+  w.innerHTML='<h3>&#127912; Stop guessing your hourly rate</h3><p>Most decorators set their rate based on what others charge, or what feels right. This helps you work out what you <strong>actually need to charge</strong>, based on your real costs, your real working time, and what you want to take home.</p><p>It\u2019s not a one-off tool. Come back to it whenever your costs change, your workload shifts, or you\u2019re thinking about putting your rate up.</p><div class="welcome-note">Fill in the <strong>yellow boxes</strong> with your own figures. The <strong>white boxes</strong> calculate automatically. The <strong>green boxes</strong> are your key results. Start with Section A below.</div>';
   root.appendChild(w);
   root.appendChild(el("div","desktop-notice","&#128196; <strong>Designed for desktop/laptop (Windows &amp; Mac).</strong> Best used in Chrome, Edge, Firefox or Safari. Mobile use is not fully supported."));
   root.appendChild(el("div","autosave-note","&#128190; Your figures auto-save in this browser. Full backup and restore is in the <strong>Settings</strong> tab."));
@@ -393,7 +393,7 @@ function buildT1(){
   root.appendChild(rv);
 
   var ns=el("div","nextstep-box");
-  ns.innerHTML='<h4>\u2714 You\u2019ve got your real hourly rate. What\u2019s next?</h4><p>Now that you know what you need to charge, the next steps are:</p><p><strong>1.</strong> Estimate how long the job will take<br/><strong>2.</strong> Present the quote properly to the customer</p><p>Those are separate skills \u2014 and separate tools. This product is your rate benchmark. Keep it updated, and use it as the foundation for every price you give.</p><div class="pqp-ref">\uD83D\uDEE1\uFE0F Need help building professional quotes? See <strong>PaintQuote Pro</strong> at tractionstream.com</div>';
+  ns.innerHTML='<h4>\u2714 You\u2019ve got your real hourly rate. What\u2019s next?</h4><p>Now that you know what you need to charge, the next steps are:</p><p><strong>1.</strong> Estimate how long the job will take<br/><strong>2.</strong> Present the quote properly to the customer</p><p>Those are separate skills, and separate tools. This product is your rate benchmark. Keep it updated, and use it as the foundation for every price you give.</p><div class="pqp-ref">\uD83D\uDEE1\uFE0F Need help building professional quotes? See <strong><a href="https://app.tractionstream.com/paintquote-pro" target="_blank" style="color:#b8913a;text-decoration:underline">PaintQuote Pro</a></strong></div>';
   root.appendChild(ns);
   upd();
 }
@@ -554,7 +554,7 @@ function buildT5(){
   root.appendChild(sbox);
 
   var vbox=el("div","ebox");
-  vbox.innerHTML='<div class="etitle">About</div><p style="font-size:13px;color:#444;line-height:1.8"><strong>Product:</strong> Find Your Real Hourly Rate<br/><strong>Version:</strong> 2.2 (Build 5.2)<br/><strong>Last updated:</strong> March 2026<br/><strong>Created by:</strong> Omero Combi \u2014 Painter & Decorator Business Support<br/><strong>Support:</strong> support@tractionstream.com</p>';
+  vbox.innerHTML='<div class="etitle">About</div><p style="font-size:13px;color:#444;line-height:1.8"><strong>Product:</strong> Find Your Real Hourly Rate<br/><strong>Version:</strong> 2.2 (Build 5.2)<br/><strong>Last updated:</strong> March 2026<br/><strong>Created by:</strong> Omero Combi, Painter & Decorator Business Support<br/><strong>Support:</strong> support@tractionstream.com</p>';
   root.appendChild(vbox);
   var dbox=el("div","ebox");
   dbox.innerHTML='<div class="etitle">Supported Devices</div><p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:8px">Designed for <strong>desktop and laptop computers</strong> running Windows or Mac.</p><p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:8px"><strong>&#10003; Works well on:</strong> Chrome, Edge, Firefox, Safari (Windows &amp; Mac)</p><p style="font-size:13px;color:#888;line-height:1.7"><strong>&#9888; Not officially supported:</strong> iPhone, iPad, Android. It may display on mobile but file saving and some features may not work reliably on mobile browsers.</p>';
