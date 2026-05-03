@@ -523,14 +523,6 @@
   <p class="header-sub">A simple calculator for painters who are new to working for themselves. No guesswork. No jargon. Just your number.</p>
 </div>
 
-<div class="toggle-bar">
-  <span class="toggle-label">Measurements</span>
-  <div class="toggle-wrap">
-    <button class="toggle-btn active" onclick="setUnit('metric')" id="btn-metric">Square metres (m²)</button>
-    <button class="toggle-btn" onclick="setUnit('imperial')" id="btn-imperial">Square feet (ft²)</button>
-  </div>
-</div>
-
 <div class="main">
 
   <div class="intro-note">
@@ -856,7 +848,7 @@
     <h3 style="margin-bottom:6px;">Your hourly rate is the foundation. But it does not answer what comes next.</h3>
     <h3 style="color:var(--gold); margin-bottom:6px;">Find Your Real Hourly Rate</h3>
     <h3 style="margin-bottom:20px;">handles everything that comes after.</h3>
-    <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">Six things that catch painters out once they are working for themselves.</p>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">Eight things that catch painters out once they are working for themselves.</p>
 
     <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px; text-align:left;">
 
@@ -902,6 +894,16 @@
 
       <div style="background:var(--off-white); border-radius:8px; padding:14px 16px; border-left:3px solid var(--gold);">
         <div style="font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; display:flex; align-items:flex-start; gap:8px;">
+          <span>The Job Cost Calculator works in square metres or square feet — whichever you use.</span>
+          <span class="tip" tabindex="0" onclick="toggleTip(this)" style="flex-shrink:0; margin-top:2px;">?
+            <span class="tip-box">Whether you measure rooms in square metres or square feet, the paid tool has a toggle so the job costing section works in your measurements. Built for UK, USA, Canada, and Ireland.</span>
+          </span>
+        </div>
+        <div style="font-size:13px; color:var(--text-muted);">Toggle between square metres and square feet — works wherever you are.</div>
+      </div>
+
+      <div style="background:var(--off-white); border-radius:8px; padding:14px 16px; border-left:3px solid var(--gold);">
+        <div style="font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; display:flex; align-items:flex-start; gap:8px;">
           <span>Your costs go up. You are still charging what you worked out six months ago.</span>
           <span class="tip" tabindex="0" onclick="toggleTip(this)" style="flex-shrink:0; margin-top:2px;">?
             <span class="tip-box">Fuel goes up. You buy a new sprayer. You want three weeks off in summer. Every change shifts your rate. This free calculator gave you one number for one moment in time. The paid tool is yours to keep and update whenever your situation changes.</span>
@@ -920,16 +922,20 @@
         <div style="font-size:13px; color:var(--text-muted);">The full tool includes market rate information for your country — so you can sense-check, not copy.</div>
       </div>
 
+      <div style="background:var(--off-white); border-radius:8px; padding:14px 16px; border-left:3px solid var(--gold);">
+        <div style="font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; display:flex; align-items:flex-start; gap:8px;">
+          <span>You need accident and sickness cover — but nobody has told you what it costs or where to get it.</span>
+          <span class="tip" tabindex="0" onclick="toggleTip(this)" style="flex-shrink:0; margin-top:2px;">?
+            <span class="tip-box">If you cannot work, your income stops immediately. The paid tool includes a field for accident and sickness insurance in your annual costs, plus country-specific guidance on what this cover is called, what it costs, and where to get it in the UK, USA, Canada, and Ireland.</span>
+          </span>
+        </div>
+        <div style="font-size:13px; color:var(--text-muted);">The full tool builds income protection into your rate and tells you where to get cover in your country.</div>
+      </div>
+
     </div>
 
-    <div style="background:var(--navy); border-radius:8px; padding:14px 18px; margin-bottom:20px; text-align:left;">
-      <div style="font-size:12px; color:rgba(255,255,255,0.5); font-family:'DM Mono',monospace; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">One-off payment</div>
-      <div style="font-family:'Playfair Display',serif; font-size:32px; color:var(--gold); line-height:1;">$49 USD</div>
-      <div style="font-size:13px; color:rgba(255,255,255,0.6); margin-top:6px;"><a href="https://www.tractionstream.com/pricing" style="color:var(--gold); text-decoration:none;">See pricing in your currency →</a></div>
-      <div style="font-size:13px; color:rgba(255,255,255,0.45); margin-top:4px;">Download it once. Keep it forever. No subscription, no login.</div>
-    </div>
-    <a href="https://www.tractionstream.com/hourly-rate-and-business-calculator" class="cta-btn">Get Find Your Real Hourly Rate</a>
-    <div class="cta-note">30-day no-quibble refund if it does not give you clarity</div>
+    <a href="https://www.tractionstream.com/hourly-rate-and-business-calculator" class="cta-btn">Find Your Real Hourly Rate →</a>
+    <div class="cta-note">One-off payment. Yours to keep. 30-day no-quibble refund.</div>
   </div>
 
 </div>
@@ -939,15 +945,7 @@
 </div>
 
 <script>
-  // Unit state
-  let currentUnit = 'metric';
-
-  function setUnit(unit) {
-    currentUnit = unit;
-    document.getElementById('btn-metric').classList.toggle('active', unit === 'metric');
-    document.getElementById('btn-imperial').classList.toggle('active', unit === 'imperial');
-    calc();
-  }
+  // Unit state removed - not needed in free calculator
 
   // Mobile tooltip toggle
   function toggleTip(el) {
