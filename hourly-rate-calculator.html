@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Should I Charge? — Free Hourly Rate Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1e2d40;
+    --navy-light: #263548;
+    --navy-dark: #141f2e;
+    --gold: #b8913a;
+    --gold-light: #d4a84b;
+    --gold-pale: #f5ead8;
+    --white: #ffffff;
+    --off-white: #f8f6f2;
+    --text: #1e2d40;
+    --text-muted: #6b7a8d;
+    --border: #ddd5c8;
+    --green: #2d6a4f;
+    --green-light: #e8f5ef;
+    --red: #8b2e2e;
+    --red-light: #fdf0f0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off-white);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--navy);
+    padding: 28px 24px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(184,145,58,0.08);
+  }
+
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 5vw, 32px);
+    color: var(--white);
+    line-height: 1.25;
+    margin-bottom: 10px;
+  }
+
+  .header-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    max-width: 480px;
+    margin: 0 auto;
+    font-weight: 300;
+  }
+
+  .gold-rule {
+    width: 48px;
+    height: 2px;
+    background: var(--gold);
+    margin: 16px auto;
+    border-radius: 2px;
+  }
+
+  /* TOGGLE */
+  .toggle-bar {
+    background: var(--navy-dark);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .toggle-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .toggle-wrap {
+    display: flex;
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .toggle-btn {
+    padding: 7px 18px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .toggle-btn.active {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+  }
+
+  /* INTRO NOTE */
+  .intro-note {
+    background: var(--navy);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 18px;
+    margin-bottom: 28px;
+    color: rgba(255,255,255,0.85);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .intro-note strong {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* SECTION */
+  .section {
+    background: var(--white);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(30,45,64,0.07);
+  }
+
+  .section-header {
+    background: var(--navy);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-letter {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 1px;
+    background: rgba(184,145,58,0.15);
+    border: 1px solid rgba(184,145,58,0.3);
+    border-radius: 4px;
+    padding: 2px 7px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--white);
+    font-weight: 700;
+  }
+
+  .section-body {
+    padding: 20px;
+  }
+
+  /* FIELD */
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field:last-child { margin-bottom: 0; }
+
+  .field-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .field-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 15px;
+    font-family: 'DM Mono', monospace;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    color: var(--navy);
+    background: var(--off-white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .field input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(184,145,58,0.12);
+    background: var(--white);
+  }
+
+  .field input::placeholder {
+    color: #b0bac8;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* TOOLTIP */
+  .tip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    font-style: normal;
+    line-height: 1;
+    user-select: none;
+    transition: background 0.15s;
+    overflow: visible;
+  }
+
+  .tip:hover { background: var(--gold); color: var(--navy); }
+
+  .tip-box {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--navy);
+    color: rgba(255,255,255,0.9);
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 12px 16px;
+    border-radius: 10px;
+    width: min(260px, 75vw);
+    z-index: 9999;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    pointer-events: none;
+    border: 1px solid rgba(184,145,58,0.3);
+  }
+
+  .tip-box::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: var(--navy);
+  }
+
+  .tip:hover .tip-box,
+  .tip:focus .tip-box { display: block; }
+
+  .tip.open .tip-box { display: block; }
+
+  /* CALCULATED ROW */
+  .calc-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--off-white);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .calc-row:last-child { margin-bottom: 0; }
+
+  .calc-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .calc-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  /* RESULTS */
+  .results {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 28px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(30,45,64,0.2);
+  }
+
+  .results-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 20px;
+  }
+
+  .result-block {
+    margin-bottom: 20px;
+  }
+
+  .result-block:last-of-type { margin-bottom: 0; }
+
+  .result-name {
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+
+  .result-number {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 10vw, 52px);
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .result-unit {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 4px;
+  }
+
+  .result-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255,255,255,0.1);
+    margin: 16px auto;
+  }
+
+  .result-warning {
+    background: rgba(184,145,58,0.1);
+    border: 1px solid rgba(184,145,58,0.25);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  .result-warning strong { color: var(--gold); }
+
+  /* CTA */
+  .cta-block {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 28px 20px;
+    text-align: center;
+    border: 2px solid var(--gold-pale);
+    box-shadow: 0 2px 12px rgba(30,45,64,0.07);
+  }
+
+  .cta-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .cta-block h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--navy);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .cta-block p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    line-height: 1.6;
+  }
+
+  .cta-questions {
+    list-style: none;
+    text-align: left;
+    margin: 16px 0 20px;
+    display: inline-block;
+  }
+
+  .cta-questions li {
+    font-size: 14px;
+    color: var(--text);
+    padding: 5px 0 5px 20px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .cta-questions li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 12px;
+    top: 6px;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 14px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 4px;
+  }
+
+  .cta-btn:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
+  }
+
+  .cta-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .footer a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+
+  /* UNIT LABEL */
+  .unit-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+  }
+
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Traction Stream — Free Tool</div>
+  <h1>What Should I Charge Per Hour?</h1>
+  <div class="gold-rule"></div>
+  <p class="header-sub">A simple calculator for painters who are new to working for themselves. No guesswork. No jargon. Just your number.</p>
+</div>
+
+<div class="toggle-bar">
+  <span class="toggle-label">Measurements</span>
+  <div class="toggle-wrap">
+    <button class="toggle-btn active" onclick="setUnit('metric')" id="btn-metric">Square metres (m²)</button>
+    <button class="toggle-btn" onclick="setUnit('imperial')" id="btn-imperial">Square feet (ft²)</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="intro-note">
+    <strong>Fill in the numbers that match your life.</strong> The example figures are just a starting point — replace them with your own. Your rate updates as you go. Every field has a <strong>?</strong> button that explains what it means in plain English.
+  </div>
+
+  <!-- SECTION A -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-letter">A</span>
+      <span class="section-title">What You Need to Take Home</span>
+    </div>
+    <div class="section-body">
+
+      <div class="field">
+        <div class="field-label">
+          Money you want in your pocket each year
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">This is what lands in your personal bank account after tax. Not what you invoice. Not what comes in before bills. What you actually live on. Think about your rent or mortgage, food, fuel for your personal car, phone, and anything else you spend day to day.</span>
+          </span>
+        </div>
+        <div class="field-hint">After tax. The amount you actually live on.</div>
+        <input type="number" id="takeHome" value="32000" min="0" oninput="calc()" placeholder="e.g. 32000">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Money set aside for retirement each year
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">When you work for yourself, nobody saves for your retirement but you. This is money you put away each month so you have something to live on later. Even a small amount matters. If you skip this now, your rate calculation will be wrong — you will end up working for less than you think.</span>
+          </span>
+        </div>
+        <div class="field-hint">Nobody does this for you when you work for yourself.</div>
+        <input type="number" id="pension" value="2400" min="0" oninput="calc()" placeholder="e.g. 2400">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Tax buffer
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">When you work for yourself, the tax man does not take your tax automatically. You have to set money aside and pay it yourself, usually once or twice a year. This number (1.30) means for every 100 you earn, you plan for 130 to cover the tax on top. It is a safe planning number for most self-employed painters. Your accountant can give you a more accurate figure.</span>
+          </span>
+        </div>
+        <div class="field-hint">Set to 1.30 — a safe planning figure. Change it if your accountant advises otherwise.</div>
+        <input type="number" id="taxBuffer" value="1.30" min="1" max="2" step="0.01" oninput="calc()" placeholder="1.30">
+      </div>
+
+      <div class="calc-row">
+        <span class="calc-label">
+          What your business needs to earn before tax
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">This is calculated automatically. It is the amount your business needs to bring in just to give you your take-home pay, cover your retirement savings, and cover your tax bill. It does not include your business running costs yet — those come next.</span>
+          </span>
+        </span>
+        <span class="calc-value" id="preTax">—</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION B -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-letter">B</span>
+      <span class="section-title">What It Costs to Run Your Business</span>
+    </div>
+    <div class="section-body">
+
+      <p class="field-hint" style="margin-bottom:16px;">These are the costs you pay whether you are working or not. Replace the figures with your own. If you are not sure, leave the default — it is a realistic starting point.</p>
+
+      <div class="field">
+        <div class="field-label">
+          Van or vehicle — fuel per year
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">Add up what you spend on fuel for your work vehicle across the whole year. If you are not sure, think about how much you spend in a typical week and multiply by 48 (allowing for some time off).</span>
+          </span>
+        </div>
+        <input type="number" id="fuel" value="3000" min="0" oninput="calc()" placeholder="e.g. 3000">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Van or vehicle — insurance and registration
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">Your work vehicle insurance and any registration or road tax costs per year. In most countries you need commercial vehicle insurance if you use your vehicle for work — personal car insurance usually does not cover this.</span>
+          </span>
+        </div>
+        <input type="number" id="vanInsurance" value="1500" min="0" oninput="calc()" placeholder="e.g. 1500">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Van or vehicle — servicing and repairs
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">What you spend on keeping your vehicle running — services, tyres, unexpected repairs. Even if you had a cheap year, a good year is followed by an expensive one. Use an average.</span>
+          </span>
+        </div>
+        <input type="number" id="vanMaint" value="1000" min="0" oninput="calc()" placeholder="e.g. 1000">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Van or vehicle — wear and tear reserve
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">Your van loses value every year you drive it. Eventually you will need to replace it. This is money you set aside each year toward that day. If you ignore this, the cost comes as a nasty surprise. Even 100 a month is better than nothing.</span>
+          </span>
+        </div>
+        <input type="number" id="vanDepreciation" value="1500" min="0" oninput="calc()" placeholder="e.g. 1500">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Public liability insurance
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">This covers you if you accidentally damage a customer's property or someone gets injured while you are working. Most customers — especially any commercial or landlord work — will ask to see this before you start. It is not optional if you want to be taken seriously and be protected.</span>
+          </span>
+        </div>
+        <input type="number" id="pli" value="500" min="0" oninput="calc()" placeholder="e.g. 500">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Tools — replacement and new purchases per year
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">Brushes, rollers, poles, scrapers, dust sheets, spray equipment, power tools — all of it wears out or needs upgrading. Add up what you typically spend in a year. If this year was cheap, last year was probably expensive. Use an average.</span>
+          </span>
+        </div>
+        <input type="number" id="tools" value="1200" min="0" oninput="calc()" placeholder="e.g. 1200">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Accountant or bookkeeper
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">When you work for yourself you need to file a tax return every year. An accountant does this for you, keeps you out of trouble, and often saves you more than they cost. Even a basic annual fee is worth including here. If you do it yourself for free right now, that is fine — put zero, but know you may need this later.</span>
+          </span>
+        </div>
+        <input type="number" id="accountant" value="800" min="0" oninput="calc()" placeholder="e.g. 800">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Phone and data plan
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">Your phone is a business tool. You use it for customer calls, messages, photos, navigation, and payments. Include the cost of your plan here.</span>
+          </span>
+        </div>
+        <input type="number" id="phone" value="600" min="0" oninput="calc()" placeholder="e.g. 600">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Software and subscriptions
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">Any apps, software, or online tools you pay for to run your business. This might include a quoting app, accounting software, cloud storage, or anything else. Add them up across the year.</span>
+          </span>
+        </div>
+        <input type="number" id="software" value="400" min="0" oninput="calc()" placeholder="e.g. 400">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Workwear and PPE
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">Overalls, boots, dust masks, safety glasses — anything you wear or use to protect yourself on the job. These wear out and need replacing. Include what you spend in a year.</span>
+          </span>
+        </div>
+        <input type="number" id="workwear" value="400" min="0" oninput="calc()" placeholder="e.g. 400">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Training or licences
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">Any courses, trade tests, certifications, or licences you need to keep current. In some countries you need a licence to trade legally — check what applies to you. Include renewal costs here.</span>
+          </span>
+        </div>
+        <input type="number" id="training" value="400" min="0" oninput="calc()" placeholder="e.g. 400">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Advertising and getting work
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">Anything you spend to find customers or get your name out there. This could be Facebook ads, Google ads, leaflets, a website, business cards, or a listing on a local trades directory. If you are just starting and spending nothing yet, put zero — but know that finding work usually costs something, even if it is just your time.</span>
+          </span>
+        </div>
+        <div class="field-hint">Facebook ads, leaflets, website, trades directories — anything you spend to find customers.</div>
+        <input type="number" id="advertising" value="600" min="0" oninput="calc()" placeholder="e.g. 600">
+      </div>
+
+      <div class="calc-row" style="margin-top:16px; background: var(--navy); border-color: var(--navy);">
+        <span class="calc-label" style="color: rgba(255,255,255,0.6);">
+          Total annual running costs
+        </span>
+        <span class="calc-value" id="totalOverheads" style="color: var(--gold);">—</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION C -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-letter">C</span>
+      <span class="section-title">What Your Business Needs to Invoice Each Year</span>
+    </div>
+    <div class="section-body">
+
+      <div class="calc-row">
+        <span class="calc-label">
+          What you need to earn before tax
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">This is from Section A — the amount your business needs to earn to give you your take-home pay after tax and retirement savings.</span>
+          </span>
+        </span>
+        <span class="calc-value" id="cPreTax">—</span>
+      </div>
+
+      <div class="calc-row">
+        <span class="calc-label">Total annual running costs</span>
+        <span class="calc-value" id="cOverheads">—</span>
+      </div>
+
+      <div class="calc-row" style="background: var(--navy); border-color: var(--navy);">
+        <span class="calc-label" style="color: rgba(255,255,255,0.6);">
+          Total your business must invoice per year
+          <span class="tip" tabindex="0" onclick="toggleTip(this)" style="background: rgba(255,255,255,0.15); color: var(--gold);">?
+            <span class="tip-box">This is the total your business needs to invoice (bill to customers) across the year just to break even — pay yourself, cover all your costs, and put something away for tax and retirement. This does not include materials. Materials are always quoted separately and passed on to the customer.</span>
+          </span>
+        </span>
+        <span class="calc-value" id="totalRequired" style="color: var(--gold);">—</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION D -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-letter">D</span>
+      <span class="section-title">How Many Hours You Can Actually Charge For</span>
+    </div>
+    <div class="section-body">
+
+      <div class="field">
+        <div class="field-label">
+          Days you work per week
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">How many days a week you actually paint? Most sole traders work 4 to 5 days. If you are just starting, be honest — some weeks will be slow at first while you build up work.</span>
+          </span>
+        </div>
+        <div class="field-hint">Most self-employed painters work 4 to 5 days. Be honest about your actual situation.</div>
+        <input type="number" id="daysPerWeek" value="5" min="1" max="7" step="0.5" oninput="calc()" placeholder="e.g. 5">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Weeks off per year (holidays, sick days, quiet weeks)
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">This includes your holiday, any sick days, bank holidays, and slow weeks when you do not have work lined up. Most self-employed painters lose 6 to 10 weeks a year to this even if they are busy. If you guess low here, your rate will come out too low and you will slowly run out of money.</span>
+          </span>
+        </div>
+        <div class="field-hint">Include holidays, bank holidays, quiet weeks, and sick days. Most painters lose 6–10 weeks.</div>
+        <input type="number" id="weeksOff" value="8" min="0" max="30" oninput="calc()" placeholder="e.g. 8">
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          Hours per day spent actually painting
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">This is not how long you are out of the house. It is the hours you are physically on the tools — brush in hand, roller on the wall. You cannot charge for driving to a job, giving a quote, buying materials, or cleaning up. Most painters get 5.5 to 7 chargeable hours out of an 8-hour day.</span>
+          </span>
+        </div>
+        <div class="field-hint">Hours with a brush in your hand. Not travel, not quoting, not cleaning up. Typically 5.5–7 hours.</div>
+        <input type="number" id="hoursPerDay" value="6" min="1" max="12" step="0.5" oninput="calc()" placeholder="e.g. 6">
+      </div>
+
+      <div class="calc-row">
+        <span class="calc-label">
+          Chargeable hours per year
+          <span class="tip" tabindex="0" onclick="toggleTip(this)">?
+            <span class="tip-box">This is the total number of hours per year you can actually bill a customer for. It is calculated from your days per week, hours per day, and weeks working. This is the number your hourly rate is divided into — get this wrong and your rate will be wrong.</span>
+          </span>
+        </span>
+        <span class="calc-value" id="billableHours">—</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results">
+    <div class="results-eyebrow">Your Results</div>
+
+    <div class="result-block">
+      <div class="result-name">Your break-even rate</div>
+      <div class="result-number" id="breakEven">—</div>
+      <div class="result-unit">per hour — the minimum you can charge without losing money</div>
+    </div>
+
+    <div class="result-divider"></div>
+
+    <div class="result-block">
+      <div class="result-name">Your recommended charge-out rate</div>
+      <div class="result-number" id="chargeOut">—</div>
+      <div class="result-unit">per hour — includes a 20% buffer
+        <span class="tip" tabindex="0" onclick="toggleTip(this)" style="background: rgba(255,255,255,0.15); color: var(--gold); margin-left: 4px; vertical-align: middle;">?
+          <span class="tip-box">Your break-even rate is the floor — the minimum you can charge without losing money. But working at break-even leaves nothing for when the van needs a big repair, when work goes quiet for a few weeks, or when you want to grow. The 20% buffer builds a cushion above break-even. It is not profit — it is protection. Most experienced painters price at break-even plus 20 to 30 percent as a matter of habit.</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="result-warning" id="warningBlock" style="display:none;">
+      <strong>Worth knowing:</strong> <span id="warningText"></span>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-block">
+    <div class="cta-eyebrow">When one number is not enough</div>
+    <h3 style="margin-bottom:6px;">Your hourly rate is the foundation. But it does not answer what comes next.</h3>
+    <h3 style="color:var(--gold); margin-bottom:6px;">Find Your Real Hourly Rate</h3>
+    <h3 style="margin-bottom:20px;">handles everything that comes after.</h3>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">Six things that catch painters out once they are working for themselves.</p>
+
+    <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px; text-align:left;">
+
+      <div style="background:var(--off-white); border-radius:8px; padding:14px 16px; border-left:3px solid var(--gold);">
+        <div style="font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; display:flex; align-items:flex-start; gap:8px;">
+          <span>You have your hourly rate. But you still do not know what to charge for a full day.</span>
+          <span class="tip" tabindex="0" onclick="toggleTip(this)" style="flex-shrink:0; margin-top:2px;">?
+            <span class="tip-box">Your day rate is not your hourly rate multiplied by eight. A properly calculated day rate accounts for the real chargeable hours in a full day once setup, cleanup, and travel are stripped out. The paid tool calculates it from the same figures you already entered here.</span>
+          </span>
+        </div>
+        <div style="font-size:13px; color:var(--text-muted);">The full tool gives you your day rate and week rate — properly calculated, not guessed.</div>
+      </div>
+
+      <div style="background:var(--off-white); border-radius:8px; padding:14px 16px; border-left:3px solid var(--gold);">
+        <div style="font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; display:flex; align-items:flex-start; gap:8px;">
+          <span>You are buying materials for every job. You have no idea what to charge on top of them.</span>
+          <span class="tip" tabindex="0" onclick="toggleTip(this)" style="flex-shrink:0; margin-top:2px;">?
+            <span class="tip-box">Most painters who are new to the business side pass materials on at cost or add a random percentage. But you source them, carry them, are responsible for them, and have money tied up in them. The paid tool tells you exactly what markup percentage to add to materials so you are not working for free on that part of every job.</span>
+          </span>
+        </div>
+        <div style="font-size:13px; color:var(--text-muted);">The full tool calculates your materials markup — the percentage to add on top so you are not losing money on supplies.</div>
+      </div>
+
+      <div style="background:var(--off-white); border-radius:8px; padding:14px 16px; border-left:3px solid var(--gold);">
+        <div style="font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; display:flex; align-items:flex-start; gap:8px;">
+          <span>Someone offers to help on a big job. You say yes without knowing if you can afford to take him on.</span>
+          <span class="tip" tabindex="0" onclick="toggleTip(this)" style="flex-shrink:0; margin-top:2px;">?
+            <span class="tip-box">Taking on another person is not just their day rate. There is holiday pay, employer contributions, liability, supervision time, and the question of what you need to charge the customer on top just to make any money. Get it wrong and you work harder for less. The paid tool shows you the full cost so you know whether you can afford to take him on or not before you commit.</span>
+          </span>
+        </div>
+        <div style="font-size:13px; color:var(--text-muted);">The full tool shows you whether you can afford to take him on or not.</div>
+      </div>
+
+      <div style="background:var(--off-white); border-radius:8px; padding:14px 16px; border-left:3px solid var(--gold);">
+        <div style="font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; display:flex; align-items:flex-start; gap:8px;">
+          <span>You are about to price a job but you have no idea if the numbers work before you open your mouth.</span>
+          <span class="tip" tabindex="0" onclick="toggleTip(this)" style="flex-shrink:0; margin-top:2px;">?
+            <span class="tip-box">Before you give a customer a price, you need to know what that job costs you in labour, materials, and any hired equipment — for your eyes only, not theirs. The paid tool has a private Job Cost Calculator where you work out what any job should earn you before you commit to a number.</span>
+          </span>
+        </div>
+        <div style="font-size:13px; color:var(--text-muted);">The full tool has a private Job Cost Calculator — for your eyes only, before you quote.</div>
+      </div>
+
+      <div style="background:var(--off-white); border-radius:8px; padding:14px 16px; border-left:3px solid var(--gold);">
+        <div style="font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; display:flex; align-items:flex-start; gap:8px;">
+          <span>Your costs go up. You are still charging what you worked out six months ago.</span>
+          <span class="tip" tabindex="0" onclick="toggleTip(this)" style="flex-shrink:0; margin-top:2px;">?
+            <span class="tip-box">Fuel goes up. You buy a new sprayer. You want three weeks off in summer. Every change shifts your rate. This free calculator gave you one number for one moment in time. The paid tool is yours to keep and update whenever your situation changes.</span>
+          </span>
+        </div>
+        <div style="font-size:13px; color:var(--text-muted);">The full tool updates every time your costs or plans change — open it, adjust, done.</div>
+      </div>
+
+      <div style="background:var(--off-white); border-radius:8px; padding:14px 16px; border-left:3px solid var(--gold);">
+        <div style="font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; display:flex; align-items:flex-start; gap:8px;">
+          <span>You wonder if your rate is in the right ballpark — or whether you are way off what other painters charge.</span>
+          <span class="tip" tabindex="0" onclick="toggleTip(this)" style="flex-shrink:0; margin-top:2px;">?
+            <span class="tip-box">Not to copy anyone. So you know where you stand. The paid tool includes market rate information for painters across different countries and regions. Use it to sense-check your own number, not to set it — your rate must come from your costs, not from someone else's guesswork.</span>
+          </span>
+        </div>
+        <div style="font-size:13px; color:var(--text-muted);">The full tool includes market rate information for your country — so you can sense-check, not copy.</div>
+      </div>
+
+    </div>
+
+    <div style="background:var(--navy); border-radius:8px; padding:14px 18px; margin-bottom:20px; text-align:left;">
+      <div style="font-size:12px; color:rgba(255,255,255,0.5); font-family:'DM Mono',monospace; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">One-off payment</div>
+      <div style="font-family:'Playfair Display',serif; font-size:32px; color:var(--gold); line-height:1;">$49 USD</div>
+      <div style="font-size:13px; color:rgba(255,255,255,0.6); margin-top:6px;"><a href="https://www.tractionstream.com/pricing" style="color:var(--gold); text-decoration:none;">See pricing in your currency →</a></div>
+      <div style="font-size:13px; color:rgba(255,255,255,0.45); margin-top:4px;">Download it once. Keep it forever. No subscription, no login.</div>
+    </div>
+    <a href="https://www.tractionstream.com/hourly-rate-and-business-calculator" class="cta-btn">Get Find Your Real Hourly Rate</a>
+    <div class="cta-note">30-day no-quibble refund if it does not give you clarity</div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <a href="https://tractionstream.com">tractionstream.com</a> — The business side of the trade
+</div>
+
+<script>
+  // Unit state
+  let currentUnit = 'metric';
+
+  function setUnit(unit) {
+    currentUnit = unit;
+    document.getElementById('btn-metric').classList.toggle('active', unit === 'metric');
+    document.getElementById('btn-imperial').classList.toggle('active', unit === 'imperial');
+    calc();
+  }
+
+  // Mobile tooltip toggle
+  function toggleTip(el) {
+    // Only on touch devices
+    if (window.matchMedia('(hover: none)').matches) {
+      const wasOpen = el.classList.contains('open');
+      document.querySelectorAll('.tip.open').forEach(t => t.classList.remove('open'));
+      if (!wasOpen) el.classList.add('open');
+    }
+  }
+
+  // Close tips on outside click
+  document.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('tip')) {
+      document.querySelectorAll('.tip.open').forEach(t => t.classList.remove('open'));
+    }
+  });
+
+  function val(id) {
+    return parseFloat(document.getElementById(id).value) || 0;
+  }
+
+  function fmt(n) {
+    if (isNaN(n) || !isFinite(n)) return '—';
+    return Math.round(n).toLocaleString();
+  }
+
+  function calc() {
+    // Section A
+    const takeHome = val('takeHome');
+    const pension = val('pension');
+    const taxBuffer = val('taxBuffer') || 1.30;
+    const preTax = (takeHome + pension) * taxBuffer;
+
+    // Section B
+    const overheads =
+      val('fuel') + val('vanInsurance') + val('vanMaint') + val('vanDepreciation') +
+      val('pli') + val('tools') + val('accountant') + val('phone') +
+      val('software') + val('workwear') + val('training') + val('advertising');
+
+    // Section C
+    const totalRequired = preTax + overheads;
+
+    // Section D
+    const daysPerWeek = val('daysPerWeek');
+    const weeksOff = val('weeksOff');
+    const hoursPerDay = val('hoursPerDay');
+    const workingWeeks = 52 - weeksOff;
+    const billableHours = daysPerWeek * workingWeeks * hoursPerDay;
+
+    // Results
+    const breakEven = billableHours > 0 ? totalRequired / billableHours : 0;
+    const chargeOut = breakEven * 1.20;
+
+    // Update display
+    document.getElementById('preTax').textContent = fmt(preTax);
+    document.getElementById('totalOverheads').textContent = fmt(overheads);
+    document.getElementById('cPreTax').textContent = fmt(preTax);
+    document.getElementById('cOverheads').textContent = fmt(overheads);
+    document.getElementById('totalRequired').textContent = fmt(totalRequired);
+    document.getElementById('billableHours').textContent = fmt(billableHours) + ' hrs';
+    document.getElementById('breakEven').textContent = fmt(breakEven);
+    document.getElementById('chargeOut').textContent = fmt(chargeOut);
+
+    // Warnings
+    const warningBlock = document.getElementById('warningBlock');
+    const warningText = document.getElementById('warningText');
+    let warnings = [];
+
+    if (pension === 0) {
+      warnings.push('You have not included any retirement savings. Your rate may be coming out lower than it should be.');
+    }
+    if (billableHours > 1600) {
+      warnings.push('Your chargeable hours are quite high. Check your days per week and hours per day are realistic — overestimating here makes your rate look lower than it actually needs to be.');
+    }
+    if (billableHours < 600 && billableHours > 0) {
+      warnings.push('Your chargeable hours are very low. If this is your starting point while you build up work, that is fine — but your rate will need to increase as you get busier.');
+    }
+    if (breakEven > 0 && breakEven < 15) {
+      warnings.push('Your break-even rate looks very low. Double-check your overheads — some fields may have been left at zero.');
+    }
+
+    if (warnings.length > 0) {
+      warningText.textContent = warnings[0];
+      warningBlock.style.display = 'block';
+    } else {
+      warningBlock.style.display = 'none';
+    }
+  }
+
+  // Run on load
+  calc();
+</script>
+
+</body>
+</html>
