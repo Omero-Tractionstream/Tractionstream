@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Painter &amp; Decorator Hourly Rate &amp; Business Calculator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:linear-gradient(160deg,#0d1f4e 0%,#1a3a7a 40%,#0d2d6b 100%);min-height:100vh;padding-bottom:40px}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{opacity:1}
+.hdr{background:linear-gradient(135deg,#0a1a50 0%,#1a3a7a 50%,#0d2d6b 100%);padding:24px 20px 16px;text-align:center;border-bottom:3px solid #f0c040;position:sticky;top:0;z-index:100}
+.hdr-kicker{font-size:11px;letter-spacing:3px;color:#f0c040;font-weight:700;margin-bottom:4px;text-transform:uppercase}
+.hdr-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;line-height:1.2}
+.hdr-sub{font-size:13px;color:#a8c4f0;margin-top:2px;font-weight:500}
+.tabs{display:flex;gap:4px;margin-top:14px;overflow-x:auto;justify-content:center;padding-bottom:2px}
+.tab-btn{padding:8px 14px;border-radius:20px;border:none;cursor:pointer;font-weight:700;font-size:12px;white-space:nowrap;transition:all .2s;background:rgba(255,255,255,0.1);color:#c8d8f0}
+.tab-btn.active{background:linear-gradient(135deg,#f0c040 0%,#e8a800 100%);color:#0a1a50;box-shadow:0 2px 12px rgba(240,192,64,0.4);transform:translateY(-1px)}
+.content{max-width:720px;margin:0 auto;padding:16px}
+.key{display:flex;gap:16px;flex-wrap:wrap;background:rgba(255,255,255,0.11);border-radius:12px;padding:14px 20px;margin-bottom:12px;align-items:center;justify-content:center}
+.key-item{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;color:#fff}
+.key-item span{color:rgba(255,255,255,0.65);font-weight:400;font-size:13px}
+.key-swatch{width:26px;height:26px;border-radius:5px;flex-shrink:0;display:inline-block}
+.key-swatch.yellow{background:#f0c040;border:2px solid #e8a800}
+.key-swatch.white{background:#ffffff;border:2px solid #c0cce0}
+.key-swatch.green{background:#38b96a;border:2px solid #2a9a55}
+.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 8px 40px rgba(0,0,0,0.3)}
+.welcome{background:linear-gradient(135deg,#f0f6ff,#e8f0ff);border:1px solid #c0d4f0;border-left:4px solid #2356a8;border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:18px}
+.welcome h3{font-size:14px;font-weight:700;color:#1a3a6b;margin-bottom:8px}
+.welcome ul{list-style:none;padding:0}
+.welcome ul li{font-size:13px;color:#333;padding:2px 0;line-height:1.5}
+.welcome ul li::before{content:"• ";color:#2356a8;font-weight:700}
+.welcome-note{font-size:12px;color:#555;margin-top:8px;padding-top:8px;border-top:1px solid #c0d4f0}
+.desktop-notice{background:linear-gradient(135deg,#fff8e8,#fff3d0);border:1px solid #f0c040;border-left:4px solid #e8a800;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#7a5a00}
+.savebar{display:flex;gap:8px;flex-wrap:wrap;padding:10px 0;margin-bottom:4px;align-items:center;border-bottom:1px solid #eee}
+.sbtn{padding:7px 13px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;display:flex;align-items:center;gap:5px}
+.sbtn-save{background:linear-gradient(135deg,#2356a8,#1a3a6b);color:#fff}
+.sbtn-load{background:#fff;color:#2356a8;border:1px solid #2356a8}
+.sbtn-reset{background:#f5f5f5;color:#555;border:1px solid #ddd}
+.sbtn:hover{opacity:0.88;cursor:pointer}
+.smsg{font-size:11px;color:#2a7a2a;font-weight:600;margin-left:4px}
+.savebar-note{font-size:11px;color:#888;margin:0 0 8px}
+.sec-hdr{background:linear-gradient(135deg,#1a3a6b 0%,#2356a8 100%);color:#fff;padding:10px 16px;border-radius:10px;font-weight:700;font-size:14px;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.irow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 12px;background:#fff;border-radius:8px;border:1px solid #e0e8f5;margin:5px 0}
+.irow-lbl{font-weight:600;font-size:13px;color:#1a3a6b}
+.irow-hint{font-size:11px;color:#888;margin-top:2px}
+.irow-right{display:flex;align-items:center;gap:4px}
+.ipfx{color:#2356a8;font-weight:700;font-size:14px}
+.isfx{color:#666;font-size:13px}
+.finp{width:90px;padding:6px 8px;border:2px solid #f0c040;border-radius:6px;background:#fffde7;font-weight:700;font-size:14px;color:#0a2a6e;outline:none;text-align:right;font-family:inherit}
+.finp:focus{border-color:#e8a800;box-shadow:0 0 0 3px rgba(240,192,64,0.2)}
+.rrow{display:grid;grid-template-columns:1fr auto;align-items:center;padding:10px 14px;border-radius:8px;margin:5px 0}
+.rrow.n{background:#f0f6ff;border:1px solid #dde8f8}
+.rrow.h{background:linear-gradient(135deg,#fff8d6,#fff3b0);border:2px solid #f0c040;box-shadow:0 2px 8px rgba(240,192,64,0.25)}
+.rrow.g{background:linear-gradient(135deg,#eafaf1,#d4f5e0);border:2px solid #38b96a;box-shadow:0 2px 8px rgba(56,185,106,0.15)}
+.rlbl{font-weight:700;font-size:13px}.rrow.n .rlbl{color:#1a3a6b}.rrow.h .rlbl{color:#7a5a00}.rrow.g .rlbl{color:#1a6e3a}
+.rhint{font-size:11px;color:#888;margin-top:1px}
+.rval{font-weight:800;letter-spacing:-0.5px}
+.rrow.n .rval{font-size:17px;color:#2356a8}.rrow.h .rval{font-size:20px;color:#b08000}.rrow.g .rval{font-size:17px;color:#1a6e3a}
+.tip{background:linear-gradient(135deg,#fffbea,#fff8d6);border:1px solid #f0c040;border-left:4px solid #f0c040;border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:13px;color:#7a5a00;line-height:1.6}
+.warn{background:linear-gradient(135deg,#fff2ee,#ffe8e0);border:1px solid #e8a090;border-left:4px solid #d95030;border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:13px;color:#6b2010;line-height:1.6}
+.est-note{font-size:11px;color:#888;font-style:italic;margin:2px 0 4px 0;padding-left:4px}
+.toggle-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 12px;background:#fff;border-radius:8px;border:1px solid #e0e8f5;margin:5px 0}
+.toggle-lbl{font-weight:600;font-size:13px;color:#1a3a6b}
+.toggle-hint{font-size:11px;color:#888;margin-top:2px}
+.toggle-switch{display:flex;gap:0;border-radius:6px;overflow:hidden;border:2px solid #f0c040}
+.toggle-opt{padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;background:#fffde7;color:#888;transition:all .15s}
+.toggle-opt.on{background:linear-gradient(135deg,#f0c040,#e8a800);color:#0a1a50}
+.sync-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:6px;border:1px solid #2356a8;background:#f0f6ff;color:#2356a8;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px}
+.sync-btn:hover{background:#ddeeff}
+.tw{overflow-x:auto;margin:8px 0}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{padding:8px 10px;background:#1a3a6b;color:#fff;white-space:nowrap;text-align:left}
+th.r{text-align:right}th.c{text-align:center}
+td{padding:7px 8px;border-bottom:1px solid #e8eef8;vertical-align:middle}
+tr:nth-child(odd) td{background:#f8f9fb}tr:nth-child(even) td{background:#fff}
+.tfoot td{background:#deeaf1!important;font-weight:700;color:#1a3a6b}
+.dinp{padding:5px 8px;border:1px solid #e0e8f5;border-radius:6px;background:#f8f9fb;font-size:12px;color:#555;outline:none;width:100%;font-family:inherit}
+.ninp{padding:5px 7px;border:2px solid #f0c040;border-radius:6px;background:#fffde7;font-weight:700;font-size:13px;color:#0a2a6e;outline:none;text-align:right;font-family:inherit}
+.ninp:focus,.dinp:focus,.finp:focus{border-color:#e8a800;box-shadow:0 0 0 2px rgba(240,192,64,0.2)}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ebox{background:#f8f9fb;border-radius:10px;padding:12px;margin:8px 0;border:1px solid #e0e8f5}
+.etitle{font-weight:700;font-size:13px;color:#1a3a6b;margin-bottom:8px}
+.rgrid{display:grid;gap:5px;margin-top:4px}
+.rrow2{display:grid;grid-template-columns:180px 1fr;gap:12px;padding:10px 12px;border-radius:8px;border:1px solid #dde8f8;align-items:start}
+.rrow2:nth-child(odd){background:#f0f6ff}.rrow2:nth-child(even){background:#fff}
+.rtitle{font-weight:700;font-size:13px;color:#1a3a6b}
+.rbody{font-size:13px;color:#444;line-height:1.5}
+.settings-box{background:#f8f9fb;border:1px solid #e0e8f5;border-radius:10px;padding:14px;margin-bottom:14px}
+.settings-box summary{font-weight:700;font-size:13px;color:#1a3a6b;cursor:pointer;padding:2px 0}
+.settings-box summary:hover{color:#2356a8}
+.settings-inner{padding-top:12px;display:grid;gap:6px}
+.quote-btn{display:block;width:100%;padding:14px;margin:20px 0 8px;background:linear-gradient(135deg,#f0c040,#e8a800);color:#0a1a50;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+.quote-btn:hover{opacity:0.9;transform:translateY(-1px)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.4)}
+.modal-hdr{background:linear-gradient(135deg,#0a1a50,#1a3a7a);color:#fff;padding:18px 20px;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center}
+.modal-hdr h2{font-size:16px;font-weight:800}
+.modal-close{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1}
+.modal-body{padding:20px}
+.qfield{margin-bottom:12px}
+.qfield label{display:block;font-size:12px;font-weight:700;color:#1a3a6b;margin-bottom:4px}
+.qfield input,.qfield textarea{width:100%;padding:8px 10px;border:1px solid #d0dce8;border-radius:6px;font-size:13px;font-family:inherit;outline:none}
+.qfield input:focus,.qfield textarea:focus{border-color:#2356a8;box-shadow:0 0 0 2px rgba(35,86,168,0.15)}
+.qfield textarea{resize:vertical;min-height:60px}
+.qrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quote-output{display:none;margin-top:16px}
+.quote-output.visible{display:block}
+.quote-doc{background:#fff;border:1px solid #dde8f8;border-radius:10px;padding:24px;font-size:13px;line-height:1.6}
+.q-logo-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #1a3a6b}
+.q-biz-name{font-size:18px;font-weight:900;color:#1a3a6b}
+.q-biz-sub{font-size:12px;color:#666;margin-top:2px}
+.q-ref{text-align:right;font-size:12px;color:#555}
+.q-ref strong{color:#1a3a6b}
+.q-section{margin-bottom:16px}
+.q-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#2356a8;margin-bottom:6px;padding-bottom:3px;border-bottom:1px solid #e0e8f8}
+.q-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.q-lbl{font-size:11px;color:#888}
+.q-val{font-size:13px;font-weight:600;color:#1a3a6b}
+.q-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.q-table th{background:#1a3a6b;color:#fff;padding:6px 8px;text-align:left}
+.q-table th.r{text-align:right}
+.q-table td{padding:5px 8px;border-bottom:1px solid #eee}
+.q-table tr:nth-child(odd) td{background:#f8f9fb}
+.q-table tr:nth-child(even) td{background:#fff}
+.q-totals{margin-top:12px;border-top:2px solid #1a3a6b;padding-top:10px}
+.q-total-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.q-total-row.big{font-size:16px;font-weight:900;color:#1a3a6b;padding-top:8px;border-top:1px solid #dde8f8;margin-top:4px}
+.q-footer{margin-top:16px;padding-top:10px;border-top:1px solid #eee;font-size:11px;color:#888;text-align:center}
+.q-notes{background:#fffbea;border:1px solid #f0c040;border-radius:6px;padding:10px 12px;font-size:12px;color:#7a5a00;margin-top:8px}
+.print-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.print-btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit}
+.print-btn.p{background:linear-gradient(135deg,#1a3a6b,#2356a8);color:#fff}
+.print-btn.c{background:#f5f5f5;color:#333;border:1px solid #ccc}
+.print-btn:hover{opacity:0.9}
+.footer{text-align:center;font-size:11px;color:rgba(255,255,255,0.4);margin-top:20px;line-height:1.8}
+.footer strong{color:rgba(255,255,255,0.65)}
+@media print{
+  body{background:#fff!important;padding:0}
+  .hdr,.tabs,.content>.key,.savebar,.savebar-note,.quote-btn,.print-actions,.modal-hdr,.modal-close,.settings-box,.desktop-notice{display:none!important}
+  .card{box-shadow:none!important;border-radius:0!important;padding:0!important}
+  .modal-overlay{display:block!important;position:static!important;background:none!important;padding:0!important}
+  .modal{box-shadow:none!important;border-radius:0!important;max-height:none!important}
+  .quote-output{display:block!important}
+  .modal-body>*:not(.quote-output){display:none!important}
+}
+@media(max-width:600px){
+  .sgrid{grid-template-columns:1fr}
+  .rrow2{grid-template-columns:1fr;gap:4px}
+  .card{padding:14px}
+  .hdr-title{font-size:18px}
+  .qrow{grid-template-columns:1fr}
+  .q-grid2{grid-template-columns:1fr}
+  .q-logo-row{flex-direction:column;gap:8px}
+}
+
+.market-sel{margin-bottom:16px;}
+.market-sel-label{font-size:12px;color:#666;margin-bottom:8px;font-weight:600;}
+.market-btns{display:flex;flex-wrap:wrap;gap:6px;}
+.mktbtn{padding:7px 14px;font-size:13px;background:#f0f4f8;border:1px solid #ccd6e0;border-radius:6px;cursor:pointer;color:#2356a8;font-weight:500;transition:all 0.15s;}
+.mktbtn.active{background:#2356a8;color:#fff;border-color:#2356a8;}
+.mktbtn:hover:not(.active){background:#e0e8f0;}
+/* ── Print summary overlay ── */
+.ps-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:600;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.ps-overlay.open{display:flex;}
+.ps-doc{background:#fff;width:100%;max-width:780px;border-radius:4px;font-family:'Segoe UI',system-ui,sans-serif;font-size:12px;color:#000;line-height:1.5;margin:auto;border:1px solid #ccc;}
+.ps-hdr{background:#fff;color:#000;padding:16px 24px 12px;border-bottom:3px solid #000;display:flex;justify-content:space-between;align-items:flex-start;}
+.ps-hdr-left h1{font-size:16px;font-weight:800;margin:0 0 2px;color:#000;}
+.ps-hdr-left p{font-size:10px;color:#555;margin:0;}
+.ps-hdr-right{text-align:right;font-size:10px;color:#333;line-height:1.8;}
+.ps-body{padding:16px 24px;}
+.ps-section{margin-bottom:14px;page-break-inside:avoid;}
+.ps-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#000;border-bottom:1.5px solid #000;padding-bottom:2px;margin-bottom:6px;}
+.ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
+.ps-row{display:flex;justify-content:space-between;align-items:baseline;padding:2px 4px;border-bottom:1px solid #e0e0e0;}
+.ps-row:nth-child(odd){background:#f5f5f5;}
+.ps-lbl{color:#333;font-size:11px;}
+.ps-val{font-weight:700;color:#000;font-size:11px;white-space:nowrap;margin-left:8px;}
+.ps-row.result{background:#ebebeb!important;border-bottom:1px solid #999;}
+.ps-row.result .ps-lbl{font-weight:700;color:#000;}
+.ps-row.result .ps-val{color:#000;font-size:12px;}
+.ps-row.total{background:#000!important;border-radius:2px;margin-top:3px;}
+.ps-row.total .ps-lbl{color:#fff;font-weight:700;}
+.ps-row.total .ps-val{color:#fff;font-size:13px;}
+.ps-note{font-size:10px;color:#555;font-style:italic;margin-top:4px;padding:4px 6px;border-left:2px solid #999;}
+.ps-footer{padding:8px 24px;font-size:10px;color:#555;border-top:1px solid #ccc;display:flex;justify-content:space-between;}
+.ps-actions{display:flex;gap:10px;padding:12px 24px;border-top:1px solid #ddd;background:#f8f8f8;}
+.ps-btn{padding:9px 20px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;}
+.ps-btn.print{background:#000;color:#fff;}
+.ps-btn.close{background:#f0f0f0;color:#333;border:1px solid #ccc;}
+.ps-btn:hover{opacity:0.85;}
+@media print{
+  body *{visibility:hidden!important;}
+  .ps-overlay,.ps-overlay *{visibility:visible!important;}
+  .ps-overlay{display:block!important;position:static!important;background:none!important;padding:0!important;overflow:visible!important;}
+  .ps-doc{max-width:100%!important;border-radius:0!important;border:none!important;box-shadow:none!important;}
+  .ps-actions{display:none!important;}
+  .ps-row:nth-child(odd){background:#f5f5f5!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .ps-row.result{background:#ddd!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .ps-row.total{background:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .ps-row.total .ps-lbl,.ps-row.total .ps-val{color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-kicker">Traction Stream &bull; <span id="ty"></span></div>
+  <div class="hdr-title">&#127912; Painter &amp; Decorator</div>
+  <div class="hdr-sub">True Hourly Rate &amp; Business Calculator</div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="sw(0)">&#9881; Your Rate</button>
+    <button class="tab-btn" onclick="sw(1)">&#128119; Day Rate &amp; Hiring</button>
+    <button class="tab-btn" onclick="sw(2)">&#128203; Job Cost Calculator</button>
+    <button class="tab-btn" onclick="sw(3)">&#127758; Your Market</button>
+    <button class="tab-btn" onclick="sw(4)">&#9881; Settings</button>
+  </div>
+</div>
+
+
+<div class="content">
+  <div class="key">
+    <div class="key-item"><span class="key-swatch yellow"></span> Yellow &nbsp;<span>Fill these in</span></div>
+    <div class="key-item"><span class="key-swatch white"></span> White &nbsp;<span>Auto-calculated</span></div>
+    <div class="key-item"><span class="key-swatch green"></span> Green &nbsp;<span>A Result</span></div>
+  </div>
+  <div class="card">
+    <div id="t0"></div>
+    <div id="t1" style="display:none"></div>
+    <div id="t2" style="display:none"></div>
+    <div id="t3" style="display:none"></div>
+    <div id="t4" style="display:none"></div>
+  </div>
+  <div class="footer">
+    <strong>Created by Traction Stream</strong> &bull; Painter &amp; Decorator Business Support<br/>
+    Designed for desktop/laptop (Windows &amp; Mac). Best used in Chrome, Edge, Firefox or Safari.<br/>
+    For guidance only. Always consult a qualified accountant for your specific tax situation.<br/>
+    Full terms of use and licence conditions are contained in the accompanying User Guide (<strong>Painter Calculator Guide.pdf</strong>).<br/>
+    Terms of use and licence details are included in the accompanying user guide.<br/>
+    Need help? Email <strong>support@tractionstream.com</strong><br/>
+    Rates shown are estimates only. Always verify tax thresholds with your local tax authority or accountant.<br/>
+    Version 1.2 (Build 5.0)
+  </div>
+</div>
+
+<div id="ps-overlay" class="ps-overlay">
+  <div class="ps-doc" id="ps-doc"></div>
+</div>
+
+<script>
+// ── Global settings (editable via Settings tab) ───────────────────────────────
+var CFG_DEFAULTS={ty:"2025/26",vat:90000,mileage:0.45};
+var CFG=loadCfg();
+function loadCfg(){try{var v=localStorage.getItem("cfg");return v?JSON.parse(v):JSON.parse(JSON.stringify(CFG_DEFAULTS));}catch(e){return JSON.parse(JSON.stringify(CFG_DEFAULTS));}}
+function saveCfg(){try{localStorage.setItem("cfg",JSON.stringify(CFG));}catch(e){}}
+function applyTaxYear(){var ty=document.getElementById("ty");var ty2=document.getElementById("ty2");if(ty)ty.textContent=CFG.ty;if(ty2)ty2.textContent=CFG.ty;}
+applyTaxYear();
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+function ls(k,fb){try{var v=localStorage.getItem(k);return(v&&v!=="null")?JSON.parse(v):fb;}catch(e){return fb;}}
+function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+
+// ── Tab switch ────────────────────────────────────────────────────────────────
+function sw(i){
+  document.querySelectorAll(".tab-btn").forEach(function(b,j){b.classList.toggle("active",i===j);});
+  [0,1,2,3,4].forEach(function(j){document.getElementById("t"+j).style.display=i===j?"":"none";});
+}
+
+// ── Formatters ────────────────────────────────────────────────────────────────
+var fmt=function(n){return(n==null||isNaN(n))?"0.00":Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",");};
+var pct=function(n){return isNaN(n)?"0%":(n*100).toFixed(1)+"%";};
+function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined)e.innerHTML=h;return e;}
+function sh(icon,txt){var d=el("div","sec-hdr");d.textContent=icon+" "+txt;return d;}
+function tip(t){var d=el("div","tip");d.innerHTML="&#128161; "+t;return d;}
+function wrn(t){var d=el("div","warn");d.innerHTML="&#9888;&#65039; "+t;return d;}
+
+function rrow(lbl,val,type,hint){
+  var row=el("div","rrow "+(type||"n"));
+  var L=el("div");var lb=el("div","rlbl");lb.textContent=lbl;L.appendChild(lb);
+  if(hint){var h=el("div","rhint");h.textContent=hint;L.appendChild(h);}
+  var rv=el("div","rval");rv.innerHTML=val||"";
+  row.appendChild(L);row.appendChild(rv);
+  return{row:row,val:rv,hint:hint?L.querySelector(".rhint"):null};
+}
+
+function irow(lbl,value,opts,cb){
+  var row=el("div","irow");
+  var L=el("div");var lb=el("div","irow-lbl");lb.innerHTML=lbl;L.appendChild(lb);
+  if(opts.hint){var h=el("div","irow-hint");h.innerHTML=opts.hint;L.appendChild(h);}
+  var R=el("div","irow-right");
+  if(opts.prefix!=null&&opts.prefix!==""){var p=el("span","ipfx");p.textContent=opts.prefix;R.appendChild(p);}
+  var inp=document.createElement("input");
+  inp.type=opts.type||"number";inp.className="finp";inp.value=value;
+  if(opts.min!=null)inp.min=opts.min;if(opts.max!=null)inp.max=opts.max;if(opts.step!=null)inp.step=opts.step;
+  function commit(){
+    var v=parseFloat(inp.value);if(isNaN(v))v=opts.min!=null?opts.min:0;
+    if(opts.min!=null||opts.max!=null)v=clamp(v,opts.min!=null?opts.min:-1e9,opts.max!=null?opts.max:1e9);
+    inp.value=v;cb(v);
+  }
+  inp.addEventListener("change",commit);inp.addEventListener("blur",commit);
+  inp.addEventListener("input",function(){var v=parseFloat(inp.value);if(!isNaN(v))cb(v);});
+  R.appendChild(inp);
+  if(opts.suffix){var s=el("span","isfx");s.textContent=opts.suffix;R.appendChild(s);}
+  row.appendChild(L);row.appendChild(R);
+  return{row:row,inp:inp};
+}
+
+function toggleRow(lbl,hint,opts,cb){
+  var row=el("div","toggle-row");
+  var L=el("div");var lb=el("div","toggle-lbl");lb.textContent=lbl;L.appendChild(lb);
+  if(hint){var h=el("div","toggle-hint");h.textContent=hint;L.appendChild(h);}
+  var sw=el("div","toggle-switch");
+  opts.forEach(function(o,i){
+    var btn=el("button","toggle-opt"+(o.active?" on":""),o.label);
+    btn.onclick=function(){
+      sw.querySelectorAll(".toggle-opt").forEach(function(b){b.classList.remove("on");});
+      btn.classList.add("on");cb(o.value);
+    };
+    sw.appendChild(btn);
+  });
+  row.appendChild(L);row.appendChild(sw);
+  return{row:row,sw:sw};
+}
+
+// ── Save / Load file ──────────────────────────────────────────────────────────
+function saveFile(){
+  var data=JSON.stringify({t0:ls("t0",null),t1:ls("t1",null),t2:ls("t2",null),cfg:CFG},null,2);
+  var blob=new Blob([data],{type:"application/json"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");a.href=url;a.download="my-painter-calculator.json";
+  document.body.appendChild(a);a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
+}
+function loadFile(onDone){
+  var inp=document.createElement("input");inp.type="file";inp.accept=".json";
+  inp.addEventListener("change",function(e){
+    var file=e.target.files[0];if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      try{
+        var data=JSON.parse(ev.target.result);
+        if(data.t0)ss("t0",data.t0);
+        if(data.t1)ss("t1",data.t1);
+        if(data.t2)ss("t2",data.t2);
+        if(data.cfg){CFG=data.cfg;saveCfg();applyTaxYear();}
+        buildT0();buildT1();buildT2();buildT3();buildT4();
+        if(onDone)onDone("✓ Numbers loaded from file!");
+      }catch(e){alert("Could not read file. Please use a file saved from this calculator.");}
+    };
+    reader.readAsText(file);
+  });
+  inp.click();
+}
+
+function saveBar(root,tabId,resetFn){
+  var bar=el("div","savebar");
+  var sb=el("button","sbtn sbtn-save","&#128190; Save + Download Backup");
+  sb.onclick=function(){
+    var key="t"+tabId.replace("t","");
+    if(window["_s"+tabId]!==undefined)ss(tabId,window["_s"+tabId]);
+    saveFile();showMsg(tabId,"✓ Saved in browser + backup file downloaded");
+  };
+  var lb_=el("button","sbtn sbtn-load","&#128193; Load Numbers");
+  lb_.onclick=function(){loadFile(function(msg){showMsg(tabId,msg);});};
+  var rb=el("button","sbtn sbtn-reset","↺ Reset");
+  rb.onclick=resetFn;
+  var sm=el("span","smsg");sm.id="smsg"+tabId;sm.style.display="none";
+  bar.appendChild(sb);bar.appendChild(lb_);bar.appendChild(rb);bar.appendChild(sm);
+  root.appendChild(bar);
+  root.appendChild(el("div","savebar-note","&#128161; Numbers auto-save in this browser only. If you open this file in a different browser, or on a different computer, use <strong>Save My Numbers</strong> to download a backup and <strong>Load Numbers</strong> to restore it."));
+}
+function showMsg(tabId,text){
+  var m=document.getElementById("smsg"+tabId);if(!m)return;
+  m.textContent=text;m.style.display="";
+  setTimeout(function(){m.style.display="none";},4000);
+}
+
+// ── Shared hourly rate sync ────────────────────────────────────────────────────
+function getTab0Rate(){var s=ls("t0",null);return s&&s.chargeRate?s.chargeRate:null;}
+
+/* ═══════════════════════════════════════════════════
+   TAB 0 – YOUR RATE
+═══════════════════════════════════════════════════ */
+var D0={takehome:32000,pension:2400,taxPct:32,fuel:2600,vanInsurance:1200,vanMaint:600,vanDeprec:1200,pli:350,accidentSickness:0,incomeProtection:0,tools:400,accountant:600,phone:480,software:240,website:180,advertising:300,workwear:200,training:250,sundries:200,weeks:46,daysPerWeek:5,hrsPerDay:7.5,nonBill:15,profitBuf:20,matMarkup:15,hireMarkup:15};
+
+function buildT0(){
+  var s=ls("t0",JSON.parse(JSON.stringify(D0)));
+  window["_st0"]=s;
+  var root=document.getElementById("t0");root.innerHTML="";
+  var R={};
+
+  function calc(){
+    var ohkeys=["fuel","vanInsurance","vanMaint","vanDeprec","pli","accidentSickness","incomeProtection","tools","accountant","phone","software","website","advertising","workwear","training","sundries"];
+    var oh=ohkeys.reduce(function(a,k){return a+(s[k]||0);},0);
+    // Support old saves that stored taxMult; convert to taxPct on first load
+    if(s.taxPct===undefined){s.taxPct=s.taxMult?Math.round((s.taxMult-1)*100):32;}
+    var taxMult=1+(s.taxPct/100);
+    var gr=(s.takehome+s.pension)*taxMult,rev=gr+oh;
+    var bd=s.weeks*s.daysPerWeek*(1-s.nonBill/100),bh=bd*s.hrsPerDay;
+    var be=bh>0?rev/bh:0,cr=be*(1+s.profitBuf/100);
+    var dr=cr*s.hrsPerDay,wr=dr*s.daysPerWeek,at=cr*bh;
+    return{oh:oh,gr:gr,rev:rev,bd:bd,bh:bh,be:be,cr:cr,dr:dr,wr:wr,at:at};
+  }
+  function upd(){
+    var c=calc();s.chargeRate=c.cr;ss("t0",s);window["_st0"]=s;
+    R.gr.innerHTML=fmt(c.gr);R.oh.innerHTML=fmt(c.oh);R.rev.innerHTML=fmt(c.rev);
+    R.gr2.innerHTML=fmt(c.gr);R.oh2.innerHTML=fmt(c.oh);
+    R.bd.innerHTML=c.bd.toFixed(1)+" days";R.bh.innerHTML=c.bh.toFixed(1)+" hrs";
+    R.be.innerHTML=fmt(c.be);R.cr.innerHTML=fmt(c.cr);
+    R.dr.innerHTML=fmt(c.dr);R.wr.innerHTML=fmt(c.wr);R.at.innerHTML=fmt(c.at);
+    R.scr.innerHTML=fmt(c.cr);R.sdr.innerHTML=fmt(c.dr);
+    R.sbd.innerHTML=c.bd.toFixed(1);R.sat.innerHTML=fmt(c.at);
+    R.soh.innerHTML=fmt(c.oh);R.sth.innerHTML=fmt(s.takehome);
+    if(R.drH)R.drH.textContent=s.hrsPerDay+" hrs x "+fmt(c.cr)+"/hr";
+  }
+  function ai(lbl,key,opts){var x=irow(lbl,s[key],opts,function(v){s[key]=v;upd();});root.appendChild(x.row);}
+  function ar(lbl,rk,type,hint){var x=rrow(lbl,"",type,hint);root.appendChild(x.row);R[rk]=x.val;if(x.hint)R[rk+"H"]=x.hint;return x;}
+
+  var w=el("div","welcome");
+  w.innerHTML='<h3>&#128076; You can paint. Now let&#39;s get the business side right.</h3><p style="margin:8px 0 12px;font-size:14px;color:#444;line-height:1.6">Most painters who are new to working for themselves underprice their work. Not because they are bad at painting, but because nobody ever showed them how to work out what they actually need to charge. This calculator does that. Work through it once, honestly, and you will know your real number.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px"><div style="background:#e8f0f8;border-radius:6px;padding:8px 10px;font-size:12.5px;color:#1a3a6b"><strong>Your Rate</strong> — what you must charge per hour to cover everything and pay yourself properly</div><div style="background:#e8f0f8;border-radius:6px;padding:8px 10px;font-size:12.5px;color:#1a3a6b"><strong>Day Rate &amp; Hiring</strong> — your full day rate, and what it really costs to take someone on</div><div style="background:#e8f0f8;border-radius:6px;padding:8px 10px;font-size:12.5px;color:#1a3a6b"><strong>Job Cost Calculator</strong> — work out what any job costs you before you give a customer a price</div><div style="background:#e8f0f8;border-radius:6px;padding:8px 10px;font-size:12.5px;color:#1a3a6b"><strong>Your Market</strong> — sense-check your rate against what other painters charge in your country</div></div><div class="welcome-note">&#128161; Fill in the <strong>yellow boxes</strong> with your own figures. White boxes calculate automatically. Green boxes are your key results. Start with Section A below.</div>';
+  root.appendChild(w);
+  root.appendChild(el("div","desktop-notice","&#128196; <strong>Designed for desktop/laptop (Windows &amp; Mac).</strong> Best used in Chrome, Edge, Firefox or Safari. Mobile use is not fully supported."));
+  root.appendChild(sh("💰","Section A – How Much Do You Want to Earn?"));
+  ai("Money you want in your pocket each year (after tax)","takehome",{step:100,min:0,hint:"This is your after-tax take-home pay. What lands in your personal bank account after paying your tax bill. Not your turnover. Not profit before tax. What you actually live on. Think rent or mortgage, food, fuel, phone, and daily spending. Be honest. Most people new to working for themselves set this too low."});
+  ai("Money set aside for retirement each year","pension",{step:100,min:0,hint:"When you work for yourself, nobody saves for your retirement except you. This is money you put away each month so you have something to live on when you stop working. Skipping this entirely means your rate calculation is understated. A common starting point is 5% of what you want to earn."});
+  ai("Tax rate (% of earnings going to tax and self-employment contributions)","taxPct",{prefix:"",suffix:"%",step:1,min:0,max:60,hint:"What percentage of your business earnings do you expect to lose to income tax and self-employment contributions? Enter a whole number. 30% is a reasonable starting point for most self-employed painters in English-speaking countries — lower in some, higher in others. Ask your accountant to confirm the right figure for your situation."});
+  ar("What your business needs to earn before tax","gr","n","Calculated automatically from your take-home pay, retirement savings, and tax rate. This is the amount your business must earn just to pay you what you need before any business running costs are added.");
+  root.appendChild(tip("Set aside 25-30% of every payment you receive into a separate bank account the moment it arrives. Your tax bill is not a surprise. It is a scheduled payment. Treat it like one from day one."));
+
+  root.appendChild(sh("🚐","Section B – Your Annual Business Costs"));
+  root.appendChild(tip("Most painters new to working for themselves underestimate their running costs by 30-40%. Every number in this section is real money leaving your business whether you are working or not. If you leave anything at zero, your rate will come out too low."));
+  [["fuel","Fuel for your vehicle","Add up your annual fuel spend. Estimate your weekly spend and multiply by 48 working weeks. Include fuel for site visits, quoting, and material runs."],["vanInsurance","Vehicle insurance and registration","Work vehicle insurance and any annual registration or road tax. In most countries you need commercial vehicle insurance if you use your vehicle for work. Check your policy."],["vanMaint","Vehicle servicing and repairs","What you spend keeping your vehicle on the road across a full year. Use an average across good and bad years."],["vanDeprec","Vehicle replacement reserve","Your vehicle loses value every year. Eventually you will need to replace it. This is money you set aside each year toward that day. Ignoring it does not make the cost go away."],["pli","Public liability insurance","This covers you if you accidentally damage a customer property or someone is injured while you are working. Most serious customers will ask to see this certificate before you start."],["accidentSickness","Accident and sickness insurance","Covers loss of income if you are injured or too ill to work. If you are self-employed, nobody pays you when you are off the tools — this is your only protection. If you employ staff, you may be required to carry employer liability cover for work-related injury. See the Your Market tab for guidance on policy types in your country."],["incomeProtection","Income protection insurance","Pays a percentage of your income if you cannot work due to long-term illness or disability. Different from short-term accident cover — this is for extended periods off work. Self-employed painters should carry their own. Sub-contractors carry their own. If you have employed staff, check what your country requires. See the Your Market tab for providers by country."],["tools","Tools and equipment replacement","Brushes, rollers, poles, scrapers, dust sheets, spray equipment, power tools. All of it wears out. Use a realistic average annual figure."],["accountant","Accountant or bookkeeper","When you work for yourself you must file a tax return every year. An accountant handles this and keeps you out of trouble. Even a basic annual fee is worth including."],["phone","Phone and data plan","Your phone is a business tool. You use it for calls, messages, photos, navigation, and payments. Include the full cost of your plan."],["software","Software and subscriptions","Any apps or online tools you pay for. Quoting software, accounting software, cloud storage. Add up all subscriptions across the year."],["website","Website and online listings","Your website hosting and domain, plus any paid listings on trades directories or platforms where customers find you."],["advertising","Advertising and marketing","Anything you spend to find customers. Paid social media ads, leaflets, flyers, business cards. Put zero if spending nothing right now."],["workwear","Workwear and protective equipment","Overalls, boots, dust masks, safety glasses. These wear out. Include what you spend in a year on replacing and upgrading them."],["training","Training and certifications","Any courses, trade tests, certifications, or licences you need to keep current. Include renewal fees."],["sundries","Sundries and small expenses","Parking, tolls, bank charges, postage, printer ink. Small individually but can easily total several hundred a year."]].forEach(function(f){ai(f[1],f[0],{hint:f[2]});});
+  ar("Total Annual Business Costs","oh","n","Everything before you pay yourself a penny");
+
+  root.appendChild(sh("📊","Section C – Total Revenue Your Business Needs"));
+  ar("Gross income needed (from Section A)","gr2","n","The pre-tax amount your business must pay you. Carried forward from Section A.");
+  ar("Total annual business costs (from Section B)","oh2","n","All your running costs carried forward. These costs hit your business whether you are working or not.");
+  ar("TOTAL YOUR BUSINESS MUST INVOICE EACH YEAR","rev","g","The combined total your business must generate to break even. Does not include materials, which are quoted separately and passed to the customer on top of your labour charge.");
+
+  root.appendChild(sh("📅","Section D – Your Billable Hours"));
+  ai("Weeks working per year","weeks",{prefix:"",suffix:"weeks",min:1,max:52,step:1,hint:"Start with 52 and subtract your weeks off: holidays, bank holidays, quiet weeks, and sick days. Most self-employed painters lose 6 to 10 weeks a year to this even when busy. Overestimating here makes your rate come out lower than it needs to be."});
+  ai("Days worked per week","daysPerWeek",{prefix:"",suffix:"days",min:1,max:7,step:0.5,hint:"How many days a week do you actually paint? Most self-employed painters work 4 to 5 days. Be honest about your actual situation, not the ideal."});
+  ai("Chargeable hours per day","hrsPerDay",{prefix:"",suffix:"hrs",min:1,max:12,step:0.5,hint:"Not how long you are out of the house. The hours you are physically on the tools that you can charge for. You cannot charge for driving, quoting, buying materials, or cleaning up. Most painters get 5.5 to 7 genuinely chargeable hours out of an 8-hour working day."});
+  ai("Non-chargeable time as a % of your week","nonBill",{prefix:"",suffix:"%",min:0,max:60,step:1,hint:"Even on working days, some of your time cannot be charged. Quoting new jobs, driving between sites, picking up materials, admin. A rough guide: 10-20% of your working week is non-chargeable for a sole trader who is reasonably busy."});
+  ar("Total chargeable days per year","bd","n","Calculated from your working weeks, days per week, and non-chargeable time. The number of days you can actually bill for across the year. Almost always lower than people expect.");
+  ar("Total chargeable hours per year","bh","n","Your chargeable days multiplied by chargeable hours per day. This is the total hours your business can bill out in a year. Get this too high and your rate comes out too low.");
+  root.appendChild(wrn("Days lost to illness, holidays, and quiet periods mean no income. Your rate above already accounts for this — charging less will leave you short."));
+
+  root.appendChild(sh("⭐","Section E – Your Rate Results"));
+  ar("Your break-even hourly rate","be","n","The minimum you can charge per hour without losing money. At this rate you cover all costs and pay yourself what you need, but there is no cushion. This is the floor, not the target. Charging less means you are slowly subsidising your customers.");
+  ai("Buffer above break-even (%)","profitBuf",{prefix:"",suffix:"%",min:0,max:60,step:5,hint:"Your break-even rate leaves no room for anything to go wrong. This buffer adds a percentage on top. It covers quiet weeks, unexpected repairs, jobs that take longer than quoted, and slow-paying customers. 15-25% is a realistic starting point."});
+  ar("Your minimum hourly rate","cr","h","Your break-even rate plus your buffer. Do not charge less than this. Charging more is always fine. As you build your reputation and confidence, push this number up.");
+  var drX=rrow("Your day rate","","g","Your hourly rate multiplied by your chargeable hours per day. Use this when quoting day-rate work. This is your minimum day rate.");R.drH=drX.hint;root.appendChild(drX.row);R.dr=drX.val;
+  ar("Your week rate","wr","g","Your day rate multiplied by your working days per week. Useful for longer contracts where a customer asks for a weekly price.");ar("Target Annual Turnover","at","g","How much you need to invoice over the full year");
+  root.appendChild(tip("See the Your Market tab for typical rates in your country and region. Use them to sense-check your number, not to set it. Your rate must come from your own costs."));
+
+  root.appendChild(sh("🎨","Section F – Mark-Up on Materials & Hire Equipment"));
+  ai("Materials mark-up (%)","matMarkup",{prefix:"",suffix:"%",min:0,max:60,step:5,hint:"When you buy materials for a job you are not just a delivery service. You source them, carry them, are responsible for them, and have your money tied up in them until the customer pays. A mark-up of 10-20% on top of what you paid is fair, standard practice, and expected by the industry."});
+  ai("Hired equipment mark-up (%)","hireMarkup",{prefix:"",suffix:"%",min:0,max:60,step:5,hint:"When you hire equipment for a job you arrange it, take responsibility if it is damaged, and return it. That is not a zero-cost activity. A mark-up of 10-20% on top of the hire cost is reasonable and standard."});
+
+  root.appendChild(sh("📋","Section G – At-a-Glance Summary"));
+  var g=el("div","sgrid");
+  function sg(lbl,rk,type){var x=rrow(lbl,"",type);g.appendChild(x.row);R[rk]=x.val;}
+  sg("Min. Hourly Rate","scr","h");sg("Day Rate","sdr","h");
+  sg("Chargeable Days / Year","sbd","n");sg("Annual Invoicing Target","sat","n");
+  sg("Annual Business Costs","soh","n");sg("Take-Home Target","sth","n");
+  root.appendChild(g);
+  root.appendChild(wrn("These are MINIMUMS. If your diary is always full and customers never flinch at your price — it may be worth considering a rate increase."));
+  upd();
+}
+
+/* ═══════════════════════════════════════════════════
+   TAB 1 – DAY RATE & HIRING
+═══════════════════════════════════════════════════ */
+var D1={hourlyRate:28,hrsPerDay:7.5,travel:0,parking:0,theirRate:180,numDays:3,holiday:0,toolsProv:0,extraIns:0,supervision:0,labourMargin:20};
+
+function buildT1(){
+  var s=ls("t1",JSON.parse(JSON.stringify(D1)));
+  window["_st1"]=s;
+  var root=document.getElementById("t1");root.innerHTML="";
+  var R={};
+
+  function calc(){
+    var ld=s.hourlyRate*s.hrsPerDay,fd=ld+s.travel+s.parking;
+    var ni=Math.max(0,s.theirRate*s.numDays*0.15),pen=s.theirRate*s.numDays*0.03;
+    var ex=ni+pen+s.holiday+s.toolsProv+s.extraIns+s.supervision;
+    var tot=s.theirRate*s.numDays+ex,cpd=s.numDays>0?tot/s.numDays:0;
+    var ctc=cpd*(1+s.labourMargin/100);
+    return{ld:ld,fd:fd,ni:ni,pen:pen,ex:ex,tot:tot,cpd:cpd,ctc:ctc};
+  }
+  function upd(){
+    ss("t1",s);window["_st1"]=s;var c=calc();
+    R.ld.innerHTML=fmt(c.ld);R.fd.innerHTML=fmt(c.fd);
+    R.ni.innerHTML=fmt(c.ni)+" <span style='font-size:10px;color:#888;font-weight:400'>(simple estimate)</span>";
+    R.pen.innerHTML=fmt(c.pen)+" <span style='font-size:10px;color:#888;font-weight:400'>(simple estimate)</span>";
+    R.ex.innerHTML=fmt(c.ex);R.tot.innerHTML=fmt(c.tot);
+    if(R.totH)R.totH.textContent="Over "+s.numDays+" day"+(s.numDays!==1?"s":"");
+    R.cpd.innerHTML=fmt(c.cpd);R.cpd2.innerHTML=fmt(c.cpd);R.ctc.innerHTML=fmt(c.ctc);
+  }
+  function ai(par,lbl,key,opts){var x=irow(lbl,s[key],opts,function(v){s[key]=v;upd();});par.appendChild(x.row);}
+  function ar(par,lbl,rk,type,hint){var x=rrow(lbl,"",type,hint);par.appendChild(x.row);R[rk]=x.val;if(x.hint)R[rk+"H"]=x.hint;return x;}
+
+  saveBar(root,"t1",function(){ss("t1",JSON.parse(JSON.stringify(D1)));buildT1();});
+
+  root.appendChild(sh("👷","Part 1 – Your Own Day Rate"));
+  ai(root,"Your Hourly Rate (from Your Rate tab)","hourlyRate",{hint:"Copy from Section E of the Your Rate tab"});
+  // Sync button
+  var syncBtn=el("button","sync-btn","&#8593; Use my calculated rate from Your Rate tab");
+  syncBtn.onclick=function(){
+    var s1=ls("t0",null);
+    if(s1&&s1.chargeRate&&s1.chargeRate>0){s.hourlyRate=Math.round(s1.chargeRate*100)/100;ss("t1",s);buildT1();}
+    else{alert("Fill in Your Rate tab first to calculate your hourly rate.");}
+  };
+  root.appendChild(syncBtn);
+  ai(root,"Hours Worked Per Day","hrsPerDay",{prefix:"",suffix:"hrs",step:0.5,min:1,max:12});
+  ar(root,"Labour Day Rate","ld","n");
+  ai(root,"Travel Cost for the Day","travel",{hint:"Enter the total travel cost for the day. Check the approved vehicle allowance rate with your local tax authority or accountant."});
+  ai(root,"Parking / Congestion / Other Daily Expenses","parking",{});
+  ar(root,"YOUR FULL DAY RATE TO QUOTE","fd","h","Labour + travel + expenses");
+  root.appendChild(tip("Always confirm in writing what a 'day' includes: start/finish time, what's included, what costs extra."));
+
+  root.appendChild(sh("🤝","Part 2 – Hiring Someone on Day Rate (True Cost to You)"));
+  root.appendChild(tip("Their day rate is just the start. Here is everything you need to factor in before agreeing what to pay them."));
+  ai(root,"Their agreed day rate (what you pay them)","theirRate",{hint:"Enter the daily amount you have agreed to pay this person. This is just the starting point. Everything in this section adds to their true cost to you."});
+  ai(root,"Number of Days They Will Work","numDays",{prefix:"",suffix:"days",step:1,min:1,max:365});
+
+  var box=el("div","ebox");box.appendChild(el("div","etitle","Extra Costs On Top of Their Day Rate"));
+  ar(box,"Employer payroll tax (employed staff only – approx. 15% UK / varies by country)","ni","n","Only if this person is on your payroll as an employee. Self-employed sub-contractors handle their own tax.");
+  ar(box,"Employer pension or superannuation (employed staff only – 3% min UK / varies by country)","pen","n","Required by law for employed staff in most countries. Check the current rate and rules with your accountant.");
+  box.appendChild(el("div","est-note","&#9432; Payroll tax and pension figures are simplified estimates. Exact amounts depend on earnings thresholds and payroll setup. Confirm with your accountant."));
+  ai(box,"Holiday Pay – enter amount manually (12.07% of their pay if a 'worker')","holiday",{hint:"Not auto-calculated. Work out 12.07% of their total pay and enter it here. Ask an accountant if unsure."});
+  ai(box,"Tools & PPE You Provide","toolsProv",{});
+  ai(box,"Extra Insurance (check your PL covers sub-contractors)","extraIns",{hint:"Some PL policies don't cover labour-only sub-contractors!"});
+  ai(box,"Your Supervision/Management Time (cost to you)","supervision",{hint:"Time managing them = time you can't bill"});
+  root.appendChild(box);
+  ar(root,"Total Extra Costs","ex","n");
+  var totX=rrow("TOTAL TRUE COST OF HIRING THIS PERSON","","h","");R.totH=totX.hint;root.appendChild(totX.row);R.tot=totX.val;
+  ar(root,"True All-In Cost Per Day","cpd","n","Including all hidden extras");
+  root.appendChild(wrn("Make sure the job value is MUCH more than this total. You need to make profit ABOVE their cost – not just cover it!"));
+
+  root.appendChild(sh("💷","Part 3 – What to Charge the Customer for Labour"));
+  ar(root,"True All-In Cost Per Day of Hired Labour","cpd2","n");
+  ai(root,"Your Profit Margin on Labour %","labourMargin",{prefix:"",suffix:"%",min:0,max:60,step:5,hint:"You're organising the job, taking the risk. 15–25% is fair."});
+  ar(root,"CHARGE TO CUSTOMER PER DAY OF LABOUR","ctc","h","At minimum – this is what to put on the invoice");
+  root.appendChild(tip("GOLDEN RULE: Never charge the customer the same day rate you agreed with your sub-contractor. You need to make money on top, not just cover their cost."));
+
+  root.appendChild(sh("📋","Part 4 – Sub-Contractor vs Employee (Plain English)"));
+  var tw=el("div","tw");
+  var rows=[["Who pays their tax?","They handle their own tax","You handle it through payroll"],["Holiday pay?","No - they invoice you for days worked","Yes - legal minimum in most countries"],["Employer contributions?","No - they pay their own","Yes - varies by country, get advice"],["Pension or superannuation?","Up to them","Varies by country - check locally"],["Accident & sickness insurance?","They carry their own - not your responsibility","You should check what cover you are required to carry for employed staff in your country"],["Income protection?","They arrange their own - not your responsibility","Not typically your obligation but check local employment law - some countries require employer-funded cover"],["Follow your rules?","Not fully (tax authorities watch this)","Yes - under your direction"],["Own tools?","Usually yes","Usually you provide tools"],["Cheaper?","Usually short-term","Better for long-term reliable staff"]];
+  tw.innerHTML='<table><thead><tr><th>Topic</th><th>Self-Employed Sub</th><th style="background:#d95030">Employed Staff</th></tr></thead><tbody>'+rows.map(function(r){return'<tr><td style="font-weight:600;color:#1a3a6b">'+r[0]+'</td><td style="color:#2a5a2a">'+r[1]+'</td><td style="color:#8b2000">'+r[2]+'</td></tr>';}).join('')+'</tbody></table>';
+  root.appendChild(tw);
+  root.appendChild(wrn("Tax authorities in most countries can reclassify a subcontractor as an employee if they only work for you, use your tools, and work your hours. This can result in back-taxes and penalties. Get proper advice before taking anyone on regularly."));
+  upd();
+}
+
+/* ═══════════════════════════════════════════════════
+   TAB 2 – JOB QUOTER
+═══════════════════════════════════════════════════ */
+var D2={hourlyRate:28,matMarkup:15,hireMarkup:15,vatReg:false,salesTaxRate:20,areaUnit:"m2",
+  labour:[{desc:"Prep and paint bedroom walls & ceiling",hrs:12},{desc:"Paint all woodwork (skirting, door, frame)",hrs:6},{desc:"",hrs:0},{desc:"",hrs:0},{desc:"",hrs:0}],
+  materials:[{desc:"Matt emulsion – 2x5L (walls)",qty:2,cost:22},{desc:"Satinwood – 1L (woodwork)",qty:1,cost:18},{desc:"Primer / undercoat – 1L",qty:1,cost:12},{desc:"Brushes, rollers, tape, dust sheets",qty:1,cost:25},{desc:"",qty:0,cost:0},{desc:"",qty:0,cost:0}],
+  hire:[{desc:"",days:0,cost:0},{desc:"",days:0,cost:0}]};
+
+function buildT2(){
+  var saved=ls("t2",null);
+  var s=saved?saved:JSON.parse(JSON.stringify(D2));
+  if(s.vatReg===undefined)s.vatReg=false;
+  if(s.salesTaxRate===undefined)s.salesTaxRate=20;
+  if(s.areaUnit===undefined)s.areaUnit="m2";
+  window["_st2"]=s;
+  var root=document.getElementById("t2");root.innerHTML="";
+  var R={};
+
+  function calc(){
+    var lt=s.labour.reduce(function(a,r){return a+r.hrs*s.hourlyRate;},0);
+    var mt=s.materials.reduce(function(a,r){return a+r.qty*r.cost*(1+s.matMarkup/100);},0);
+    var ht=s.hire.reduce(function(a,r){return a+r.days*r.cost*(1+s.hireMarkup/100);},0);
+    var sub=lt+mt+ht,vat=s.vatReg?sub*(s.salesTaxRate/100):0,total=sub+vat;
+    return{lt:lt,mt:mt,ht:ht,sub:sub,vat:vat,total:total};
+  }
+  function upd(){
+    ss("t2",s);window["_st2"]=s;var c=calc();
+    if(R.ltot)R.ltot.textContent=fmt(c.lt);
+    if(R.mtot)R.mtot.textContent=fmt(c.mt);
+    if(R.htot)R.htot.textContent=fmt(c.ht);
+    if(R.slt)R.slt.innerHTML=fmt(c.lt);
+    if(R.smt)R.smt.innerHTML=fmt(c.mt);
+    if(R.sht)R.sht.innerHTML=fmt(c.ht);
+    if(R.sub)R.sub.innerHTML=fmt(c.sub);
+    if(R.vat)R.vat.innerHTML=fmt(c.vat);
+    if(R.vatRow)R.vatRow.style.display=s.vatReg?"":"none";
+    if(R.tot)R.tot.innerHTML=fmt(c.total);
+    
+    s.labour.forEach(function(r,i){if(R["lr"+i])R["lr"+i].textContent=fmt(s.hourlyRate);if(R["lc"+i])R["lc"+i].textContent=fmt(r.hrs*s.hourlyRate);});
+    s.materials.forEach(function(r,i){if(R["mmu"+i])R["mmu"+i].textContent=pct(s.matMarkup/100);if(R["myc"+i])R["myc"+i].textContent=fmt(r.qty*r.cost);if(R["mch"+i])R["mch"+i].textContent=fmt(r.qty*r.cost*(1+s.matMarkup/100));});
+    s.hire.forEach(function(r,i){if(R["hmu"+i])R["hmu"+i].textContent=pct(s.hireMarkup/100);if(R["hyc"+i])R["hyc"+i].textContent=fmt(r.days*r.cost);if(R["hch"+i])R["hch"+i].textContent=fmt(r.days*r.cost*(1+s.hireMarkup/100));});
+  }
+  function ai(lbl,key,opts){var x=irow(lbl,s[key],opts,function(v){s[key]=v;upd();});root.appendChild(x.row);}
+  function ar(lbl,rk,type,hint){var x=rrow(lbl,"",type,hint);root.appendChild(x.row);R[rk]=x.val;return x;}
+
+  saveBar(root,"t2",function(){ss("t2",JSON.parse(JSON.stringify(D2)));buildT2();});
+
+  root.appendChild(sh("⚙️","Your Rates"));
+  ai("Your Hourly Rate","hourlyRate",{hint:"Copy from Your Rate tab, Section E"});
+  var syncBtn2=el("button","sync-btn","&#8593; Use my calculated rate from Your Rate tab");
+  syncBtn2.onclick=function(){
+    var s0=ls("t0",null);
+    if(s0&&s0.chargeRate&&s0.chargeRate>0){s.hourlyRate=Math.round(s0.chargeRate*100)/100;ss("t2",s);buildT2();}
+    else{alert("Fill in Your Rate tab first to calculate your hourly rate.");}
+  };
+  root.appendChild(syncBtn2);
+  ai("Materials Mark-Up %","matMarkup",{prefix:"",suffix:"%",step:5,min:0,max:60});
+  ai("Equipment Hire Mark-Up %","hireMarkup",{prefix:"",suffix:"%",step:5,min:0,max:60});
+
+  // VAT toggle
+  var vtX=toggleRow("Are you registered for sales tax or GST?","This affects your job cost total.",[{label:"No",value:false,active:!s.vatReg},{label:"Yes",value:true,active:s.vatReg}],function(v){s.vatReg=v;upd();});
+  root.appendChild(vtX.row);
+  ai("Your sales tax / GST / VAT rate (%)","salesTaxRate",{prefix:"",suffix:"%",step:0.5,min:0,max:30,hint:"Enter the rate that applies in your country. Examples: UK 20%, Australia GST 10%, Canada HST varies by province (5-15%), US varies by state, Ireland 23%, New Zealand 15%. Only applies if you are registered."});
+  root.appendChild(tip("Sales tax, GST, and VAT registration thresholds vary by country. Check with your local tax authority or accountant when your turnover starts to grow."));
+
+  // Area estimator
+  root.appendChild(sh("📐","Area Estimator (optional)"));
+  var areaUnit=s.areaUnit||"m2";
+  var areaBox=el("div","ebox");
+  areaBox.appendChild(el("div","etitle","Estimate hours from room area"));
+  areaBox.appendChild(el("p","",['<span style="font-size:13px;color:#555;line-height:1.6">Enter the paintable area and surface type to get a suggested hours range. Click <strong>Use this estimate</strong> to copy it into the first labour row.</span>'].join("")));
+
+  // Unit toggle
+  var unitRow=el("div","toggle-row");
+  var unitL=el("div");unitL.innerHTML='<div class="toggle-lbl">Area unit</div><div class="toggle-hint">Switch between square metres and square feet</div>';
+  var unitSw=el("div","toggle-switch");
+  var m2btn=el("button","toggle-opt"+(areaUnit==="m2"?" on":""),"m²");
+  var ftbtn=el("button","toggle-opt"+(areaUnit==="ft2"?" on":""),"ft²");
+  var areaInp,areaResult;
+
+  function getConvFactor(){return areaUnit==="m2"?1:0.0929;}// ft² to m²
+  function getUnitLabel(){return areaUnit==="m2"?"m²":"ft²";}
+
+  function recalcArea(){
+    var rawArea=parseFloat(areaInp?areaInp.value:0)||0;
+    var areaM2=rawArea*getConvFactor();
+    // Coverage rates per coat in m²: walls+ceiling emulsion ~8m²/hr, gloss/satinwood woodwork ~6m²/hr, prep/sanding ~4m²/hr
+    var rates=[
+      {label:"Walls – emulsion (2 coats)",rate:4.0},
+      {label:"Ceiling – emulsion (2 coats)",rate:4.5},
+      {label:"Walls + ceiling combined (2 coats)",rate:3.5},
+      {label:"Woodwork – gloss or satinwood (2 coats)",rate:3.0},
+      {label:"Prep and sanding",rate:3.5},
+      {label:"Spray finish (walls, 2 coats)",rate:8.0}
+    ];
+    var sel=surfSel?surfSel.value:"walls";
+    var chosen=rates.find(function(r){return r.label.toLowerCase().indexOf(sel)!==-1;})||rates[0];
+    var hrsLow=(areaM2/chosen.rate*0.85).toFixed(1);
+    var hrsHigh=(areaM2/chosen.rate*1.25).toFixed(1);
+    if(areaResult){
+      if(rawArea>0){
+        areaResult.innerHTML='<strong>Suggested hours: '+hrsLow+' – '+hrsHigh+'</strong> &nbsp;<span style="font-size:11px;color:#888">('+rawArea.toFixed(1)+' '+getUnitLabel()+' = '+areaM2.toFixed(1)+' m²)</span>';
+        useBtn.style.display="inline-block";
+        useBtn._mid=(parseFloat(hrsLow)+parseFloat(hrsHigh))/2;
+      } else {
+        areaResult.innerHTML='<span style="color:#aaa;font-size:12px">Enter an area above to see estimated hours.</span>';
+        useBtn.style.display="none";
+      }
+    }
+  }
+
+  m2btn.onclick=function(){
+    var cur=parseFloat(areaInp.value)||0;
+    if(areaUnit==="ft2"&&cur>0)areaInp.value=(cur*0.0929).toFixed(1);
+    areaUnit="m2";s.areaUnit="m2";ss("t2",s);
+    m2btn.classList.add("on");ftbtn.classList.remove("on");
+    if(areaUnitLbl)areaUnitLbl.textContent="m²";
+    recalcArea();
+  };
+  ftbtn.onclick=function(){
+    var cur=parseFloat(areaInp.value)||0;
+    if(areaUnit==="m2"&&cur>0)areaInp.value=(cur/0.0929).toFixed(1);
+    areaUnit="ft2";s.areaUnit="ft2";ss("t2",s);
+    ftbtn.classList.add("on");m2btn.classList.remove("on");
+    if(areaUnitLbl)areaUnitLbl.textContent="ft²";
+    recalcArea();
+  };
+  unitSw.appendChild(m2btn);unitSw.appendChild(ftbtn);
+  unitRow.appendChild(unitL);unitRow.appendChild(unitSw);
+  areaBox.appendChild(unitRow);
+
+  // Surface type selector
+  var surfRow=el("div","irow");
+  var surfL=el("div");surfL.innerHTML='<div class="irow-lbl">Surface type</div><div class="irow-hint">Affects the hours estimate</div>';
+  var surfR=el("div","irow-right");
+  var surfSel=document.createElement("select");surfSel.className="dinp";surfSel.style.width="auto";
+  [["walls","Walls – emulsion (2 coats)"],["ceiling","Ceiling – emulsion (2 coats)"],["walls + ceiling","Walls + ceiling combined (2 coats)"],["woodwork","Woodwork – gloss or satinwood (2 coats)"],["prep","Prep and sanding"],["spray","Spray finish (walls, 2 coats)"]].forEach(function(o){
+    var opt=document.createElement("option");opt.value=o[0];opt.textContent=o[1];surfSel.appendChild(opt);
+  });
+  surfSel.addEventListener("change",recalcArea);
+  surfR.appendChild(surfSel);surfRow.appendChild(surfL);surfRow.appendChild(surfR);
+  areaBox.appendChild(surfRow);
+
+  // Area input
+  var areaRow=el("div","irow");
+  var areaL=el("div");areaL.innerHTML='<div class="irow-lbl">Paintable area</div><div class="irow-hint">Measure wall height × perimeter (minus doors/windows) for walls; length × width for ceilings</div>';
+  var areaR=el("div","irow-right");
+  areaInp=document.createElement("input");areaInp.type="number";areaInp.className="finp";areaInp.style.width="90px";areaInp.min="0";areaInp.step="0.5";areaInp.value="";areaInp.placeholder="0";
+  areaInp.addEventListener("input",recalcArea);areaInp.addEventListener("change",recalcArea);
+  var areaUnitLbl=el("span","isfx",getUnitLabel());
+  areaR.appendChild(areaInp);areaR.appendChild(areaUnitLbl);
+  areaRow.appendChild(areaL);areaRow.appendChild(areaR);
+  areaBox.appendChild(areaRow);
+
+  // Result + use button
+  areaResult=el("div","");areaResult.style.cssText="padding:8px 12px;font-size:13px;color:#1a3a6b;margin:6px 0 4px";
+  areaResult.innerHTML='<span style="color:#aaa;font-size:12px">Enter an area above to see estimated hours.</span>';
+  var useBtn=el("button","sync-btn","&#10003; Use this estimate in first labour row");
+  useBtn.style.display="none";
+  useBtn.onclick=function(){
+    if(s.labour&&s.labour.length>0){
+      s.labour[0].hrs=Math.round(useBtn._mid*2)/2;// round to nearest 0.5
+      ss("t2",s);buildT2();
+    }
+  };
+  areaBox.appendChild(areaResult);areaBox.appendChild(useBtn);
+  areaBox.appendChild(el("div","est-note","&#9432; These are typical rates for a competent sole trader. Complex prep, mouldings, or poor existing surfaces will add time. Always apply your own judgement."));
+  root.appendChild(areaBox);
+
+  // Labour table
+  root.appendChild(sh("🖌️","Labour"));
+  var ltw=el("div","tw");var ltbl=document.createElement("table");
+  ltbl.innerHTML='<thead><tr><th>Task / Room</th><th class="r">Hours</th><th class="r">Rate/hr</th><th class="r">Cost</th></tr></thead>';
+  var lb=document.createElement("tbody");
+  s.labour.forEach(function(r,i){
+    var tr=document.createElement("tr");
+    var td1=document.createElement("td");var di=document.createElement("input");di.className="dinp";di.value=r.desc;di.placeholder="Labour item "+(i+1);di.addEventListener("change",function(e){r.desc=e.target.value;ss("t2",s);});di.addEventListener("blur",function(e){r.desc=e.target.value;ss("t2",s);});td1.appendChild(di);
+    var td2=document.createElement("td");td2.style.textAlign="right";var hi=document.createElement("input");hi.className="ninp";hi.type="number";hi.style.width="60px";hi.value=r.hrs;hi.step="0.5";hi.min="0";hi.addEventListener("change",function(e){r.hrs=parseFloat(e.target.value)||0;upd();});td2.appendChild(hi);
+    var td3=document.createElement("td");td3.style.textAlign="right";td3.style.color="#2356a8";td3.style.fontWeight="700";td3.textContent=fmt(s.hourlyRate);R["lr"+i]=td3;
+    var td4=document.createElement("td");td4.style.textAlign="right";td4.style.fontWeight="700";td4.style.color="#1a3a6b";td4.textContent=fmt(r.hrs*s.hourlyRate);R["lc"+i]=td4;
+    tr.append(td1,td2,td3,td4);lb.appendChild(tr);
+  });
+  var lf=document.createElement("tr");lf.className="tfoot";
+  lf.innerHTML='<td colspan="3" style="padding:7px 8px">TOTAL LABOUR</td><td style="padding:7px 8px;text-align:right;font-size:14px" id="ltot"></td>';
+  R.ltot=lf.querySelector("#ltot");lb.appendChild(lf);ltbl.appendChild(lb);ltw.appendChild(ltbl);root.appendChild(ltw);
+
+  // Materials table
+  root.appendChild(sh("🪣","Materials"));
+  var mtw=el("div","tw");var mtbl=document.createElement("table");
+  mtbl.innerHTML='<thead><tr><th>Material</th><th class="r">Qty</th><th class="r">Unit Cost</th><th class="r">Your Cost</th><th class="r">M/U%</th><th class="r">Charge</th></tr></thead>';
+  var mb=document.createElement("tbody");
+  s.materials.forEach(function(r,i){
+    var tr=document.createElement("tr");
+    var td1=document.createElement("td");var di=document.createElement("input");di.className="dinp";di.value=r.desc;di.placeholder="Material "+(i+1);di.addEventListener("change",function(e){r.desc=e.target.value;ss("t2",s);});di.addEventListener("blur",function(e){r.desc=e.target.value;ss("t2",s);});td1.appendChild(di);
+    var td2=document.createElement("td");td2.style.textAlign="right";var qi=document.createElement("input");qi.className="ninp";qi.type="number";qi.style.width="50px";qi.value=r.qty;qi.step="1";qi.min="0";qi.addEventListener("change",function(e){r.qty=parseFloat(e.target.value)||0;upd();});td2.appendChild(qi);
+    var td3=document.createElement("td");td3.style.textAlign="right";var ui=document.createElement("input");ui.className="ninp";ui.type="number";ui.style.width="65px";ui.value=r.cost;ui.step="0.5";ui.min="0";ui.addEventListener("change",function(e){r.cost=parseFloat(e.target.value)||0;upd();});td3.appendChild(ui);
+    var td4=document.createElement("td");td4.style.textAlign="right";td4.style.color="#555";td4.textContent=fmt(r.qty*r.cost);R["myc"+i]=td4;
+    var td5=document.createElement("td");td5.style.textAlign="right";td5.style.color="#2356a8";td5.textContent=pct(s.matMarkup/100);R["mmu"+i]=td5;
+    var td6=document.createElement("td");td6.style.textAlign="right";td6.style.fontWeight="700";td6.style.color="#1a3a6b";td6.textContent=fmt(r.qty*r.cost*(1+s.matMarkup/100));R["mch"+i]=td6;
+    tr.append(td1,td2,td3,td4,td5,td6);mb.appendChild(tr);
+  });
+  var mf=document.createElement("tr");mf.className="tfoot";
+  mf.innerHTML='<td colspan="5" style="padding:7px 8px">TOTAL MATERIALS (charged to customer)</td><td style="padding:7px 8px;text-align:right;font-size:14px" id="mtot"></td>';
+  R.mtot=mf.querySelector("#mtot");mb.appendChild(mf);mtbl.appendChild(mb);mtw.appendChild(mtbl);root.appendChild(mtw);
+
+  // Hire table
+  root.appendChild(sh("🏗️","Hired Equipment"));
+  var htw=el("div","tw");var htbl=document.createElement("table");
+  htbl.innerHTML='<thead><tr><th>Equipment</th><th class="r">Days</th><th class="r">Daily Hire Cost</th><th class="r">Your Cost</th><th class="r">M/U%</th><th class="r">Charge</th></tr></thead>';
+  var hb=document.createElement("tbody");
+  s.hire.forEach(function(r,i){
+    var tr=document.createElement("tr");
+    var td1=document.createElement("td");var di=document.createElement("input");di.className="dinp";di.value=r.desc;di.placeholder="Hire item "+(i+1);di.addEventListener("change",function(e){r.desc=e.target.value;ss("t2",s);});di.addEventListener("blur",function(e){r.desc=e.target.value;ss("t2",s);});td1.appendChild(di);
+    var td2=document.createElement("td");td2.style.textAlign="right";var dyi=document.createElement("input");dyi.className="ninp";dyi.type="number";dyi.style.width="50px";dyi.value=r.days;dyi.step="1";dyi.min="0";dyi.addEventListener("change",function(e){r.days=parseFloat(e.target.value)||0;upd();});td2.appendChild(dyi);
+    var td3=document.createElement("td");td3.style.textAlign="right";var ci=document.createElement("input");ci.className="ninp";ci.type="number";ci.style.width="65px";ci.value=r.cost;ci.step="0.5";ci.min="0";ci.addEventListener("change",function(e){r.cost=parseFloat(e.target.value)||0;upd();});td3.appendChild(ci);
+    var td4=document.createElement("td");td4.style.textAlign="right";td4.style.color="#555";td4.textContent=fmt(r.days*r.cost);R["hyc"+i]=td4;
+    var td5=document.createElement("td");td5.style.textAlign="right";td5.style.color="#2356a8";td5.textContent=pct(s.hireMarkup/100);R["hmu"+i]=td5;
+    var td6=document.createElement("td");td6.style.textAlign="right";td6.style.fontWeight="700";td6.style.color="#1a3a6b";td6.textContent=fmt(r.days*r.cost*(1+s.hireMarkup/100));R["hch"+i]=td6;
+    tr.append(td1,td2,td3,td4,td5,td6);hb.appendChild(tr);
+  });
+  var hf=document.createElement("tr");hf.className="tfoot";
+  hf.innerHTML='<td colspan="5" style="padding:7px 8px">TOTAL HIRE (charged to customer)</td><td style="padding:7px 8px;text-align:right;font-size:14px" id="htot"></td>';
+  R.htot=hf.querySelector("#htot");hb.appendChild(hf);htbl.appendChild(hb);htw.appendChild(htbl);root.appendChild(htw);
+
+  // Summary
+  root.appendChild(sh("📄","Quote Summary"));
+  var arx=function(lbl,rk,type,hint){var x=rrow(lbl,"",type,hint);root.appendChild(x.row);R[rk]=x.val;return x;};
+  arx("Total Labour","slt","n");arx("Total Materials (inc. mark-up)","smt","n");
+  arx("Total Hire Equipment (inc. mark-up)","sht","n");arx("SUBTOTAL (ex. tax)","sub","g");
+  var vatX=rrow("Sales tax / GST","","n","Only shown when you are registered for sales tax, GST, or VAT.");
+  root.appendChild(vatX.row);R.vat=vatX.val;R.vatRow=vatX.row;
+  var totX2=rrow("JOB COST TOTAL","","h","Combined total of labour, materials, and any hired equipment for this job. For your eyes only before you give the customer a price.");root.appendChild(totX2.row);R.tot=totX2.val;
+
+  // Quote generation removed - use PaintQuote Pro for customer-facing quotes
+  upd();
+}
+
+/* ═══════════════════════════════════════════════════
+   TAB 3 – UK MARKET RATES
+═══════════════════════════════════════════════════ */
+function buildT3(){
+  var root=document.getElementById("t3");root.innerHTML="";
+  var countries=["United Kingdom","United States","Canada","Ireland"];
+  var sel=el("div","market-sel");
+  sel.appendChild(el("div","market-sel-label","Select your country:"));
+  var btnWrap=el("div","market-btns");
+  countries.forEach(function(c,i){
+    var b=el("button","mktbtn"+(i===0?" active":""),c);
+    b.onclick=function(){
+      root.querySelectorAll(".mktbtn").forEach(function(x){x.classList.remove("active");});
+      b.classList.add("active");
+      showMarket(c,root2);
+    };
+    btnWrap.appendChild(b);
+  });
+  sel.appendChild(btnWrap);
+  root.appendChild(sel);
+  var root2=el("div","market-content");
+  root.appendChild(root2);
+  showMarket("United Kingdom",root2);
+}
+
+function showMarket(country,root2){
+  root2.innerHTML="";
+  var D={
+    "United Kingdom":{note:"Self-employed rates. Use to sense-check your own rate. Specialist skills such as spraying and decorative effects can command 50-100% more.",regions:[["London (Central)","30","45","60","Premium rates. Very high demand"],["London (Outer)","28","38","50","Still well above national average"],["South East (Surrey, Kent, Essex)","22","32","42","Strong demand, affluent areas"],["South West (Bristol, Bath, Devon)","20","28","38","Tourist areas can command more"],["East of England","18","26","34","Growing market, lower cost of living"],["East Midlands","17","24","32","Solid demand, moderate rates"],["West Midlands (Birmingham area)","17","25","33","City areas at the higher end"],["Yorkshire and Humber","16","23","30","Cities higher, rural lower"],["North West (Manchester, Liverpool)","18","26","35","Major cities push rates up"],["North East (Newcastle, Sunderland)","15","21","28","Lower cost of living"],["Wales","16","22","30","Cardiff higher, rural lower"],["Scotland (Central Belt)","18","26","35","Higher income tax affects take-home"],["Scotland (Rural)","16","22","28","Less competition but less work"],["Northern Ireland","14","20","26","Generally lower than mainland GB"]],jobs:[["Paint 1 bedroom (walls only)","150-250","280-400","400-600"],["Full bedroom walls ceiling and woodwork","350-500","500-700","700-1000"],["Living room or dining room","400-600","600-900","900-1400"],["Hall stairs and landing","400-600","600-900","900-1500"],["Full interior 3-bed house","2500","3500-4500","5500-8000"],["Exterior 3-bed semi","800-1200","1400-2000","2200-3500"],["Exterior detached house","2000-3000","3500-5000","5000-9000"],["Front door both sides and frame","150-250","250-350","350-500"],["Fence panels per panel","15-20","20-30","30-45"]],tax:"You must register for VAT once your annual turnover exceeds the current threshold. Check the latest figure at gov.uk. Set aside 25-30% of every payment for your tax bill.",ip:"Look for 'income protection insurance' or 'permanent health insurance'. LV, Aviva, Royal London, and The Exeter all cover self-employed tradespeople. Premium depends on age, deferral period (how long you wait before payments start), and benefit level."},
+    "United States":{note:"Self-employed rates in USD. Rates vary significantly by state and city. Specialist work such as spray and faux finishes can command 50-100% more.",regions:[["New York and New Jersey","38","52","75","Premium market. High cost of living"],["California (LA, San Francisco)","35","50","70","Strong demand, competitive market"],["New England (Boston, CT)","32","45","65","Higher rates, skilled market"],["Mid-Atlantic (DC, Maryland, Virginia)","28","40","58","Government proximity drives rates"],["Pacific Northwest (Seattle, Portland)","30","42","60","Growing market, high cost of living"],["Florida (Miami, Orlando, Tampa)","25","35","50","Large market, seasonal variation"],["Texas (Dallas, Houston, Austin)","22","32","48","Fast-growing cities, moderate rates"],["Mountain West (Denver, Phoenix)","24","34","50","Growing market, rising rates"],["Midwest (Chicago, Minneapolis)","22","30","45","Steady demand, moderate cost of living"],["South (Atlanta, Charlotte, Nashville)","20","28","42","Growing cities, lower rural rates"],["Rural or Small Town","18","24","35","Less competition, lower cost of living"]],jobs:[["Paint 1 bedroom (walls only)","200-350","400-600","600-900"],["Full bedroom walls ceiling and trim","500-750","800-1100","1100-1600"],["Living room or dining room","600-900","900-1400","1400-2200"],["Full interior 3-bed house","3500","5000-7000","8000-12000"],["Exterior average house","1500-2500","3000-5000","5000-9000"],["Front door both sides and frame","200-350","350-550","550-800"],["Deck or fence per 100 sq ft","150-250","280-400","400-600"]],tax:"Self-employed painters pay self-employment tax (15.3%) plus federal and state income tax. Set aside 25-30% of income. Check IRS.gov and your state tax authority for current rates.",ip:"Look for 'individual disability insurance' or 'long-term disability insurance' for self-employed workers. Guardian, Principal, MassMutual, and The Standard cover trades. Short-term and long-term policies are sold separately."},
+    "Canada":{note:"Self-employed rates in Canadian dollars. Rates vary by province. Specialist work can command significantly more.",regions:[["Greater Vancouver (BC)","30","42","58","Highest rates in Canada"],["Victoria and BC Interior","26","36","50","Strong market, lower than Vancouver"],["Calgary and Edmonton (Alberta)","28","40","55","Oil economy drives higher rates"],["Toronto and GTA (Ontario)","28","40","56","High demand, competitive market"],["Ottawa and Eastern Ontario","24","34","48","Steady government-driven demand"],["Montreal and Quebec","22","30","44","Bilingual market, solid demand"],["Winnipeg and Manitoba","20","28","40","Stable market, moderate rates"],["Halifax and Atlantic Provinces","18","25","36","Lower cost of living, lower rates"],["Saskatchewan","20","28","38","Steady demand, moderate rates"],["Rural any province","16","22","32","Less competition, fewer jobs"]],jobs:[["Paint 1 bedroom (walls only)","275-450","500-750","750-1100"],["Full bedroom walls ceiling and trim","650-950","1000-1400","1400-2000"],["Living room or dining room","750-1100","1200-1800","1800-2800"],["Full interior 3-bed house","4500","6500-9000","10000-15000"],["Exterior average house","2000-3500","4000-6500","7000-11000"],["Front door both sides and frame","275-450","450-700","700-1000"],["Deck or fence per 100 sq ft","200-325","350-525","525-800"]],tax:"Self-employed painters must contribute to CPP and pay income tax. Register for HST or GST when annual revenue exceeds 30,000 CAD. Check CRA.gc.ca for current thresholds.",ip:"Look for 'disability insurance' or 'income replacement insurance' for self-employed workers. Manulife, Sun Life, Canada Life, and RBC Insurance offer cover. Provincial workers' compensation does not cover self-employed unless you opt in."},
+    "Ireland":{note:"Self-employed rates in Euros. Rates are higher in Dublin and other cities. Specialist work commands significantly more.",regions:[["Dublin City Centre","28","38","55","Premium rates, high cost of living"],["Dublin Suburbs and County","24","32","46","Strong demand, well above national average"],["Cork and Galway","20","28","40","Second tier cities, solid rates"],["Limerick and Waterford","18","25","36","Mid-size cities, moderate rates"],["Wicklow Kildare Meath","20","28","40","Commuter belt, Dublin overspill"],["Rest of Leinster","16","22","32","Steady demand, lower cost of living"],["Munster (rural)","15","20","30","Lower rates, seasonal variation"],["Connacht and Ulster","14","19","28","Lower cost of living, less competition"]],jobs:[["Paint 1 bedroom (walls only)","200-350","400-600","600-900"],["Full bedroom walls ceiling and woodwork","450-650","700-1000","1000-1500"],["Living room or dining room","500-800","900-1300","1300-2000"],["Hall stairs and landing","500-750","800-1200","1200-1800"],["Full interior 3-bed house","3000","4500-6000","7000-10000"],["Exterior 3-bed semi","1200-1800","2000-3000","3000-4500"],["Front door both sides and frame","200-300","300-450","450-650"]],tax:"Self-employed painters must file an annual tax return with Revenue at revenue.ie. Register for VAT when turnover exceeds the threshold for services. Set aside 25-30% for tax.",ip:"Look for 'income protection insurance' or 'permanent health insurance'. Irish Life, Aviva, Royal London Ireland, and New Ireland cover self-employed. Tax relief on premiums is available at your marginal rate."}
+  };
+  var m=D[country];if(!m)return;
+  root2.appendChild(tip(m.note));
+  root2.appendChild(sh("📍","Typical Hourly Rates by Region"));
+  var rw=el("div","tw");
+  rw.innerHTML="<table><thead><tr><th>Region</th><th class=\"c\">Lower</th><th class=\"c\">Mid</th><th class=\"c\">Top</th><th>Notes</th></tr></thead><tbody>"+m.regions.map(function(r){return"<tr><td style=\"font-weight:600;color:#1a3a6b\">"+r[0]+"</td><td style=\"text-align:center;color:#555\">"+r[1]+"</td><td style=\"text-align:center;font-weight:700;color:#2356a8\">"+r[2]+"</td><td style=\"text-align:center;color:#555\">"+r[3]+"</td><td style=\"font-size:11px;color:#777\">"+r[4]+"</td></tr>";}).join("")+"</tbody></table>";
+  root2.appendChild(rw);
+  root2.appendChild(sh("🏠","Typical Job Prices (Labour Only)"));
+  root2.appendChild(wrn("Ballpark figures only. Always survey the job first. Every property is different."));
+  var jw=el("div","tw");
+  jw.innerHTML="<table><thead><tr><th>Job Type</th><th class=\"c\">Simple or Small</th><th class=\"c\">Typical</th><th class=\"c\">Large or Complex</th></tr></thead><tbody>"+m.jobs.map(function(r){return"<tr><td style=\"font-weight:600;color:#1a3a6b\">"+r[0]+"</td><td style=\"text-align:center;color:#555\">"+r[1]+"</td><td style=\"text-align:center;font-weight:700;color:#2356a8\">"+r[2]+"</td><td style=\"text-align:center;color:#555\">"+r[3]+"</td></tr>";}).join("")+"</tbody></table>";
+  root2.appendChild(jw);
+  root2.appendChild(sh("💰","Tax and Registration in "+country));
+  var tb=el("div","ebox");tb.innerHTML="<p style=\"font-size:13px;color:#444;line-height:1.8\">"+m.tax+"</p>";root2.appendChild(tb);
+  root2.appendChild(sh("🏥","Income Protection Insurance in "+country));
+  var ipb=el("div","ebox");ipb.innerHTML="<p style=\"font-size:13px;color:#444;line-height:1.8;margin-bottom:8px\"><strong>Self-employed:</strong> No one pays you when you are off the tools. Income protection is the only safety net you have if you are ill or injured for more than a few weeks. It belongs in your Section B costs.</p><p style=\"font-size:13px;color:#444;line-height:1.8;margin-bottom:8px\"><strong>Employed staff:</strong> Sub-contractors carry their own cover. If you have people on your payroll, check what your country requires you to provide.</p><p style=\"font-size:13px;color:#444;line-height:1.8\">"+m.ip+"</p>";root2.appendChild(ipb);
+  root2.appendChild(sh("⭐","8 Golden Rules for Pricing Your Work"));
+  var rules=[["1. Never race to the bottom on price","Cutting your rate just to win jobs is a race you cannot win. Someone will always be cheaper. Win on quality, reliability, and trust instead."],["2. Put everything in writing","Even a simple message confirming the price and what is included protects you. Most disputes come from nothing being agreed in writing."],["3. Always take a deposit","25-33% upfront is normal and expected. It weeds out time-wasters, covers your materials, and reduces your risk."],["4. Review your rates every year","Material costs, fuel, and insurance go up every year. If your rate has not moved in two or more years, you are earning less in real terms."],["5. Know your tax registration threshold","Tax and sales tax thresholds vary by country. Check with your local tax authority or accountant and plan before you reach it."],["6. Keep tax money separate","Open a second bank account. Every time you are paid, move 25-30% into it immediately. Your tax bill will not be a surprise if you do this."],["7. Insurance is never optional","Public liability is the bare minimum. If you accidentally damage a customer property and you are not covered, you are in serious trouble."],["8. Build a reputation","Happy customers tell their neighbours. Ask for a review after every job. Ten good reviews are worth more than any advert."]];
+  var rg=el("div","rgrid");rules.forEach(function(r){var row=el("div","rrow2");row.innerHTML="<div class=\"rtitle\">"+r[0]+"</div><div class=\"rbody\">"+r[1]+"</div>";rg.appendChild(row);});root2.appendChild(rg);
+}
+
+
+function buildT4(){
+  var root=document.getElementById("t4");root.innerHTML="";
+  root.appendChild(sh("⚙️","Calculator Settings"));
+  root.appendChild(tip("These settings are saved to your browser. Update them each year as your local rates change."));
+
+  var box=el("div","ebox");
+  box.appendChild(el("div","etitle","Calculator Settings"));
+
+  function addSetting(lbl,hint,val,key,opts){
+    var x=irow(lbl,val,opts,function(v){CFG[key]=v;saveCfg();applyTaxYear();buildT3();});
+    box.appendChild(x.row);
+    return x;
+  }
+
+  // Tax year is text, not number - build manually
+  var tyRow=el("div","irow");
+  var tyL=el("div");tyL.innerHTML='<div class="irow-lbl">Tax Year Label</div><div class="irow-hint">Shown in the header and throughout the calculator</div>';
+  var tyR=el("div","irow-right");
+  var tyInp=document.createElement("input");tyInp.type="text";tyInp.className="finp";tyInp.style.width="80px";tyInp.value=CFG.ty;
+  tyInp.addEventListener("change",function(){CFG.ty=tyInp.value.trim()||"2025/26";saveCfg();applyTaxYear();buildT3();});
+  tyR.appendChild(tyInp);tyRow.appendChild(tyL);tyRow.appendChild(tyR);box.appendChild(tyRow);
+
+  
+  addSetting("Vehicle cost rate (per mile or km)","Used in the Day Rate tab for travel costs",CFG.mileage,"mileage",{hint:"Check the approved rate with your accountant or tax authority",min:0,max:1,step:0.01});
+
+  root.appendChild(box);
+
+  root.appendChild(sh("💾","Save & Restore All Data"));
+  var sbox=el("div","ebox");
+  sbox.appendChild(el("div","etitle","Backup & Restore"));
+  sbox.innerHTML+='<p style="font-size:13px;color:#444;margin-bottom:12px">Save all your figures to a backup file on your computer. You can reload them at any time, or on a different computer.</p>';
+  var sbar=el("div","savebar");
+  var sb=el("button","sbtn sbtn-save","&#128190; Save + Download Backup");
+  sb.onclick=function(){
+    if(window["_st0"]!==undefined)ss("t0",window["_st0"]);
+    if(window["_st1"]!==undefined)ss("t1",window["_st1"]);
+    if(window["_st2"]!==undefined)ss("t2",window["_st2"]);
+    saveFile();showMsg("t4","✓ Saved in browser + backup file downloaded");
+  };
+  var lb_=el("button","sbtn sbtn-load","&#128193; Load Numbers from File");
+  lb_.onclick=function(){loadFile(function(msg){showMsg("t4",msg);});};
+  var sm=el("span","smsg");sm.id="smsgt4";sm.style.display="none";
+  sbar.appendChild(sb);sbar.appendChild(lb_);sbar.appendChild(sm);
+  sbox.appendChild(sbar);
+
+  root.appendChild(sh("🖨️","Print Summary"));
+  var pbox=el("div","ebox");
+  pbox.appendChild(el("div","etitle","Full Input & Results Summary"));
+  pbox.innerHTML+='<p style="font-size:13px;color:#444;margin-bottom:12px">Generates a complete summary of all your figures and results — formatted for printing or saving as a PDF. Suitable for sharing with your accountant.</p>';
+  var pbar=el("div","savebar");
+  var pb=el("button","sbtn sbtn-save","&#128438; Generate &amp; Print Summary");
+  pb.style.background="linear-gradient(135deg,#1a3a6b,#2356a8)";
+  pb.onclick=function(){buildPrintSummary();};
+  pbar.appendChild(pb);
+  pbox.appendChild(pbar);
+  pbox.appendChild(el("div","savebar-note","&#128161; Opens a print-ready document with all inputs and results. Use your browser's Print function (Ctrl+P / Cmd+P) to print or save as PDF."));
+  root.appendChild(pbox);
+  root.appendChild(sbox);
+
+  var vbox=el("div","ebox");
+  vbox.innerHTML='<div class="etitle">About This Calculator</div><p style="font-size:13px;color:#444;line-height:1.8"><strong>Version:</strong> 1.2 (Build 5.0)<br/><strong>Last updated:</strong> March 2026<br/><strong>Created by:</strong> Traction Stream<br/><strong>Support:</strong> support@tractionstream.com</p>';
+  root.appendChild(vbox);
+  var dbox=el("div","ebox");
+  dbox.innerHTML='<div class="etitle">Supported Devices</div>\
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:8px">This calculator is <strong>designed for desktop and laptop computers</strong> running Windows or Mac.</p>\
+    <p style="font-size:13px;color:#444;line-height:1.7;margin-bottom:8px"><strong>&#10003; Works well on:</strong> Chrome, Edge, Firefox, Safari (Windows &amp; Mac)</p>\
+    <p style="font-size:13px;color:#888;line-height:1.7"><strong>&#9888; Not officially supported:</strong> iPhone, iPad, Android. The calculator may display on mobile but file saving and some features may not work reliably on mobile browsers.</p>';
+  root.appendChild(dbox);
+}
+
+// ── Print Summary ─────────────────────────────────────────────────────────────
+function buildPrintSummary(){
+  var s0=ls("t0",JSON.parse(JSON.stringify(D0)));
+  var s1=ls("t1",JSON.parse(JSON.stringify(D1)));
+  var s2=ls("t2",JSON.parse(JSON.stringify(D2)));
+
+  // Old-save guard: convert taxMult to taxPct if needed
+  if(s0.taxPct===undefined){s0.taxPct=s0.taxMult?Math.round((s0.taxMult-1)*100):32;}
+  var taxMult=1+(s0.taxPct/100);
+
+  // Recalculate all results
+  var ohkeys=["fuel","vanInsurance","vanMaint","vanDeprec","pli","accidentSickness","incomeProtection","tools","accountant","phone","software","website","advertising","workwear","training","sundries"];
+  var oh=ohkeys.reduce(function(a,k){return a+(s0[k]||0);},0);
+  var gr=(s0.takehome+s0.pension)*taxMult,rev=gr+oh;
+  var bd=s0.weeks*s0.daysPerWeek*(1-s0.nonBill/100),bh=bd*s0.hrsPerDay;
+  var be=bh>0?rev/bh:0,cr=be*(1+s0.profitBuf/100);
+  var dr=cr*s0.hrsPerDay,wr=dr*s0.daysPerWeek,at=cr*bh;
+
+  var ld=s1.hourlyRate*s1.hrsPerDay,fd=ld+s1.travel+s1.parking;
+  var ni=Math.max(0,s1.theirRate*s1.numDays*0.15),pen=s1.theirRate*s1.numDays*0.03;
+  var ex=ni+pen+s1.holiday+s1.toolsProv+s1.extraIns+s1.supervision;
+  var tot=s1.theirRate*s1.numDays+ex,cpd=s1.numDays>0?tot/s1.numDays:0;
+  var ctc=cpd*(1+s1.labourMargin/100);
+
+  var lt=s2.labour.reduce(function(a,r){return a+r.hrs*s2.hourlyRate;},0);
+  var mt=s2.materials.reduce(function(a,r){return a+r.qty*r.cost*(1+s2.matMarkup/100);},0);
+  var ht=s2.hire.reduce(function(a,r){return a+r.days*r.cost*(1+s2.hireMarkup/100);},0);
+  var sub=lt+mt+ht,vat=s2.vatReg?sub*((s2.salesTaxRate||20)/100):0,jobTotal=sub+vat;
+
+  var now=new Date();
+  var dateStr=now.toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
+
+  // Show options dialog first
+  var overlay=document.getElementById("ps-overlay");
+  var doc=document.getElementById("ps-doc");
+
+  // Build options screen
+  var optHtml='<div style="padding:28px;font-family:\'Segoe UI\',system-ui,sans-serif;">'
+    +'<h2 style="font-size:16px;font-weight:800;color:#1a3a6b;margin:0 0 6px">Generate Summary</h2>'
+    +'<p style="font-size:13px;color:#555;margin:0 0 20px">Choose what to include in the printed summary.</p>'
+    +'<label style="display:flex;align-items:center;gap:10px;font-size:13px;color:#333;margin-bottom:12px;cursor:pointer;">'
+    +'<input type="checkbox" id="ps-opt-jc" checked style="width:16px;height:16px;"> Include Job Cost Calculator section</label>'
+    +'<label style="display:flex;align-items:center;gap:10px;font-size:13px;color:#333;margin-bottom:24px;cursor:pointer;">'
+    +'<input type="checkbox" id="ps-opt-hire" checked style="width:16px;height:16px;"> Include Day Rate &amp; Hiring section</label>'
+    +'<div style="display:flex;gap:10px;">'
+    +'<button onclick="renderPrintSummary()" style="padding:10px 22px;background:#1a3a6b;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Generate</button>'
+    +'<button onclick="document.getElementById(\'ps-overlay\').classList.remove(\'open\')" style="padding:10px 18px;background:#f0f0f0;color:#333;border:1px solid #ccc;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">Cancel</button>'
+    +'</div>'
+    +'</div>';
+  doc.innerHTML=optHtml;
+  overlay.classList.add("open");
+
+  window.renderPrintSummary=function(){
+    var inclJC=document.getElementById("ps-opt-jc").checked;
+    var inclHire=document.getElementById("ps-opt-hire").checked;
+
+    function row(lbl,val,cls){return '<div class="ps-row'+(cls?" "+cls:"")+'"><span class="ps-lbl">'+lbl+'</span><span class="ps-val">'+val+'</span></div>';}
+    function section(title,content){return '<div class="ps-section"><div class="ps-section-title">'+title+'</div>'+content+'</div>';}
+    function note(t){return '<div class="ps-note">'+t+'</div>';}
+
+    var html='<div class="ps-hdr">'
+      +'<div class="ps-hdr-left"><h1>Hourly Rate &amp; Business Calculator</h1><p>Complete input and results summary — for your records or accountant review</p></div>'
+      +'<div class="ps-hdr-right"><strong>Traction Stream</strong><br/>support@tractionstream.com<br/>'+dateStr+'<br/>Tax year: '+CFG.ty+'</div>'
+      +'</div>'
+      +'<div class="ps-body">'
+
+      +section("A — Income Target",
+        '<div class="ps-grid">'
+        +row("Take-home pay (after tax)",fmt(s0.takehome))
+        +row("Retirement savings per year",fmt(s0.pension))
+        +row("Tax rate applied",s0.taxPct+"%")
+        +row("Pre-tax income needed",fmt(gr),"result")
+        +'</div>')
+
+      +section("B — Annual Business Costs",
+        '<div class="ps-grid">'
+        +row("Fuel",fmt(s0.fuel))
+        +row("Vehicle insurance &amp; registration",fmt(s0.vanInsurance))
+        +row("Vehicle servicing &amp; repairs",fmt(s0.vanMaint))
+        +row("Vehicle replacement reserve",fmt(s0.vanDeprec))
+        +row("Public liability insurance",fmt(s0.pli))
+        +row("Accident &amp; sickness insurance",fmt(s0.accidentSickness))
+        +row("Income protection insurance",fmt(s0.incomeProtection))
+        +row("Tools &amp; equipment",fmt(s0.tools))
+        +row("Accountant / bookkeeper",fmt(s0.accountant))
+        +row("Phone &amp; data",fmt(s0.phone))
+        +row("Software &amp; subscriptions",fmt(s0.software))
+        +row("Website &amp; listings",fmt(s0.website))
+        +row("Advertising &amp; marketing",fmt(s0.advertising))
+        +row("Workwear &amp; PPE",fmt(s0.workwear))
+        +row("Training &amp; certifications",fmt(s0.training))
+        +row("Sundries",fmt(s0.sundries))
+        +'</div>'
+        +row("Total annual business costs",fmt(oh),"result"))
+
+      +section("C — Revenue Target",
+        row("Total your business must invoice per year",fmt(rev),"total"))
+
+      +section("D — Billable Hours",
+        '<div class="ps-grid">'
+        +row("Weeks working per year",s0.weeks+" wks")
+        +row("Days per week",s0.daysPerWeek+" days")
+        +row("Chargeable hours per day",s0.hrsPerDay+" hrs")
+        +row("Non-chargeable time",s0.nonBill+"%")
+        +row("Chargeable days per year",bd.toFixed(1)+" days","result")
+        +row("Chargeable hours per year",bh.toFixed(1)+" hrs","result")
+        +'</div>')
+
+      +section("E — Rate Results",
+        '<div class="ps-grid">'
+        +row("Break-even hourly rate",fmt(be))
+        +row("Buffer above break-even",s0.profitBuf+"%")
+        +row("Minimum hourly rate",fmt(cr),"result")
+        +row("Day rate",fmt(dr),"result")
+        +row("Week rate",fmt(wr),"result")
+        +row("Annual invoicing target",fmt(at),"result")
+        +'</div>')
+
+      +section("F — Mark-Ups",
+        '<div class="ps-grid">'
+        +row("Materials mark-up",s0.matMarkup+"%")
+        +row("Hire equipment mark-up",s0.hireMarkup+"%")
+        +'</div>');
+
+    if(inclHire){
+      html+=section("Day Rate &amp; Hiring — Your Day Rate",
+        '<div class="ps-grid">'
+        +row("Hourly rate used",fmt(s1.hourlyRate))
+        +row("Hours per day",s1.hrsPerDay+" hrs")
+        +row("Travel cost",fmt(s1.travel))
+        +row("Parking / other expenses",fmt(s1.parking))
+        +row("Labour day rate",fmt(ld),"result")
+        +row("Your full day rate to quote",fmt(fd),"result")
+        +'</div>')
+
+      +section("Day Rate &amp; Hiring — Hired Labour Cost",
+        '<div class="ps-grid">'
+        +row("Their agreed day rate",fmt(s1.theirRate))
+        +row("Number of days",s1.numDays+" days")
+        +row("Employer payroll tax (est.)",fmt(ni))
+        +row("Employer pension (est.)",fmt(pen))
+        +row("Holiday pay",fmt(s1.holiday))
+        +row("Tools &amp; PPE provided",fmt(s1.toolsProv))
+        +row("Extra insurance",fmt(s1.extraIns))
+        +row("Supervision time (cost)",fmt(s1.supervision))
+        +row("Total true cost of hiring",fmt(tot),"result")
+        +row("True all-in cost per day",fmt(cpd),"result")
+        +row("Your profit margin on labour",s1.labourMargin+"%")
+        +row("Charge to customer per day",fmt(ctc),"result")
+        +'</div>'
+        +note("Payroll tax and pension are simplified estimates. Confirm with your accountant."));
+    }
+
+    if(inclJC){
+      html+=section("Job Cost Calculator — Settings",
+        '<div class="ps-grid">'
+        +row("Hourly rate",fmt(s2.hourlyRate))
+        +row("Materials mark-up",s2.matMarkup+"%")
+        +row("Hire mark-up",s2.hireMarkup+"%")
+        +row("Sales tax registered",s2.vatReg?"Yes":"No")
+        +(s2.vatReg?row("Sales tax rate",(s2.salesTaxRate||20)+"%"):"")
+        +'</div>');
+
+      var labRows=s2.labour.filter(function(r){return r.hrs>0||r.desc;});
+      if(labRows.length){
+        html+=section("Job Cost — Labour",
+          labRows.map(function(r){return row(r.desc||"(no description)",fmt(r.hrs)+" hrs = "+fmt(r.hrs*s2.hourlyRate));}).join("")
+          +row("Total labour",fmt(lt),"result"));
+      }
+      var matRows=s2.materials.filter(function(r){return r.qty>0||r.desc;});
+      if(matRows.length){
+        html+=section("Job Cost — Materials",
+          matRows.map(function(r){return row(r.desc||"(no description)","qty "+r.qty+" × "+fmt(r.cost)+" = "+fmt(r.qty*r.cost*(1+s2.matMarkup/100)));}).join("")
+          +row("Total materials (inc. mark-up)",fmt(mt),"result"));
+      }
+      var hirRows=s2.hire.filter(function(r){return r.days>0||r.desc;});
+      if(hirRows.length){
+        html+=section("Job Cost — Hired Equipment",
+          hirRows.map(function(r){return row(r.desc||"(no description)",r.days+" days × "+fmt(r.cost)+" = "+fmt(r.days*r.cost*(1+s2.hireMarkup/100)));}).join("")
+          +row("Total hire (inc. mark-up)",fmt(ht),"result"));
+      }
+      html+=section("Job Cost — Summary",
+        row("Subtotal (ex. tax)",fmt(sub))
+        +(s2.vatReg?row("Sales tax / GST",fmt(vat)):"")
+        +row("Job cost total",fmt(jobTotal),"total"));
+    }
+
+    html+='</div>'
+      +'<div class="ps-footer">'
+      +'<span>Traction Stream — Painter &amp; Decorator Business Calculator</span>'
+      +'<span>For guidance only. Confirm tax figures with a qualified accountant.</span>'
+      +'</div>'
+      +'<div class="ps-actions">'
+      +'<button class="ps-btn print" onclick="window.print()">&#128438; Print / Save as PDF</button>'
+      +'<button class="ps-btn close" onclick="document.getElementById(\'ps-overlay\').classList.remove(\'open\')">&#10005; Close</button>'
+      +'</div>';
+
+    doc.innerHTML=html;
+  };
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+buildT0();buildT1();buildT2();buildT3();buildT4();
+</script>
+</body>
+</html>
