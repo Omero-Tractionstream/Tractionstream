@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interior Walls Job Cost Estimator — Traction Stream</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1e2d40;--navy-mid:#263548;--gold:#b8913a;--gold-light:#d4aa55;
+  --gold-pale:#fef9ee;--white:#ffffff;--off-white:#f8f7f5;--border:#e2ddd6;
+  --border-strong:#c8c0b4;--text:#1a1a1a;--text-mid:#4a4a4a;--text-light:#888;
+  --input-bg:#ffffff;--input-border:#d0c8be;--input-focus:#b8913a;
+  --result-bg:#f0f7f0;--result-border:#27ae60;--result-text:#1a5e20;
+  --green:#27ae60;--green-dark:#1e8449;--blue-pale:#eef4ff;--blue:#2356a8;
+  --shadow:0 4px 16px rgba(0,0,0,0.08);--shadow-lg:0 8px 32px rgba(0,0,0,0.12);
+  --radius:10px;--radius-sm:6px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Sora',system-ui,sans-serif;background:var(--off-white);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:14px;}
+
+/* HEADER */
+.app-header{background:var(--navy);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.brand-mark{width:32px;height:32px;background:var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--navy);font-family:'Sora',sans-serif;letter-spacing:-1px;}
+.brand-text{font-size:15px;font-weight:700;color:var(--white);letter-spacing:0.3px;}
+.brand-sub{font-size:10px;font-weight:400;color:rgba(255,255,255,0.45);display:block;letter-spacing:0.5px;margin-top:-2px;}
+.header-free-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--gold);border:1px solid rgba(184,145,58,0.4);padding:7px 14px;border-radius:20px;text-decoration:none;transition:all 0.2s;font-family:'Sora',sans-serif;}
+.header-free-btn:hover{background:rgba(184,145,58,0.1);border-color:var(--gold);}
+
+/* HERO */
+.page-hero{background:var(--white);border-bottom:1px solid var(--border);padding:28px 24px 24px;}
+.page-hero-inner{max-width:1080px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.page-hero h1{font-size:clamp(22px,3.5vw,32px);font-weight:800;color:var(--navy);line-height:1.15;letter-spacing:-0.5px;}
+.page-hero h1 span{color:var(--gold);}
+.page-hero p{font-size:14px;color:var(--text-mid);margin-top:6px;font-weight:400;max-width:520px;}
+.unit-toggle{display:inline-flex;background:var(--off-white);border:1.5px solid var(--border-strong);border-radius:8px;overflow:hidden;flex-shrink:0;}
+.unit-btn{padding:9px 22px;font-size:13px;font-weight:600;font-family:'Sora',sans-serif;border:none;cursor:pointer;background:transparent;color:var(--text-light);transition:all 0.18s;letter-spacing:0.3px;}
+.unit-btn.active{background:var(--navy);color:var(--white);border-radius:6px;}
+
+/* LAYOUT */
+.page-body{max-width:1080px;margin:0 auto;padding:24px 16px 80px;display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;}
+@media(max-width:800px){.page-body{grid-template-columns:1fr;}.upsell-sidebar{order:-1;}}
+
+/* TABS */
+.tab-nav{display:flex;background:var(--white);border:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;overflow:hidden;border-bottom:none;}
+.tab-btn{flex:1;padding:13px 8px;font-size:13px;font-weight:600;font-family:'Sora',sans-serif;border:none;cursor:pointer;background:transparent;color:var(--text-light);transition:all 0.18s;border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:6px;letter-spacing:0.2px;}
+.tab-btn.active{color:var(--navy);border-bottom-color:var(--gold);background:var(--white);}
+.tab-btn:hover:not(.active){color:var(--text);background:var(--off-white);}
+.tab-icon{font-size:15px;}
+.calc-card{background:var(--white);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+.tab-panel{display:none;padding:24px;}
+.tab-panel.active{display:block;animation:fade-in 0.2s ease;}
+@keyframes fade-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* SECTIONS */
+.sec{margin-bottom:20px;}
+.sec-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--off-white);}
+.sec-hdr-icon{width:30px;height:30px;background:var(--navy);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.sec-hdr-text{font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;}
+.sec-hdr-sub{font-size:11px;font-weight:400;color:var(--text-light);letter-spacing:0;text-transform:none;margin-left:auto;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:560px){.two-col{grid-template-columns:1fr;}}
+.divider{height:1px;background:var(--border);margin:20px 0;}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:5px;}
+.field-label{font-size:12px;font-weight:600;color:var(--text-mid);display:flex;align-items:center;gap:5px;letter-spacing:0.2px;}
+.field-hint{font-size:11px;color:var(--text-light);font-weight:400;margin-left:2px;}
+
+/* INPUTS */
+.inp{height:36px;padding:0 10px;border:1.5px solid var(--input-border);border-radius:var(--radius-sm);font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--text);background:var(--input-bg);transition:border-color 0.18s,box-shadow 0.18s;width:100%;outline:none;}
+.inp:focus{border-color:var(--input-focus);box-shadow:0 0 0 3px rgba(184,145,58,0.15);}
+.inp::placeholder{color:#ccc;font-weight:400;}
+.inp-wrap{position:relative;}
+.inp-suffix{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:500;color:var(--text-light);pointer-events:none;}
+.inp-wrap.has-suffix .inp{padding-right:36px;}
+select.inp{cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;}
+
+/* RESULTS */
+.result-field{background:var(--result-bg);border:1.5px solid var(--result-border);border-radius:var(--radius-sm);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px;}
+.result-label{font-size:12px;font-weight:600;color:var(--result-text);letter-spacing:0.2px;}
+.result-value{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--green-dark);white-space:nowrap;}
+.result-field.grand{background:var(--navy);border-color:var(--navy);padding:14px 18px;}
+.result-field.grand .result-label{color:rgba(255,255,255,0.7);font-size:13px;}
+.result-field.grand .result-value{color:var(--gold);font-size:20px;}
+
+/* MINI TOGGLE */
+.mini-toggle{display:inline-flex;background:var(--off-white);border:1px solid var(--border-strong);border-radius:4px;overflow:hidden;flex-shrink:0;}
+.mini-btn{padding:4px 8px;font-size:10px;font-weight:600;font-family:'Sora',sans-serif;border:none;cursor:pointer;background:transparent;color:var(--text-light);transition:all 0.15s;white-space:nowrap;}
+.mini-btn.active{background:var(--navy);color:var(--white);}
+
+/* PRESET BADGE */
+.preset-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--blue);background:var(--blue-pale);padding:3px 8px;border-radius:10px;letter-spacing:0.3px;}
+
+/* TOOLTIP */
+.tooltip-wrap{position:static;display:inline-flex;align-items:center;}
+.tooltip-btn{width:16px;height:16px;background:var(--border-strong);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--white);font-family:'Sora',sans-serif;transition:background 0.18s;flex-shrink:0;}
+.tooltip-btn:hover{background:var(--navy);}
+.tooltip-box{position:fixed;width:220px;background:var(--navy);color:var(--white);font-size:12px;font-weight:400;line-height:1.55;padding:10px 12px;border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);z-index:9999;display:none;pointer-events:none;}
+.tooltip-box::after{content:'';position:absolute;top:100%;left:20px;border:6px solid transparent;border-top-color:var(--navy);}
+
+/* PAINT CARD */
+.paint-card{background:var(--off-white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;}
+.paint-card-hdr{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.paint-card-num{width:24px;height:24px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--white);flex-shrink:0;}
+.paint-card-title{font-size:13px;font-weight:700;color:var(--navy);}
+.paint-card-sub{font-size:11px;color:var(--text-light);}
+
+/* NOTES BOX */
+.notes-box{background:var(--gold-pale);border:1px solid rgba(184,145,58,0.25);border-left:3px solid var(--gold);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px 14px;font-size:12px;color:var(--text-mid);line-height:1.6;}
+.notes-box strong{color:var(--navy);}
+.notes-box a{color:var(--navy);font-weight:700;}
+
+/* RATE PROMPT */
+.rate-prompt{background:var(--blue-pale);border:1px solid rgba(35,86,168,0.2);border-left:3px solid var(--blue);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 12px;display:flex;align-items:flex-start;gap:10px;margin-top:8px;}
+.rate-prompt-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.rate-prompt-text{font-size:11px;color:var(--blue);line-height:1.55;}
+.rate-prompt-text a{color:var(--blue);font-weight:700;text-decoration:underline;}
+
+/* CHARGE-OUT NOTICE */
+.chargeout-notice{background:#fff8e1;border:1px solid #f0c040;border-left:3px solid #e6ac00;border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 14px;font-size:12px;color:#6b4f00;line-height:1.6;margin-top:8px;}
+.chargeout-notice strong{color:#4a3500;}
+
+/* SUNDRIES ROW */
+.sundry-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--off-white);}
+.sundry-row:last-child{border-bottom:none;}
+.sundry-label{font-size:12px;font-weight:600;color:var(--text-mid);flex:1;}
+.sundry-result{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--green-dark);min-width:80px;text-align:right;}
+
+/* EXTRAS TABLE */
+.extras-table{width:100%;border-collapse:collapse;}
+.extras-table th{font-size:11px;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;padding:0 6px 8px;text-align:left;border-bottom:2px solid var(--border);}
+.extras-table th.r{text-align:right;}
+.extras-table td{padding:5px 4px;border-bottom:1px solid var(--off-white);vertical-align:middle;}
+.extras-inp{height:32px;padding:0 8px;border:1.5px solid var(--input-border);border-radius:var(--radius-sm);font-size:12px;font-weight:500;font-family:'JetBrains Mono',monospace;color:var(--text);background:var(--input-bg);width:100%;outline:none;transition:border-color 0.18s;}
+.extras-inp:focus{border-color:var(--input-focus);}
+.extras-inp.sm{width:70px;}
+.extras-inp.md{width:90px;}
+.extras-calc{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--green-dark);text-align:right;min-width:72px;padding:0 4px;}
+
+/* SUMMARY TABLE */
+.summary-table{width:100%;border-collapse:collapse;}
+.summary-table tr td{padding:8px 0;border-bottom:1px solid var(--off-white);font-size:13px;}
+.summary-table tr td:first-child{color:var(--text-mid);}
+.summary-table tr td.val{text-align:right;font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text);}
+.summary-table tr td.sub{font-size:11px;color:var(--text-light);padding-left:14px;}
+.summary-section-hdr td{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);padding-top:20px !important;border-bottom:2px solid var(--border) !important;}
+.summary-subtotal td{font-weight:700;color:var(--navy);border-bottom:2px solid var(--border) !important;}
+.summary-subtotal td.val{color:var(--green-dark);font-size:14px;}
+.summary-total{background:var(--navy);border-radius:var(--radius-sm);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+.summary-total-label{font-size:14px;font-weight:700;color:rgba(255,255,255,0.75);}
+.summary-total-value{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:var(--gold);}
+.print-btn{display:inline-flex;align-items:center;gap:8px;background:var(--off-white);border:1.5px solid var(--border-strong);border-radius:var(--radius-sm);padding:9px 16px;font-size:13px;font-weight:600;font-family:'Sora',sans-serif;color:var(--text-mid);cursor:pointer;transition:all 0.18s;margin-top:16px;}
+.print-btn:hover{background:var(--border);color:var(--text);}
+
+/* UPSELL */
+.upsell-sidebar{display:flex;flex-direction:column;gap:16px;position:sticky;top:76px;}
+.upsell-free{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+.upsell-free-hdr{background:var(--off-white);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:8px;}
+.upsell-free-hdr-icon{font-size:18px;}
+.upsell-free-hdr-text{font-size:13px;font-weight:700;color:var(--navy);line-height:1.3;}
+.upsell-free-hdr-sub{font-size:11px;font-weight:400;color:var(--text-light);display:block;margin-top:1px;}
+.upsell-free-body{padding:16px;}
+.upsell-free-body p{font-size:12px;color:var(--text-mid);line-height:1.65;margin-bottom:12px;}
+.upsell-free-btn{display:block;text-align:center;background:var(--off-white);border:1.5px solid var(--border-strong);border-radius:var(--radius-sm);padding:10px;font-size:13px;font-weight:700;font-family:'Sora',sans-serif;color:var(--navy);text-decoration:none;transition:all 0.18s;}
+.upsell-free-btn:hover{background:var(--navy);color:var(--white);border-color:var(--navy);}
+.upsell-paid{background:var(--navy);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-lg);position:relative;}
+.upsell-paid::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 20px,rgba(184,145,58,0.04) 20px,rgba(184,145,58,0.04) 21px);pointer-events:none;}
+.upsell-paid-hdr{padding:20px 18px 0;position:relative;}
+.upsell-paid-eyebrow{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.upsell-paid-eyebrow::before{content:'';width:20px;height:2px;background:var(--gold);display:inline-block;}
+.upsell-paid-hdr h3{font-size:17px;font-weight:800;color:var(--white);line-height:1.25;letter-spacing:-0.3px;}
+.upsell-paid-hdr h3 em{font-style:normal;color:var(--gold);}
+.upsell-gap{padding:16px 18px;position:relative;}
+.upsell-gap-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+.upsell-gap-item:last-child{border-bottom:none;}
+.upsell-gap-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.upsell-gap-text{font-size:12px;color:rgba(255,255,255,0.72);line-height:1.55;}
+.upsell-gap-text strong{color:var(--white);}
+.upsell-price-block{margin:0 18px 18px;background:rgba(0,0,0,0.25);border:1px solid rgba(184,145,58,0.3);border-radius:var(--radius-sm);padding:14px 16px;position:relative;}
+.upsell-price-main{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--gold);line-height:1;}
+.upsell-price-term{font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;}
+.upsell-paid-btn{display:block;margin:0 18px 18px;text-align:center;background:var(--gold);border-radius:var(--radius-sm);padding:13px;font-size:14px;font-weight:700;font-family:'Sora',sans-serif;color:var(--navy);text-decoration:none;transition:all 0.18s;position:relative;letter-spacing:0.2px;}
+.upsell-paid-btn:hover{background:var(--gold-light);}
+.upsell-guarantee{padding:0 18px 16px;font-size:11px;color:rgba(255,255,255,0.35);text-align:center;line-height:1.6;position:relative;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:var(--radius);max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.25);overflow:hidden;animation:modal-in 0.2s ease;}
+@keyframes modal-in{from{opacity:0;transform:scale(0.95) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-hdr{background:var(--navy);padding:20px 24px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.modal-hdr h3{font-size:17px;font-weight:800;color:var(--white);line-height:1.25;}
+.modal-hdr h3 em{font-style:normal;color:var(--gold);}
+.modal-close{background:rgba(255,255,255,0.1);border:none;width:28px;height:28px;border-radius:50%;color:var(--white);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.18s;font-family:'Sora',sans-serif;}
+.modal-close:hover{background:rgba(255,255,255,0.2);}
+.modal-body{padding:24px;}
+.modal-body p{font-size:13px;color:var(--text-mid);line-height:1.7;margin-bottom:14px;}
+.modal-body strong{color:var(--navy);}
+.modal-list{list-style:none;margin:14px 0;}
+.modal-list li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--off-white);font-size:12px;color:var(--text-mid);line-height:1.55;}
+.modal-list li:last-child{border-bottom:none;}
+.modal-list li::before{content:'✓';color:var(--green);font-weight:700;font-size:13px;flex-shrink:0;margin-top:1px;}
+.modal-actions{display:flex;flex-direction:column;gap:8px;margin-top:20px;}
+.modal-btn-primary{display:block;text-align:center;background:var(--gold);border-radius:var(--radius-sm);padding:13px;font-size:14px;font-weight:700;font-family:'Sora',sans-serif;color:var(--navy);text-decoration:none;transition:background 0.18s;}
+.modal-btn-primary:hover{background:var(--gold-light);}
+.modal-btn-secondary{display:block;text-align:center;background:var(--off-white);border:1.5px solid var(--border-strong);border-radius:var(--radius-sm);padding:11px;font-size:13px;font-weight:600;font-family:'Sora',sans-serif;color:var(--text-mid);text-decoration:none;transition:all 0.18s;}
+.modal-btn-secondary:hover{background:var(--border);}
+
+/* PRINT */
+@media print{
+  .app-header,.page-hero .unit-toggle,.upsell-sidebar,.tab-nav,.print-btn{display:none!important;}
+  .page-body{grid-template-columns:1fr!important;padding:0!important;}
+  .calc-card{box-shadow:none!important;border:none!important;}
+  body{background:white!important;}
+  .tab-panel{display:block!important;}
+  #panel-materials,#panel-labour,#panel-extras{display:none!important;}
+  #panel-summary{display:block!important;}
+}
+@media(max-width:560px){
+  .page-hero-inner{flex-direction:column;align-items:flex-start;}
+  .app-header{padding:0 16px;}
+  .tab-btn{font-size:11px;padding:11px 4px;}
+  .tab-btn .tab-icon{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="rateModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3>What hourly rate<br>should you <em>actually</em> enter?</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>The number you enter here directly affects your job total. <strong>Enter your break-even hourly rate</strong> — the minimum your business needs to earn per hour to cover all costs and pay you properly.</p>
+      <p>Most painters use a guess or copy what someone else charges. Neither of those is your number.</p>
+      <p>Your real break-even rate is built from:</p>
+      <ul class="modal-list">
+        <li>What you actually need to take home each year</li>
+        <li>Your real business running costs — fuel, insurance, tools, accountant, phone</li>
+        <li>How many chargeable hours you actually work</li>
+        <li>Your tax rate and retirement savings</li>
+      </ul>
+      <p>Your profit markup is then added separately in the Summary tab — on top of both labour and materials — to give you your final quote price.</p>
+      <div class="modal-actions">
+        <a href="https://app.tractionstream.com/fyrhr-access/" class="modal-btn-primary" target="_blank">Get a free starting point — HRFree Calculator</a>
+        <a href="https://app.tractionstream.com/painter-hourly-rate-pro" class="modal-btn-secondary" target="_blank">Find Your Real Hourly Rate — $49 USD (full calculator)</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="app-header">
+  <a href="https://tractionstream.com" class="brand" target="_blank">
+    <div class="brand-mark">TS</div>
+    <div>
+      <span class="brand-text">Traction Stream</span>
+      <span class="brand-sub">The Business Side of the Trade</span>
+    </div>
+  </a>
+  <a href="https://app.tractionstream.com/fyrhr-access/" class="header-free-btn" target="_blank">⚡ Free Hourly Rate Calculator</a>
+</header>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div>
+      <h1>Interior Walls<br><span>Job Cost Estimator</span></h1>
+      <p>Calculates your labour, materials, time allowances, and additional costs for painting walls. Enter your figures — everything updates automatically.</p>
+      <p style="font-size:12px;color:var(--text-light);margin-top:6px;">🌍 Works in any country — metric or imperial, any currency. UK, USA, Canada, Ireland, Australia, New Zealand.</p>
+    </div>
+    <div class="unit-toggle" id="unitToggle">
+      <button class="unit-btn active" onclick="setUnit('m2')" id="btnM2">m² (metric)</button>
+      <button class="unit-btn" onclick="setUnit('ft2')" id="btnFt2">ft² (imperial)</button>
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+  <div class="calc-left">
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showTab('materials')" id="tab-materials"><span class="tab-icon">🎨</span> Materials</button>
+      <button class="tab-btn" onclick="showTab('labour')" id="tab-labour"><span class="tab-icon">🔨</span> Labour</button>
+      <button class="tab-btn" onclick="showTab('extras')" id="tab-extras"><span class="tab-icon">➕</span> Extras</button>
+      <button class="tab-btn" onclick="showTab('summary')" id="tab-summary"><span class="tab-icon">📊</span> Summary</button>
+    </div>
+    <div class="calc-card">
+
+      <!-- ══ MATERIALS ══ -->
+      <div class="tab-panel active" id="panel-materials">
+        <div class="sec">
+          <div class="sec-hdr">
+            <div class="sec-hdr-icon">📐</div>
+            <span class="sec-hdr-text">Wall Area</span>
+            <span class="sec-hdr-sub" id="unitLabel">Enter area in m²</span>
+          </div>
+          <div class="field">
+            <label class="field-label">Total paintable wall area
+              <div class="tooltip-wrap"><button class="tooltip-btn" data-tip="Measure wall height × perimeter. Subtract doors (~1.8m² / 19ft²) and windows (~1.2m² / 13ft²) each. Typical room: height × (2×length + 2×width) minus openings.">?</button><div class="tooltip-box"></div></div>
+            </label>
+            <div class="inp-wrap has-suffix">
+              <input class="inp" type="number" id="wallArea" placeholder="0" min="0" step="0.5" oninput="calc()">
+              <span class="inp-suffix" id="areaSuffix">m²</span>
+            </div>
+            <span class="field-hint">Measure from skirting to ceiling. Subtract doors and windows.</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <!-- PAINT 1 -->
+        <div class="sec">
+          <div class="paint-card">
+            <div class="paint-card-hdr">
+              <div class="paint-card-num">1</div>
+              <div><div class="paint-card-title">Sealer / Primer</div><div class="paint-card-sub">First coat — skip if surface is already sealed</div></div>
+            </div>
+            <div class="two-col">
+              <div class="field">
+                <label class="field-label">Product description</label>
+                <input class="inp" type="text" id="p1desc" placeholder="e.g. Dulux Trade Undercoat" oninput="calc()" style="font-family:'Sora',sans-serif;font-size:13px;font-weight:500;">
+              </div>
+              <div class="field">
+                <label class="field-label">Price per litre / gallon</label>
+                <div class="inp-wrap"><input class="inp" type="number" id="p1price" placeholder="0.00" min="0" step="0.01" oninput="calc()"></div>
+              </div>
+              <div class="field">
+                <label class="field-label">Coverage
+                  <div class="tooltip-wrap"><button class="tooltip-btn" data-tip="Check the tin. Typical primer: 10–12 m²/L or 400–500 ft²/gal. Finish emulsion: 12–14 m²/L or 480–560 ft²/gal. Gloss: 14–17 m²/L or 560–680 ft²/gal. Use the lower end for rough or porous surfaces.">?</button><div class="tooltip-box"></div></div>
+                </label>
+                <div style="display:flex;gap:6px;align-items:center;">
+                  <div class="inp-wrap has-suffix" style="flex:1;">
+                    <input class="inp" type="number" id="p1cov" placeholder="0.0" min="0" step="0.5" oninput="calc()">
+                    <span class="inp-suffix" id="covSuffix1">m²/L</span>
+                  </div>
+                  <div class="mini-toggle" id="covToggle1">
+                    <button class="mini-btn active" onclick="setCovUnit(1,'metric')">m²/L</button>
+                    <button class="mini-btn" onclick="setCovUnit(1,'imperial')">ft²/gal</button>
+                  </div>
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label">Number of coats</label>
+                <select class="inp" id="p1coats" onchange="calc()">
+                  <option value="1" selected>1 coat</option>
+                  <option value="2">2 coats</option>
+                  <option value="3">3 coats</option>
+                </select>
+              </div>
+            </div>
+            <div class="two-col" style="margin-top:12px;">
+              <div class="result-field"><span class="result-label" id="p1vol-label">Litres needed</span><span class="result-value" id="p1litres">—</span></div>
+              <div class="result-field"><span class="result-label">Paint cost</span><span class="result-value" id="p1cost">—</span></div>
+            </div>
+          </div>
+
+          <!-- PAINT 2 -->
+          <div class="paint-card">
+            <div class="paint-card-hdr">
+              <div class="paint-card-num">2</div>
+              <div><div class="paint-card-title">Finish Coat</div><div class="paint-card-sub">Emulsion, eggshell, satinwood, or gloss</div></div>
+            </div>
+            <div class="two-col">
+              <div class="field">
+                <label class="field-label">Product description</label>
+                <input class="inp" type="text" id="p2desc" placeholder="e.g. Dulux Trade Vinyl Matt" oninput="calc()" style="font-family:'Sora',sans-serif;font-size:13px;font-weight:500;">
+              </div>
+              <div class="field">
+                <label class="field-label">Price per litre / gallon</label>
+                <div class="inp-wrap"><input class="inp" type="number" id="p2price" placeholder="0.00" min="0" step="0.01" oninput="calc()"></div>
+              </div>
+              <div class="field">
+                <label class="field-label">Coverage</label>
+                <div style="display:flex;gap:6px;align-items:center;">
+                  <div class="inp-wrap has-suffix" style="flex:1;">
+                    <input class="inp" type="number" id="p2cov" placeholder="0.0" min="0" step="0.5" oninput="calc()">
+                    <span class="inp-suffix" id="covSuffix2">m²/L</span>
+                  </div>
+                  <div class="mini-toggle" id="covToggle2">
+                    <button class="mini-btn active" onclick="setCovUnit(2,'metric')">m²/L</button>
+                    <button class="mini-btn" onclick="setCovUnit(2,'imperial')">ft²/gal</button>
+                  </div>
+                </div>
+              </div>
+              <div class="field">
+                <label class="field-label">Number of coats</label>
+                <select class="inp" id="p2coats" onchange="calc()">
+                  <option value="1">1 coat</option>
+                  <option value="2" selected>2 coats</option>
+                  <option value="3">3 coats</option>
+                </select>
+              </div>
+            </div>
+            <div class="two-col" style="margin-top:12px;">
+              <div class="result-field"><span class="result-label" id="p2vol-label">Litres needed</span><span class="result-value" id="p2litres">—</span></div>
+              <div class="result-field"><span class="result-label">Paint cost</span><span class="result-value" id="p2cost">—</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- JOB SUNDRIES -->
+        <div class="sec">
+          <div class="sec-hdr">
+            <div class="sec-hdr-icon">🧴</div>
+            <span class="sec-hdr-text">Job Sundries</span>
+            <div class="tooltip-wrap" style="margin-left:6px;"><button class="tooltip-btn" data-tip="Routine items used on every job regardless of paint quantity — tape, sheeting, rollers, filler for minor touch-ups. Job-specific extras like heavy patching go in the Extras tab.">?</button><div class="tooltip-box"></div></div>
+          </div>
+          <div class="notes-box" style="margin-bottom:14px;font-size:11px;">
+            Items you use on every job as a matter of course. Edit descriptions and enter your cost. Leave rows blank if they don't apply. Job-specific extras go in the <a href="#" onclick="showTab('extras');return false;">Extras tab →</a>
+          </div>
+          <table class="extras-table">
+            <thead><tr><th style="width:60%">Item</th><th class="r" style="width:40%">Cost</th></tr></thead>
+            <tbody id="sundriesRows">
+              <tr><td><input class="extras-inp" type="text" value="Masking tape" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td></tr>
+              <tr><td><input class="extras-inp" type="text" value="Plastic sheeting / dust sheets" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td></tr>
+              <tr><td><input class="extras-inp" type="text" value="Roller sleeves and trays" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td></tr>
+              <tr><td><input class="extras-inp" type="text" value="Sandpaper and prep materials" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td></tr>
+              <tr><td><input class="extras-inp" type="text" value="Filler — routine touch-ups" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td></tr>
+              <tr><td><input class="extras-inp" type="text" value="Sugar soap / cleaning solution" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td></tr>
+              <tr><td><input class="extras-inp" type="text" placeholder="Other sundry item" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td></tr>
+              <tr><td><input class="extras-inp" type="text" placeholder="Other sundry item" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td></tr>
+            </tbody>
+          </table>
+          <div class="result-field" style="margin-top:12px;">
+            <span class="result-label">Job sundries total</span>
+            <span class="result-value" id="sundriesTotal">—</span>
+          </div>
+        </div>
+
+        <div class="result-field grand">
+          <span class="result-label">Total Materials Cost (paint + sundries)</span>
+          <span class="result-value" id="matTotal">—</span>
+        </div>
+
+        <div class="notes-box" style="margin-top:16px;">
+          <strong>Job-specific extras?</strong> Bonding agents, extra filler for patching, specialist primer — add these in the <a href="#" onclick="showTab('extras');return false;">Extras tab →</a>
+        </div>
+      </div>
+
+      <!-- ══ LABOUR ══ -->
+      <div class="tab-panel" id="panel-labour">
+        <div class="sec">
+          <div class="sec-hdr">
+            <div class="sec-hdr-icon">⏱️</div>
+            <span class="sec-hdr-text">Your Break-Even Hourly Rate</span>
+          </div>
+          <div class="field">
+            <label class="field-label">Your break-even hourly rate
+              <div class="tooltip-wrap"><button class="tooltip-btn" onclick="openModal()">?</button><div class="tooltip-box">Enter your break-even rate — the minimum your business needs to charge per hour to cover all costs and pay you properly. Your markup is added in the Summary tab.</div></div>
+            </label>
+            <div class="inp-wrap"><input class="inp" type="number" id="hourlyRate" placeholder="0.00" min="0" step="0.50" oninput="calc()"></div>
+            <div class="chargeout-notice">
+              <strong>Enter your break-even hourly rate</strong> — what your business needs to earn per hour to cover costs and pay you, before profit. Your profit markup is applied in the Summary tab to give you the final quote price.
+            </div>
+            <div class="rate-prompt">
+              <span class="rate-prompt-icon">💡</span>
+              <span class="rate-prompt-text">Not sure what your break-even rate is? <a href="#" onclick="openModal();return false;">Find out →</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <!-- PRODUCTION RATE -->
+        <div class="sec">
+          <div class="sec-hdr">
+            <div class="sec-hdr-icon">🏎️</div>
+            <span class="sec-hdr-text">Painting Production Rate</span>
+            <div class="tooltip-wrap" style="margin-left:6px;"><button class="tooltip-btn" data-tip="This is brush and roller time only — the time spent actually applying paint. Setup, masking, clean-down, and travel are added separately below.">?</button><div class="tooltip-box"></div></div>
+          </div>
+          <div class="notes-box" style="margin-bottom:14px;font-size:11px;">
+            ⚠️ This rate covers <strong>painting time only</strong> — cutting in and rolling. It does not include setup, masking, cleaning brushes, packing up, or travel. Add those below.
+          </div>
+          <div class="two-col">
+            <div class="field">
+              <label class="field-label">Production rate <span class="preset-badge">PRESET</span></label>
+              <div style="display:flex;gap:6px;align-items:center;">
+                <div class="inp-wrap has-suffix" style="flex:1;">
+                  <input class="inp" type="number" id="hrsPerUnit" step="0.001" oninput="calc()">
+                  <span class="inp-suffix" id="hrsSuffix">hrs/m²</span>
+                </div>
+                <div class="mini-toggle" id="prodToggle">
+                  <button class="mini-btn active" onclick="setProdUnit('metric')">m²</button>
+                  <button class="mini-btn" onclick="setProdUnit('imperial')">ft²</button>
+                </div>
+              </div>
+              <span class="field-hint">Adjust from your own site experience</span>
+            </div>
+            <div class="field">
+              <label class="field-label">Wall area (from Materials)</label>
+              <div class="result-field" style="height:36px;">
+                <span class="result-label">Area entered</span>
+                <span class="result-value" id="labourAreaDisplay">—</span>
+              </div>
+            </div>
+          </div>
+          <div class="two-col" style="margin-top:12px;">
+            <div class="result-field"><span class="result-label">Painting hours</span><span class="result-value" id="labourHours">—</span></div>
+            <div class="result-field"><span class="result-label">Painting labour cost</span><span class="result-value" id="labourCost">—</span></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <!-- TIME ALLOWANCES -->
+        <div class="sec">
+          <div class="sec-hdr">
+            <div class="sec-hdr-icon">📋</div>
+            <span class="sec-hdr-text">Time Allowances</span>
+            <span class="sec-hdr-sub">Setup, masking, clean-down, travel</span>
+          </div>
+          <div class="notes-box" style="margin-bottom:14px;font-size:11px;">
+            Enter the hours you expect to spend on each task. Cost is calculated automatically at your break-even rate. Adjust or zero out any row that doesn't apply.
+          </div>
+          <table class="extras-table">
+            <thead><tr><th style="width:40%">Task</th><th class="r" style="width:20%">Hours</th><th class="r" style="width:40%">Cost at your rate</th></tr></thead>
+            <tbody id="timeAllowances">
+              <tr>
+                <td><input class="extras-inp" type="text" value="Setup and laying out dust sheets" oninput="calc()"></td>
+                <td style="text-align:right;"><input class="extras-inp sm" type="number" value="0.5" min="0" step="0.25" oninput="calc()"></td>
+                <td class="extras-calc" id="ta-cost-0">—</td>
+              </tr>
+              <tr>
+                <td><input class="extras-inp" type="text" value="Masking and protection" oninput="calc()"></td>
+                <td style="text-align:right;"><input class="extras-inp sm" type="number" value="0.5" min="0" step="0.25" oninput="calc()"></td>
+                <td class="extras-calc" id="ta-cost-1">—</td>
+              </tr>
+              <tr>
+                <td><input class="extras-inp" type="text" value="Cleaning brushes and tools" oninput="calc()"></td>
+                <td style="text-align:right;"><input class="extras-inp sm" type="number" value="0.25" min="0" step="0.25" oninput="calc()"></td>
+                <td class="extras-calc" id="ta-cost-2">—</td>
+              </tr>
+              <tr>
+                <td><input class="extras-inp" type="text" value="Packing up and site clean" oninput="calc()"></td>
+                <td style="text-align:right;"><input class="extras-inp sm" type="number" value="0.25" min="0" step="0.25" oninput="calc()"></td>
+                <td class="extras-calc" id="ta-cost-3">—</td>
+              </tr>
+              <tr>
+                <td><input class="extras-inp" type="text" value="Travel (to and from site)" oninput="calc()"></td>
+                <td style="text-align:right;"><input class="extras-inp sm" type="number" value="0" min="0" step="0.25" oninput="calc()"></td>
+                <td class="extras-calc" id="ta-cost-4">—</td>
+              </tr>
+              <tr>
+                <td><input class="extras-inp" type="text" placeholder="Other (add your own)" oninput="calc()"></td>
+                <td style="text-align:right;"><input class="extras-inp sm" type="number" value="0" min="0" step="0.25" oninput="calc()"></td>
+                <td class="extras-calc" id="ta-cost-5">—</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="result-field grand" style="margin-top:14px;">
+            <span class="result-label">Total time allowances cost</span>
+            <span class="result-value" id="timeAllowTotal">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ EXTRAS ══ -->
+      <div class="tab-panel" id="panel-extras">
+        <div class="sec">
+          <div class="sec-hdr">
+            <div class="sec-hdr-icon">🔧</div>
+            <span class="sec-hdr-text">Labour Extras</span>
+            <span class="sec-hdr-sub">Job-specific time — hours × your rate</span>
+          </div>
+          <div class="notes-box" style="margin-bottom:14px;font-size:11px;">
+            Enter the hours for any job-specific work not covered in the main Labour tab. Cost is calculated automatically at your break-even rate.
+          </div>
+          <table class="extras-table">
+            <thead><tr><th style="width:45%">Description</th><th class="r" style="width:20%">Hours</th><th class="r" style="width:35%">Cost</th></tr></thead>
+            <tbody id="labourExtras">
+              <tr><td><input class="extras-inp" type="text" placeholder="e.g. Extra patching and filling" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp sm" type="number" placeholder="0" min="0" step="0.25" oninput="calc()"></td><td class="extras-calc" id="le-cost-0">—</td></tr>
+              <tr><td><input class="extras-inp" type="text" placeholder="e.g. Remove door fittings" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp sm" type="number" placeholder="0" min="0" step="0.25" oninput="calc()"></td><td class="extras-calc" id="le-cost-1">—</td></tr>
+              <tr><td><input class="extras-inp" type="text" placeholder="e.g. Access — ladder or scaffold" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp sm" type="number" placeholder="0" min="0" step="0.25" oninput="calc()"></td><td class="extras-calc" id="le-cost-2">—</td></tr>
+              <tr><td><input class="extras-inp" type="text" placeholder="e.g. Second visit / touch-ups" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp sm" type="number" placeholder="0" min="0" step="0.25" oninput="calc()"></td><td class="extras-calc" id="le-cost-3">—</td></tr>
+            </tbody>
+          </table>
+          <div class="result-field" style="margin-top:12px;">
+            <span class="result-label">Labour extras total</span>
+            <span class="result-value" id="labourExtrasTotal">—</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+
+        <div class="sec">
+          <div class="sec-hdr">
+            <div class="sec-hdr-icon">🧴</div>
+            <span class="sec-hdr-text">Material and Hire Extras</span>
+            <span class="sec-hdr-sub">Qty × unit cost — materials and hired equipment</span>
+          </div>
+          <div class="notes-box" style="margin-bottom:14px;font-size:11px;">
+            Enter quantity and unit cost. e.g. 2 bags of filler at 10.00 per bag = 20.00. Cost calculates automatically.
+          </div>
+          <table class="extras-table">
+            <thead><tr><th style="width:38%">Description</th><th class="r" style="width:14%">Qty</th><th class="r" style="width:18%">Unit cost</th><th class="r" style="width:30%">Total</th></tr></thead>
+            <tbody id="materialExtras">
+              <tr><td><input class="extras-inp" type="text" placeholder="e.g. Bags of filler" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp sm" type="number" placeholder="0" min="0" step="1" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td><td class="extras-calc" id="me-cost-0">—</td></tr>
+              <tr><td><input class="extras-inp" type="text" placeholder="e.g. PVA / bonding agent" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp sm" type="number" placeholder="0" min="0" step="1" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td><td class="extras-calc" id="me-cost-1">—</td></tr>
+              <tr><td><input class="extras-inp" type="text" placeholder="e.g. Specialist primer" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp sm" type="number" placeholder="0" min="0" step="1" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td><td class="extras-calc" id="me-cost-2">—</td></tr>
+              <tr><td><input class="extras-inp" type="text" placeholder="e.g. Hire equipment" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp sm" type="number" placeholder="0" min="0" step="1" oninput="calc()"></td><td style="text-align:right;"><input class="extras-inp md" type="number" placeholder="0.00" min="0" step="0.01" oninput="calc()"></td><td class="extras-calc" id="me-cost-3">—</td></tr>
+            </tbody>
+          </table>
+          <div class="result-field" style="margin-top:12px;">
+            <span class="result-label">Material and hire extras total</span>
+            <span class="result-value" id="materialExtrasTotal">—</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="result-field grand">
+          <span class="result-label">Total Extras</span>
+          <span class="result-value" id="extrasTotal">—</span>
+        </div>
+      </div>
+
+      <!-- ══ SUMMARY ══ -->
+      <div class="tab-panel" id="panel-summary">
+        <div class="sec-hdr" style="margin-bottom:20px;">
+          <div class="sec-hdr-icon">📊</div>
+          <span class="sec-hdr-text">Job Cost Summary</span>
+        </div>
+        <table class="summary-table">
+          <tbody>
+            <!-- MATERIALS -->
+            <tr class="summary-section-hdr"><td colspan="2">Materials</td></tr>
+            <tr><td>Paint 1 — <span id="sum-p1desc">Sealer / Primer</span></td><td class="val" id="sum-p1cost">—</td></tr>
+            <tr><td class="sub" id="sum-p1detail">—</td><td></td></tr>
+            <tr><td>Paint 2 — <span id="sum-p2desc">Finish Coat</span></td><td class="val" id="sum-p2cost">—</td></tr>
+            <tr><td class="sub" id="sum-p2detail">—</td><td></td></tr>
+            <tr><td>Job sundries</td><td class="val" id="sum-sundries">—</td></tr>
+            <tr class="summary-subtotal"><td>Materials subtotal</td><td class="val" id="sum-matsub">—</td></tr>
+
+            <!-- LABOUR -->
+            <tr class="summary-section-hdr"><td colspan="2">Labour</td></tr>
+            <tr><td>Painting — <span id="sum-hours">—</span> hrs @ <span id="sum-rate">—</span>/hr</td><td class="val" id="sum-labcost">—</td></tr>
+            <tbody id="sum-ta-wrap"></tbody>
+            <tr class="summary-subtotal"><td>Labour subtotal</td><td class="val" id="sum-labsub">—</td></tr>
+
+            <!-- EXTRAS -->
+            <tr class="summary-section-hdr"><td colspan="2">Extras</td></tr>
+            <tbody id="sum-le-wrap"></tbody>
+            <tbody id="sum-me-wrap"></tbody>
+            <tr class="summary-subtotal"><td>Extras subtotal</td><td class="val" id="sum-extrasub">—</td></tr>
+          </tbody>
+        </table>
+
+        <div class="summary-total">
+          <div>
+            <span class="summary-total-label">Job Cost Total</span><br>
+            <small style="font-weight:400;font-size:11px;color:rgba(255,255,255,0.5);">Your break-even cost — for your eyes only.</small><br>
+            <small style="font-weight:600;font-size:11px;color:var(--gold);">↓ Enter your markups below to see your quote price.</small>
+          </div>
+          <span class="summary-total-value" id="grandTotal">—</span>
+        </div>
+
+        <!-- MARKUP SECTION -->
+        <div style="margin-top:20px;background:var(--off-white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;">
+          <div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--border);">Your Markup — What to Charge the Client</div>
+          <div style="font-size:11px;color:var(--text-light);margin-bottom:14px;">Enter your markup percentage for labour and materials. The quote total updates automatically.</div>
+          <div class="two-col" style="gap:12px;margin-bottom:14px;">
+            <div class="field">
+              <label class="field-label">Labour markup %</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="inp-wrap has-suffix" style="width:80px;flex-shrink:0;">
+                  <input class="inp" type="number" id="labourMarkup" value="20" min="0" max="100" step="1" oninput="updateMarkup()">
+                  <span class="inp-suffix">%</span>
+                </div>
+                <div class="result-field" style="flex:1;min-width:0;">
+                  <span class="result-label">Labour charge</span>
+                  <span class="result-value" id="labourCharge">—</span>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Materials markup %</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="inp-wrap has-suffix" style="width:80px;flex-shrink:0;">
+                  <input class="inp" type="number" id="matMarkup" value="15" min="0" max="100" step="1" oninput="updateMarkup()">
+                  <span class="inp-suffix">%</span>
+                </div>
+                <div class="result-field" style="flex:1;min-width:0;">
+                  <span class="result-label">Materials charge</span>
+                  <span class="result-value" id="matCharge">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="background:var(--navy);border-radius:var(--radius-sm);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.75);">Quote Total (ex. tax)<br><small style="font-weight:400;font-size:11px;opacity:0.6;">What to charge the client before tax</small></span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:var(--gold);" id="quoteTotal">—</span>
+          </div>
+
+          <!-- TAX FIELD -->
+          <div style="margin-top:12px;">
+            <div class="field">
+              <label class="field-label">Sales tax / VAT / GST rate (% — optional)</label>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div class="inp-wrap has-suffix" style="width:80px;flex-shrink:0;">
+                  <input class="inp" type="number" id="taxPct" value="0" min="0" max="30" step="0.5" oninput="updateMarkup()">
+                  <span class="inp-suffix">%</span>
+                </div>
+                <div class="result-field" id="taxRow" style="flex:1;min-width:0;display:none;">
+                  <span class="result-label">Tax amount (<span id="taxPctDisplay">0</span>)</span>
+                  <span class="result-value" id="taxAmtDisplay">—</span>
+                </div>
+              </div>
+              <span class="field-hint">Enter 0 if not registered. UK VAT 20% · Ireland 23% · Australia GST 10% · Canada HST varies · US varies by state.</span>
+            </div>
+          </div>
+
+          <!-- GRAND TOTAL WITH TAX -->
+          <div id="grandWithTaxRow" style="display:none;background:#1a5e20;border-radius:var(--radius-sm);padding:16px 20px;justify-content:space-between;align-items:center;margin-top:10px;">
+            <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.85);">Grand Total (inc. tax)<br><small style="font-weight:400;font-size:11px;opacity:0.7;">What to present to the customer</small></span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:#fff;" id="grandWithTax">—</span>
+          </div>
+        </div>
+
+        <div id="taxNotice" style="background:var(--gold-pale);border:1px solid rgba(184,145,58,0.3);border-left:3px solid var(--gold);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px 14px;margin-top:12px;">
+          <span style="font-size:13px;font-weight:700;color:var(--navy);">⚠️ This quote total does not include VAT, GST, or sales tax.</span>
+          <span style="font-size:12px;color:var(--text-mid);display:block;margin-top:4px;">If you are registered for tax in your country, add it on top before presenting the price to the customer.</span>
+          <span style="font-size:12px;color:var(--text-mid);display:block;margin-top:4px;">Your break-even hourly rate comes from the <a href="https://app.tractionstream.com/fyrhr-access/" target="_blank" style="color:var(--gold);font-weight:700;">free hourly rate calculator</a> or <a href="https://app.tractionstream.com/painter-hourly-rate-pro" target="_blank" style="color:var(--gold);font-weight:700;">Find Your Real Hourly Rate →</a></span>
+        </div>
+
+        <button class="print-btn" onclick="window.print()">🖨️ Print this summary</button>
+      </div>
+
+    </div><!-- /calc-card -->
+  </div><!-- /calc-left -->
+
+  <!-- UPSELL SIDEBAR -->
+  <div class="upsell-sidebar">
+    <div class="upsell-free">
+      <div class="upsell-free-hdr">
+        <span class="upsell-free-hdr-icon">⚡</span>
+        <div>
+          <div class="upsell-free-hdr-text">Not sure what hourly rate to enter?</div>
+          <span class="upsell-free-hdr-sub">Get a starting point — free</span>
+        </div>
+      </div>
+      <div class="upsell-free-body">
+        <p>The rate you enter directly affects your job total. A rough figure is better than nothing — the free calculator gives you one in under 5 minutes.</p>
+        <a href="https://app.tractionstream.com/fyrhr-access/" class="upsell-free-btn" target="_blank">Get Free Hourly Rate Calculator →</a>
+      </div>
+    </div>
+
+    <div class="upsell-paid">
+      <div class="upsell-paid-hdr">
+        <div class="upsell-paid-eyebrow">Find Your Real Hourly Rate</div>
+        <h3>A rough figure<br>isn't your <em>real</em> number.</h3>
+      </div>
+      <div class="upsell-gap">
+        <div class="upsell-gap-item">
+          <span class="upsell-gap-icon">⚠️</span>
+          <span class="upsell-gap-text"><strong>A guess doesn't account for your actual costs.</strong> Fuel, insurance, tools, accountant, tax — if those aren't in the number, this job price is wrong.</span>
+        </div>
+        <div class="upsell-gap-item">
+          <span class="upsell-gap-icon">📉</span>
+          <span class="upsell-gap-text"><strong>A $5 or £5 per hour shortfall costs you ~$9,750 or ~£9,750 a year.</strong> Most painters don't notice until the money just never adds up — whatever currency you work in.</span>
+        </div>
+        <div class="upsell-gap-item">
+          <span class="upsell-gap-icon">✅</span>
+          <span class="upsell-gap-text"><strong>One hour. Your real figures. Your actual number.</strong> Built from what your business genuinely costs to run.</span>
+        </div>
+      </div>
+      <div class="upsell-price-block">
+        <div class="upsell-price-main">$49 USD</div>
+        <div class="upsell-price-term">one-time · lifetime access · no subscription</div>
+      </div>
+      <a href="https://app.tractionstream.com/painter-hourly-rate-pro" class="upsell-paid-btn" target="_blank">Yes — Find My Real Hourly Rate</a>
+      <div class="upsell-guarantee">
+        🌍 Works in any country — UK, USA, Canada, Ireland, Australia, NZ. Any currency. Metric or imperial.<br><br>
+        🛡️ 30-day money-back guarantee. No questions asked.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-body -->
+
+<script>
+var unit='m2', cov1Unit='metric', cov2Unit='metric', prodUnit='metric';
+var HRS_PER_M2=0.25, HRS_PER_FT2=0.023;
+// 1 m²/L = 40.7464 ft²/gal  (1 US gal = 3.78541 L)
+var COV_CONV=40.7464;
+
+// TOOLTIPS
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.tooltip-btn').forEach(function(btn){
+    var box=btn.nextElementSibling;
+    if(!box||!box.classList.contains('tooltip-box'))return;
+    var tip=btn.getAttribute('data-tip');
+    if(tip)box.textContent=tip;
+    btn.addEventListener('mouseenter',function(){
+      var r=btn.getBoundingClientRect();
+      box.style.display='block';
+      var left=Math.min(r.left,window.innerWidth-240);
+      box.style.left=left+'px';
+      box.style.top=(r.top+window.scrollY-10)+'px';
+      requestAnimationFrame(function(){
+        box.style.top=(r.top+window.scrollY-box.offsetHeight-10)+'px';
+      });
+    });
+    btn.addEventListener('mouseleave',function(){box.style.display='none';});
+  });
+  document.getElementById('hrsPerUnit').value=HRS_PER_M2;
+  calc();
+});
+
+// COVERAGE UNIT
+function setCovUnit(n,utype){
+  var isM=(utype==='metric');
+  var covEl=document.getElementById('p'+n+'cov');
+  var sufEl=document.getElementById('covSuffix'+n);
+  var tog=document.getElementById('covToggle'+n);
+  var volLbl=document.getElementById('p'+n+'vol-label');
+  var cur=parseFloat(covEl.value)||0;
+  var curU=(n===1)?cov1Unit:cov2Unit;
+  if(cur>0){
+    if(!isM&&curU==='metric') covEl.value=(cur*COV_CONV).toFixed(0);
+    else if(isM&&curU==='imperial') covEl.value=(cur/COV_CONV).toFixed(1);
+  }
+  if(n===1)cov1Unit=utype; else cov2Unit=utype;
+  sufEl.textContent=isM?'m²/L':'ft²/gal';
+  if(volLbl)volLbl.textContent=isM?'Litres needed':'Gallons needed';
+  tog.querySelectorAll('.mini-btn').forEach(function(b,i){b.classList.toggle('active',(i===0&&isM)||(i===1&&!isM));});
+  calc();
+}
+
+// PRODUCTION UNIT
+function setProdUnit(utype){
+  var isM=(utype==='metric');
+  var hpuEl=document.getElementById('hrsPerUnit');
+  var sufEl=document.getElementById('hrsSuffix');
+  var tog=document.getElementById('prodToggle');
+  var cur=parseFloat(hpuEl.value)||0;
+  if(cur>0){
+    if(!isM&&prodUnit==='metric') hpuEl.value=(cur/10.7639).toFixed(4);
+    else if(isM&&prodUnit==='imperial') hpuEl.value=(cur*10.7639).toFixed(3);
+  }
+  prodUnit=utype;
+  sufEl.textContent=isM?'hrs/m²':'hrs/ft²';
+  tog.querySelectorAll('.mini-btn').forEach(function(b,i){b.classList.toggle('active',(i===0&&isM)||(i===1&&!isM));});
+  calc();
+}
+
+// MASTER UNIT
+function setUnit(u){
+  unit=u;
+  var isM=(u==='m2');
+  document.getElementById('btnM2').classList.toggle('active',isM);
+  document.getElementById('btnFt2').classList.toggle('active',!isM);
+  var aEl=document.getElementById('wallArea');
+  var cur=parseFloat(aEl.value)||0;
+  if(cur>0) aEl.value=isM?(cur/10.7639).toFixed(1):(cur*10.7639).toFixed(1);
+  var sfx=isM?'m²':'ft²';
+  document.getElementById('areaSuffix').textContent=sfx;
+  document.getElementById('unitLabel').textContent='Enter area in '+sfx;
+  setProdUnit(isM?'metric':'imperial');
+  calc();
+}
+
+// TABS
+function showTab(name){
+  ['materials','labour','extras','summary'].forEach(function(t){
+    document.getElementById('panel-'+t).classList.toggle('active',t===name);
+    document.getElementById('tab-'+t).classList.toggle('active',t===name);
+  });
+  if(name==='summary')updateSummary();
+}
+
+// MODAL
+function openModal(){document.getElementById('rateModal').classList.add('open');}
+function closeModal(){document.getElementById('rateModal').classList.remove('open');}
+document.getElementById('rateModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// FORMAT
+function fmt(n){return(isNaN(n)||n===null)?'—':n.toFixed(2);}
+function fmtH(n){return n>0?n.toFixed(1)+' hrs':'—';}
+function fmtVol(n,isImp){return n>0?(isImp?n.toFixed(2)+' gal':n.toFixed(1)+' L'):'—';}
+
+// MAIN CALC
+function calc(){
+  var area=parseFloat(document.getElementById('wallArea').value)||0;
+  var p1price=parseFloat(document.getElementById('p1price').value)||0;
+  var p1cov=parseFloat(document.getElementById('p1cov').value)||0;
+  var p1coats=parseFloat(document.getElementById('p1coats').value)||1;
+  var p2price=parseFloat(document.getElementById('p2price').value)||0;
+  var p2cov=parseFloat(document.getElementById('p2cov').value)||0;
+  var p2coats=parseFloat(document.getElementById('p2coats').value)||2;
+  var rate=parseFloat(document.getElementById('hourlyRate').value)||0;
+  var hpu=parseFloat(document.getElementById('hrsPerUnit').value)||0;
+
+  var areaM2=(unit==='ft2')?(area/10.7639):area;
+  var p1covM2=(cov1Unit==='imperial')?(p1cov/COV_CONV):p1cov;
+  var p2covM2=(cov2Unit==='imperial')?(p2cov/COV_CONV):p2cov;
+  var hpuM2=(prodUnit==='imperial')?(hpu*10.7639):hpu;
+
+  // Paint 1
+  var p1L=(areaM2>0&&p1covM2>0)?(areaM2/p1covM2*p1coats):0;
+  var p1Disp=(cov1Unit==='imperial')?(p1L/3.78541):p1L;
+  var p1cost=p1L*p1price;
+  document.getElementById('p1litres').textContent=fmtVol(p1Disp,cov1Unit==='imperial');
+  document.getElementById('p1cost').textContent=p1cost>0?fmt(p1cost):'—';
+
+  // Paint 2
+  var p2L=(areaM2>0&&p2covM2>0)?(areaM2/p2covM2*p2coats):0;
+  var p2Disp=(cov2Unit==='imperial')?(p2L/3.78541):p2L;
+  var p2cost=p2L*p2price;
+  document.getElementById('p2litres').textContent=fmtVol(p2Disp,cov2Unit==='imperial');
+  document.getElementById('p2cost').textContent=p2cost>0?fmt(p2cost):'—';
+
+  // Sundries
+  var sundriesTotal=0;
+  document.getElementById('sundriesRows').querySelectorAll('tr').forEach(function(row){
+    sundriesTotal+=parseFloat(row.querySelectorAll('input')[1].value)||0;
+  });
+  document.getElementById('sundriesTotal').textContent=sundriesTotal>0?fmt(sundriesTotal):'—';
+
+  var matTotal=p1cost+p2cost+sundriesTotal;
+  document.getElementById('matTotal').textContent=matTotal>0?fmt(matTotal):'—';
+
+  // Labour — painting
+  var labHrs=(areaM2>0&&hpuM2>0)?(areaM2*hpuM2):0;
+  var labCost=labHrs*rate;
+  document.getElementById('labourAreaDisplay').textContent=area>0?(area.toFixed(1)+(unit==='m2'?' m²':' ft²')):'—';
+  document.getElementById('labourHours').textContent=fmtH(labHrs);
+  document.getElementById('labourCost').textContent=labCost>0?fmt(labCost):'—';
+
+  // Time allowances
+  var taRows=document.getElementById('timeAllowances').querySelectorAll('tr');
+  var taTotal=0;
+  taRows.forEach(function(row,i){
+    var hrs=parseFloat(row.querySelectorAll('input')[1].value)||0;
+    var cost=hrs*rate;
+    taTotal+=cost;
+    var el=document.getElementById('ta-cost-'+i);
+    if(el)el.textContent=cost>0?fmt(cost):'—';
+  });
+  document.getElementById('timeAllowTotal').textContent=taTotal>0?fmt(taTotal):'—';
+
+  // Labour extras (hours × rate)
+  var leRows=document.getElementById('labourExtras').querySelectorAll('tr');
+  var leTotal=0;
+  leRows.forEach(function(row,i){
+    var hrs=parseFloat(row.querySelectorAll('input')[1].value)||0;
+    var cost=hrs*rate;
+    leTotal+=cost;
+    var el=document.getElementById('le-cost-'+i);
+    if(el)el.textContent=cost>0?fmt(cost):'—';
+  });
+  document.getElementById('labourExtrasTotal').textContent=leTotal>0?fmt(leTotal):'—';
+
+  // Material extras (qty × unit cost)
+  var meRows=document.getElementById('materialExtras').querySelectorAll('tr');
+  var meTotal=0;
+  meRows.forEach(function(row,i){
+    var qty=parseFloat(row.querySelectorAll('input')[1].value)||0;
+    var ucost=parseFloat(row.querySelectorAll('input')[2].value)||0;
+    var cost=qty*ucost;
+    meTotal+=cost;
+    var el=document.getElementById('me-cost-'+i);
+    if(el)el.textContent=cost>0?fmt(cost):'—';
+  });
+  document.getElementById('materialExtrasTotal').textContent=meTotal>0?fmt(meTotal):'—';
+  document.getElementById('extrasTotal').textContent=(leTotal+meTotal)>0?fmt(leTotal+meTotal):'—';
+
+  window._calc={
+    area,areaM2,p1L,p1Disp,p1cost,p1coats,
+    p2L,p2Disp,p2cost,p2coats,
+    sundriesTotal,matTotal,
+    labHrs,labCost,rate,taTotal,leTotal,meTotal
+  };
+  updateSummary();
+}
+
+// SUMMARY
+function updateSummary(){
+  var c=window._calc||{};
+  var p1cost=c.p1cost||0, p2cost=c.p2cost||0;
+  var sundriesTotal=c.sundriesTotal||0;
+  var matSub=c.matTotal||0;
+  var labCost=c.labCost||0, taTotal=c.taTotal||0;
+  var labSub=labCost+taTotal;
+  var leTotal=c.leTotal||0, meTotal=c.meTotal||0;
+  var extSub=leTotal+meTotal;
+  var grand=matSub+labSub+extSub;
+
+  var p1d=document.getElementById('p1desc').value||'Sealer / Primer';
+  var p2d=document.getElementById('p2desc').value||'Finish Coat';
+  var isImp1=(cov1Unit==='imperial'), isImp2=(cov2Unit==='imperial');
+
+  document.getElementById('sum-p1desc').textContent=p1d;
+  document.getElementById('sum-p2desc').textContent=p2d;
+  document.getElementById('sum-p1cost').textContent=p1cost>0?fmt(p1cost):'—';
+  document.getElementById('sum-p1detail').textContent=c.p1L>0?
+    (isImp1?c.p1Disp.toFixed(2)+' gal':c.p1L.toFixed(1)+' L')+' × '+c.p1coats+' coat'+(c.p1coats>1?'s':''):'—';
+  document.getElementById('sum-p2cost').textContent=p2cost>0?fmt(p2cost):'—';
+  document.getElementById('sum-p2detail').textContent=c.p2L>0?
+    (isImp2?c.p2Disp.toFixed(2)+' gal':c.p2L.toFixed(1)+' L')+' × '+c.p2coats+' coat'+(c.p2coats>1?'s':''):'—';
+  document.getElementById('sum-sundries').textContent=sundriesTotal>0?fmt(sundriesTotal):'—';
+  document.getElementById('sum-matsub').textContent=matSub>0?fmt(matSub):'—';
+
+  document.getElementById('sum-hours').textContent=c.labHrs>0?c.labHrs.toFixed(1):'—';
+  document.getElementById('sum-rate').textContent=c.rate>0?fmt(c.rate):'—';
+  document.getElementById('sum-labcost').textContent=labCost>0?fmt(labCost):'—';
+
+
+  // Time allowances detail rows — use stable wrapper
+  var taRows=document.getElementById('timeAllowances').querySelectorAll('tr');
+  var taHTML='';
+  taRows.forEach(function(row){
+    var desc=row.querySelectorAll('input')[0].value||'';
+    var hrs=parseFloat(row.querySelectorAll('input')[1].value)||0;
+    var cost=hrs*(c.rate||0);
+    if(hrs>0&&desc) taHTML+='<tr><td>'+desc+' ('+hrs.toFixed(2)+' hrs)</td><td class="val">'+fmt(cost)+'</td></tr>';
+  });
+  var taWrap=document.getElementById('sum-ta-wrap');
+  if(taWrap) taWrap.innerHTML=taHTML;
+
+  document.getElementById('sum-labsub').textContent=labSub>0?fmt(labSub):'—';
+
+  // Labour extras — use stable wrapper
+  var leRows=document.getElementById('labourExtras').querySelectorAll('tr');
+  var leHTML='';
+  leRows.forEach(function(row){
+    var desc=row.querySelectorAll('input')[0].value||'';
+    var hrs=parseFloat(row.querySelectorAll('input')[1].value)||0;
+    var cost=hrs*(c.rate||0);
+    if(hrs>0&&desc) leHTML+='<tr><td>'+desc+' ('+hrs.toFixed(2)+' hrs)</td><td class="val">'+fmt(cost)+'</td></tr>';
+  });
+  var leWrap=document.getElementById('sum-le-wrap');
+  if(leWrap) leWrap.innerHTML=leHTML;
+
+  // Material and hire extras — use stable wrapper
+  var meRows=document.getElementById('materialExtras').querySelectorAll('tr');
+  var meHTML='';
+  meRows.forEach(function(row){
+    var desc=row.querySelectorAll('input')[0].value||'';
+    var qty=parseFloat(row.querySelectorAll('input')[1].value)||0;
+    var ucost=parseFloat(row.querySelectorAll('input')[2].value)||0;
+    var cost=qty*ucost;
+    if(cost>0&&desc) meHTML+='<tr><td>'+desc+' ('+qty+' × '+fmt(ucost)+')</td><td class="val">'+fmt(cost)+'</td></tr>';
+  });
+  var meWrap=document.getElementById('sum-me-wrap');
+  if(meWrap) meWrap.innerHTML=meHTML;
+
+  document.getElementById('sum-extrasub').textContent=extSub>0?fmt(extSub):'—';
+  document.getElementById('grandTotal').textContent=grand>0?fmt(grand):'—';
+  updateMarkup();
+}
+
+// MARKUP + TAX
+function updateMarkup(){
+  var c=window._calc||{};
+  var labSub=(c.labCost||0)+(c.taTotal||0)+(c.leTotal||0);
+  var matSub=(c.matTotal||0)+(c.meTotal||0);
+  var labMuEl=document.getElementById('labourMarkup');
+  var matMuEl=document.getElementById('matMarkup');
+  var taxEl=document.getElementById('taxPct');
+  if(!labMuEl||!matMuEl)return;
+  var labMu=parseFloat(labMuEl.value)||0;
+  var matMu=parseFloat(matMuEl.value)||0;
+  var taxPct=taxEl?parseFloat(taxEl.value)||0:0;
+  var labCharge=labSub*(1+labMu/100);
+  var matCharge=matSub*(1+matMu/100);
+  var quoteTotal=labCharge+matCharge;
+  var taxAmt=quoteTotal*(taxPct/100);
+  var grandWithTax=quoteTotal+taxAmt;
+
+  document.getElementById('labourCharge').textContent=labCharge>0?fmt(labCharge):'—';
+  document.getElementById('matCharge').textContent=matCharge>0?fmt(matCharge):'—';
+  document.getElementById('quoteTotal').textContent=quoteTotal>0?fmt(quoteTotal):'—';
+
+  // Tax row — show/hide
+  var taxRow=document.getElementById('taxRow');
+  var grandRow=document.getElementById('grandWithTaxRow');
+  var taxNotice=document.getElementById('taxNotice');
+  if(taxPct>0&&quoteTotal>0){
+    if(taxRow)taxRow.style.display='flex';
+    if(grandRow)grandRow.style.display='flex';
+    document.getElementById('taxAmtDisplay').textContent=fmt(taxAmt);
+    document.getElementById('taxPctDisplay').textContent=taxPct+'%';
+    document.getElementById('grandWithTax').textContent=fmt(grandWithTax);
+    if(taxNotice){
+      taxNotice.innerHTML='<span style="font-size:13px;font-weight:700;color:var(--navy);">✅ Tax calculated above at '+taxPct+'%.</span>'
+        +'<span style="font-size:12px;color:var(--text-mid);display:block;margin-top:4px;">The Grand Total with tax is what you present to the customer.</span>'
+        +'<span style="font-size:12px;color:var(--text-mid);display:block;margin-top:4px;">Your break-even hourly rate comes from the <a href="https://app.tractionstream.com/fyrhr-access/" target="_blank" style="color:var(--gold);font-weight:700;">free hourly rate calculator</a> or <a href="https://app.tractionstream.com/painter-hourly-rate-pro" target="_blank" style="color:var(--gold);font-weight:700;">Find Your Real Hourly Rate →</a></span>';
+    }
+  } else {
+    if(taxRow)taxRow.style.display='none';
+    if(grandRow)grandRow.style.display='none';
+    if(taxNotice){
+      taxNotice.innerHTML='<span style="font-size:13px;font-weight:700;color:var(--navy);">⚠️ This quote total does not include VAT, GST, or sales tax.</span>'
+        +'<span style="font-size:12px;color:var(--text-mid);display:block;margin-top:4px;">If you are registered for tax in your country, add it on top before presenting the price to the customer.</span>'
+        +'<span style="font-size:12px;color:var(--text-mid);display:block;margin-top:4px;">Your break-even hourly rate comes from the <a href="https://app.tractionstream.com/fyrhr-access/" target="_blank" style="color:var(--gold);font-weight:700;">free hourly rate calculator</a> or <a href="https://app.tractionstream.com/painter-hourly-rate-pro" target="_blank" style="color:var(--gold);font-weight:700;">Find Your Real Hourly Rate →</a></span>';
+    }
+  }
+}
+</script>
+</body>
+</html>
