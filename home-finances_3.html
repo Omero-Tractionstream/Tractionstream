@@ -379,6 +379,10 @@ tr:hover td{background:var(--surface2);}
     <p style="font-size:13px;color:var(--text-dim);margin-bottom:12px;" data-en="Record a deposit into the joint account." data-it="Registra un versamento nel conto comune.">Record a deposit into the joint account.</p>
     <div class="form-grid">
       <div class="form-group">
+        <label data-en="Date" data-it="Data">Date</label>
+        <input type="date" id="contrib-date">
+      </div>
+      <div class="form-group">
         <label data-en="Who is paying?" data-it="Chi paga?">Who is paying?</label>
         <select id="contrib-person">
           <option value="esther">Esther</option>
@@ -389,7 +393,7 @@ tr:hover td{background:var(--surface2);}
         <label data-en="Amount (€)" data-it="Importo (€)">Amount (€)</label>
         <input type="number" id="contrib-amount" placeholder="0.00" step="0.01" min="0">
       </div>
-      <div class="form-group full">
+      <div class="form-group">
         <label data-en="Note" data-it="Nota">Note</label>
         <input type="text" id="contrib-note" placeholder="Monthly contribution, catch-up payment...">
       </div>
@@ -498,15 +502,7 @@ tr:hover td{background:var(--surface2);}
       </div>
       <div class="form-group">
         <label data-en="Category" data-it="Categoria">Category</label>
-        <select id="cash-category">
-          <option value="Groceries">Groceries</option>
-          <option value="Dining Out">Dining Out</option>
-          <option value="Pharmacy">Pharmacy</option>
-          <option value="Petrol / Transport">Petrol / Transport</option>
-          <option value="Children">Children</option>
-          <option value="Miscellaneous">Miscellaneous</option>
-          <option value="Other">Other</option>
-        </select>
+        <select id="cash-category"></select>
       </div>
       <div class="form-group full">
         <label data-en="Description" data-it="Descrizione">Description</label>
@@ -563,6 +559,7 @@ tr:hover td{background:var(--surface2);}
     <div class="stat-card">
       <div class="stat-label" data-en="Remaining" data-it="Rimanente">Remaining</div>
       <div class="stat-value" id="reno-remaining">€0.00</div>
+      <div class="stat-sub" id="reno-remaining-label" data-en="remaining" data-it="rimanente">remaining</div>
     </div>
     <div class="stat-card">
       <div class="stat-label" data-en="No. of Items" data-it="N. Voci">No. of Items</div>
@@ -995,7 +992,7 @@ selectPayer('joint');
 // ==============================
 function populateCategorySelects(){
   const cats = state.categories;
-  ['entry-category','filter-category'].forEach(id => {
+  ['entry-category','filter-category','cash-category'].forEach(id => {
     const sel = document.getElementById(id);
     if(!sel) return;
     const cur = sel.value;
@@ -1076,7 +1073,7 @@ function getMonthOptions(){
 // ==============================
 function setTodayDates(){
   const today = new Date().toISOString().split('T')[0];
-  ['entry-date','reno-date','loan-date','settle-date','cash-date'].forEach(id => {
+  ['entry-date','reno-date','loan-date','settle-date','cash-date','contrib-date'].forEach(id => {
     const el = document.getElementById(id);
     if(el) el.value = today;
   });
@@ -1112,10 +1109,11 @@ function addContribution(){
   const person = document.getElementById('contrib-person').value;
   const amount = parseFloat(document.getElementById('contrib-amount').value);
   const note = document.getElementById('contrib-note').value.trim();
-  if(!amount || amount <= 0){ showToast(t('fill_all'),'error'); return; }
+  const date = document.getElementById('contrib-date').value;
+  if(!date || !amount || amount <= 0){ showToast(t('fill_all'),'error'); return; }
   const entry = {
     id: Date.now(),
-    date: new Date().toISOString().split('T')[0],
+    date,
     amount, category: 'Contribution', type: 'income',
     desc: note || (person.charAt(0).toUpperCase()+person.slice(1)) + ' contribution',
     notes: '', payer: person, isReno: false
@@ -1124,10 +1122,13 @@ function addContribution(){
   saveState(); renderAll();
   document.getElementById('contrib-amount').value = '';
   document.getElementById('contrib-note').value = '';
+  document.getElementById('contrib-date').value = new Date().toISOString().split('T')[0];
   showToast(t('contrib_added'),'success');
 }
 
 function clearEntryForm(){
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('entry-date').value = today;
   document.getElementById('entry-amount').value = '';
   document.getElementById('entry-desc').value = '';
   document.getElementById('entry-notes').value = '';
@@ -1158,8 +1159,16 @@ function renderReno(){
   document.getElementById('reno-total').textContent = fmt(total);
   document.getElementById('reno-budget-display').textContent = fmt(budget);
   const remEl = document.getElementById('reno-remaining');
-  remEl.textContent = fmt(Math.abs(remaining));
-  remEl.style.color = remaining >= 0 ? 'var(--green)' : 'var(--red)';
+  const remLabel = document.getElementById('reno-remaining-label');
+  if(remaining >= 0){
+    remEl.textContent = fmt(remaining);
+    remEl.style.color = 'var(--green)';
+    if(remLabel) remLabel.textContent = lang==='it'?'rimanente':'remaining';
+  } else {
+    remEl.textContent = fmt(Math.abs(remaining));
+    remEl.style.color = 'var(--red)';
+    if(remLabel) remLabel.textContent = lang==='it'?'sforato di':'over budget by';
+  }
   document.getElementById('reno-count').textContent = state.renoEntries.length;
 
   const tbody = document.getElementById('reno-body');
