@@ -119,7 +119,7 @@ body{font-family:'Source Sans 3',sans-serif;background:var(--navy);color:var(--i
 .step-hdr{background:linear-gradient(135deg,#1e2d40,#2d4a6e);padding:1.1rem 1.4rem;display:flex;align-items:center;gap:.9rem}
 .step-num{width:30px;height:30px;background:#b8913a;color:#1e2d40;border-radius:7px;
   display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;flex-shrink:0}
-.step-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:#fff;font-weight:600}
+.step-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff;font-weight:700}
 .step-body{padding:1.4rem}
 .builder-nav{background:#fff;border-top:1px solid #d4dce8;padding:.9rem 1.25rem;
   display:flex;justify-content:space-between;align-items:center;
@@ -480,15 +480,34 @@ textarea{resize:vertical;min-height:75px}
   </div>
 </div>
 
+<!-- COPY FROM LAST JOB MODAL -->
+<div id="copy-last-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:0;max-width:400px;width:92%;box-shadow:0 16px 48px rgba(0,0,0,.35);overflow:hidden">
+    <div style="background:#1e2d40;padding:1.5rem 2rem;text-align:center">
+      <div style="font-size:2rem;margin-bottom:.4rem">📋</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#fff;font-weight:700">Start a New Quote</div>
+    </div>
+    <div style="padding:1.75rem 2rem">
+      <p style="font-size:.92rem;color:#4a5568;margin-bottom:1.4rem;text-align:center;line-height:1.6">
+        Copy job details from <strong id="copy-last-client" style="color:#1e2d40"></strong>?<br>
+        <span style="font-size:.82rem;color:#6a80a0">Copies scope, prep, paint specs and Please Note. Client details and amounts start fresh.</span>
+      </p>
+      <button onclick="newJobCopyLast()" style="width:100%;padding:.8rem;background:linear-gradient(135deg,#b8913a,#d4aa5a);color:#1e2d40;border:none;border-radius:10px;font-weight:700;font-size:.95rem;cursor:pointer;font-family:'Source Sans 3',sans-serif;margin-bottom:.65rem">Copy from Last Job</button>
+      <button onclick="newJobFresh()" style="width:100%;padding:.75rem;background:#f0f4f8;color:#4a5568;border:1.5px solid #d4dce8;border-radius:10px;font-weight:500;font-size:.9rem;cursor:pointer;font-family:'Source Sans 3',sans-serif">Start Fresh</button>
+    </div>
+  </div>
+</div>
+
 <!-- SCREEN: BUILDER -->
 <div class="screen" id="s-builder">
   <nav class="top-nav">
     <div class="nav-logo">Paint<span>Quote</span> Pro</div>
     <button class="nav-btn" onclick="builderSaveExit()">💾 Save &amp; Exit</button>
+    <button class="nav-btn" onclick="builderSaveExit();setTimeout(()=>{ populateSettings();show('s-settings'); },650)">⚙ Settings</button>
   </nav>
   <div class="prog-bar">
     <div class="prog-steps" id="prog-steps"></div>
-    <div class="prog-label">Step <strong id="step-cur">1</strong> of <strong id="step-tot">14</strong> — <strong id="step-nam">Document Details</strong></div>
+    <div class="prog-label"><span>Step <strong id="step-cur">1</strong> of <strong id="step-tot">14</strong> — <strong id="step-nam">Document Details</strong></span><span id="prog-time" style="color:rgba(255,255,255,.45);font-size:.72rem"></span></div>
   </div>
   <div class="builder-body" id="builder-body">
     <div class="builder-inner" id="builder-inner"></div>
@@ -706,6 +725,66 @@ textarea{resize:vertical;min-height:75px}
         </div>
       </div>
 
+      <!-- Letterhead Layout -->
+      <div class="settings-sec">
+        <div class="settings-hdr">Letterhead Layout</div>
+        <div class="settings-body">
+          <p style="font-size:.82rem;color:#6a80a0;margin-bottom:1rem">Choose how your company name, logo, and contact details are arranged in the document header.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:.5rem">
+            <label style="cursor:pointer">
+              <input type="radio" name="lh-layout" id="lh-left" value="left" onchange="updateDocPreview()" style="display:none">
+              <div id="lh-left-card" style="border:2px solid #d4dce8;border-radius:10px;padding:.75rem .6rem;text-align:center;transition:border .15s">
+                <div style="background:#1e2d40;border-radius:5px;padding:.4rem .5rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.3rem">
+                  <div style="width:22px;height:14px;background:#b8913a;border-radius:2px;flex-shrink:0"></div>
+                  <div style="flex:1">
+                    <div style="height:4px;background:#fff;border-radius:2px;margin-bottom:2px;width:80%"></div>
+                    <div style="height:3px;background:rgba(255,255,255,.5);border-radius:2px;width:60%"></div>
+                  </div>
+                </div>
+                <div style="font-size:.74rem;color:#1e2d40;font-weight:600">Logo Left</div>
+                <div style="font-size:.68rem;color:#6a80a0">Text Right</div>
+              </div>
+            </label>
+            <label style="cursor:pointer">
+              <input type="radio" name="lh-layout" id="lh-centre" value="centre" onchange="updateDocPreview()" style="display:none">
+              <div id="lh-centre-card" style="border:2px solid #d4dce8;border-radius:10px;padding:.75rem .6rem;text-align:center;transition:border .15s">
+                <div style="background:#1e2d40;border-radius:5px;padding:.4rem .5rem;margin-bottom:.5rem;display:flex;flex-direction:column;align-items:center;gap:2px">
+                  <div style="width:22px;height:10px;background:#b8913a;border-radius:2px"></div>
+                  <div style="height:4px;background:#fff;border-radius:2px;width:70%"></div>
+                  <div style="height:3px;background:rgba(255,255,255,.5);border-radius:2px;width:50%"></div>
+                </div>
+                <div style="font-size:.74rem;color:#1e2d40;font-weight:600">Centred</div>
+                <div style="font-size:.68rem;color:#6a80a0">Logo above</div>
+              </div>
+            </label>
+            <label style="cursor:pointer">
+              <input type="radio" name="lh-layout" id="lh-textonly" value="textonly" onchange="updateDocPreview()" style="display:none">
+              <div id="lh-textonly-card" style="border:2px solid #d4dce8;border-radius:10px;padding:.75rem .6rem;text-align:center;transition:border .15s">
+                <div style="background:#1e2d40;border-radius:5px;padding:.4rem .5rem;margin-bottom:.5rem;display:flex;flex-direction:column;align-items:flex-start;gap:2px">
+                  <div style="height:5px;background:#fff;border-radius:2px;width:85%"></div>
+                  <div style="height:3px;background:rgba(255,255,255,.5);border-radius:2px;width:60%"></div>
+                  <div style="height:3px;background:rgba(255,255,255,.4);border-radius:2px;width:45%"></div>
+                </div>
+                <div style="font-size:.74rem;color:#1e2d40;font-weight:600">Text Only</div>
+                <div style="font-size:.68rem;color:#6a80a0">No logo position</div>
+              </div>
+            </label>
+          </div>
+          <script>
+          // Highlight selected layout card
+          function refreshLayoutCards() {
+            const val = document.querySelector('[name="lh-layout"]:checked')?.value || 'left';
+            ['left','centre','textonly'].forEach(v => {
+              const id = v==='textonly'?'lh-textonly-card':('lh-'+v+'-card');
+              const el = document.getElementById(id);
+              if (el) el.style.borderColor = val===v ? '#b8913a' : '#d4dce8';
+            });
+          }
+          document.querySelectorAll('[name="lh-layout"]').forEach(r => r.addEventListener('change', refreshLayoutCards));
+          </script>
+        </div>
+      </div>
+
       <!-- Logo -->
       <div class="settings-sec">
         <div class="settings-hdr">Company Logo</div>
@@ -816,8 +895,9 @@ let CUR_STEP = 0;     // current wizard step index
 
 const STEPS = [
   {id:'doc',    name:'Document Details'},
-  {id:'header', name:'Header & Footer'},
   {id:'client', name:'Customer Details'},
+  {id:'amounts',name:'Amounts & VAT'},
+  {id:'header', name:'Header & Footer'},
   {id:'scope',  name:'Scope of Works'},
   {id:'basedon',name:'Quote is Based On'},
   {id:'prep',   name:'Surface Preparation'},
@@ -825,11 +905,13 @@ const STEPS = [
   {id:'notes',  name:'Please Note'},
   {id:'colours',name:'Colour Scheme'},
   {id:'timing', name:'Timing'},
-  {id:'amounts',name:'Amounts & VAT'},
   {id:'offer',  name:'Day Offer'},
   {id:'closing',name:'Closing & Sign-off'},
   {id:'preview',name:'Preview & Generate'},
 ];
+
+// Track which steps the user has visited (for clickable progress bar)
+let VISITED_STEPS = new Set([0]);
 
 // ── Screen navigation ────────────────────────────────
 function show(id) {
@@ -1263,7 +1345,7 @@ function defaultSettings() {
     hdrBg:'#1e2d40', hdrTxt:'#ffffff', accent:'#b8913a', accTxt:'#ffffff', shdgBg:'#3d5a80', shdgTxt:'#ffffff',
     nextRef:1001, refPfx:'',
     tc:'link', tcUrl:'',
-    paintBrands:["Dulux Trade","Johnstone's","Crown Trade","Farrow & Ball","Little Greene","Zinsser"],
+    paintBrands:["Dulux Trade","Johnstone's","Crown Trade","Farrow & Ball","Trade","Zinsser"],
   };
 }
 
@@ -1462,6 +1544,11 @@ function populateSettings() {
   if (showMotto) showMotto.checked = s.showMotto || false;
   if (mottoRow)  mottoRow.style.display = (s.showMotto) ? '' : 'none';
   if (mottoEl)   mottoEl.value = s.motto || 'Dedicated To Excellence';
+  // Load letterhead layout
+  const lhLayout = s.lhLayout || 'left';
+  const lhRadio = document.getElementById('lh-' + (lhLayout === 'textonly' ? 'textonly' : lhLayout));
+  if (lhRadio) lhRadio.checked = true;
+  if (typeof refreshLayoutCards === 'function') refreshLayoutCards();
   const newFields = ['legal-name','reg-no','reg-in','reg-office'];
   newFields.forEach(k => {
     const el = document.getElementById('s-'+k);
@@ -1564,6 +1651,7 @@ function settingsSave() {
   s.refPfx  = document.getElementById('s-refpfx').value || '';
   s.tcUrl   = document.getElementById('s-tc-url').value || '';
   s.backupFreq = document.getElementById('s-backup-freq')?.value || '14';
+  s.lhLayout = document.querySelector('[name="lh-layout"]:checked')?.value || 'left';
   autoSaveToLS(); // silently back up, no dirty flag
   toast('Settings saved ✓');
   setTimeout(() => { renderDash(); show('s-dash'); }, 600);
@@ -1623,23 +1711,22 @@ function updateDocPreview() {
   if (!p) return;
 
   const hasLogo = s.logo;
-  // Header — mirrors actual Word doc layout exactly
+  const lhLayout = document.querySelector('[name="lh-layout"]:checked')?.value || s.lhLayout || 'left';
+  // Header — mirrors actual Word doc layout, respects selected layout
   let headerInner = '';
-  if (hasLogo) {
+  const contactBlock = `<div style="text-align:right;flex-shrink:0;white-space:nowrap">${tel?`<div style="color:${hdrTxt};font-size:10px">T: ${tel}</div>`:''} ${email?`<div style="color:${accent};font-size:10px">${email}</div>`:''}</div>`;
+  if (lhLayout === 'centre') {
+    // Centred stack: logo/name centred, contact below centred
     headerInner = `
-      <div style="display:flex;align-items:center;gap:14px">
-        <div style="flex-shrink:0;min-width:80px"><img src="${s.logo}" style="max-height:52px;max-width:120px;object-fit:contain;display:block"></div>
-        <div style="flex:1;min-width:0">
-          <div style="color:${hdrTxt};font-weight:700;font-size:15px;font-family:Calibri,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lhDisplayName}</div>
-          ${showMotto&&motto?`<div style="color:${hdrTxt};font-size:11px;font-style:italic;font-weight:700;margin-top:2px">${motto}</div>`:''}
-          ${showAddr&&addrLine?`<div style="color:${hdrTxt};opacity:.8;font-size:10px;margin-top:2px">${addrLine}</div>`:''}
-        </div>
-        <div style="text-align:right;flex-shrink:0;white-space:nowrap">
-          ${tel?`<div style="color:${hdrTxt};font-size:10px">T: ${tel}</div>`:''}
-          ${email?`<div style="color:${accent};font-size:10px">${email}</div>`:''}
-        </div>
+      <div style="text-align:center">
+        ${hasLogo?`<img src="${s.logo}" style="max-height:48px;max-width:120px;object-fit:contain;display:inline-block;margin-bottom:4px">`:'' }
+        <div style="color:${hdrTxt};font-weight:700;font-size:16px;font-family:Calibri,sans-serif">${lhDisplayName}</div>
+        ${showMotto&&motto?`<div style="color:${hdrTxt};font-size:10px;font-style:italic;font-weight:700;margin-top:2px">${motto}</div>`:''}
+        ${showAddr&&addrLine?`<div style="color:${hdrTxt};opacity:.8;font-size:9px;margin-top:2px">${addrLine}</div>`:''}
+        ${(tel||email)?`<div style="font-size:9px;margin-top:2px;color:${hdrTxt}">${tel?`T: ${tel}`:''} ${email?`· ${email}`:''}</div>`:''}
       </div>`;
-  } else {
+  } else if (lhLayout === 'textonly') {
+    // Text only: no logo slot, name large left, contact right
     const nameSz = (!showMotto&&!showAddr)?'20px':(showMotto&&showAddr)?'15px':'17px';
     headerInner = `
       <div style="display:flex;justify-content:space-between;align-items:center;gap:14px">
@@ -1648,11 +1735,33 @@ function updateDocPreview() {
           ${showMotto&&motto?`<div style="color:${hdrTxt};font-size:11px;font-style:italic;font-weight:700;margin-top:3px">${motto}</div>`:''}
           ${showAddr&&addrLine?`<div style="color:${hdrTxt};opacity:.8;font-size:10px;margin-top:3px">${addrLine}</div>`:''}
         </div>
-        <div style="text-align:right;flex-shrink:0;white-space:nowrap">
-          ${tel?`<div style="color:${hdrTxt};font-size:10px">T: ${tel}</div>`:''}
-          ${email?`<div style="color:${accent};font-size:10px">${email}</div>`:''}
-        </div>
+        ${contactBlock}
       </div>`;
+  } else {
+    // Default: Logo Left, Text Right (or no-logo version of same)
+    if (hasLogo) {
+      headerInner = `
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="flex-shrink:0;min-width:80px"><img src="${s.logo}" style="max-height:52px;max-width:120px;object-fit:contain;display:block"></div>
+          <div style="flex:1;min-width:0">
+            <div style="color:${hdrTxt};font-weight:700;font-size:15px;font-family:Calibri,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lhDisplayName}</div>
+            ${showMotto&&motto?`<div style="color:${hdrTxt};font-size:11px;font-style:italic;font-weight:700;margin-top:2px">${motto}</div>`:''}
+            ${showAddr&&addrLine?`<div style="color:${hdrTxt};opacity:.8;font-size:10px;margin-top:2px">${addrLine}</div>`:''}
+          </div>
+          ${contactBlock}
+        </div>`;
+    } else {
+      const nameSz = (!showMotto&&!showAddr)?'20px':(showMotto&&showAddr)?'15px':'17px';
+      headerInner = `
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px">
+          <div>
+            <div style="color:${hdrTxt};font-weight:700;font-size:${nameSz};font-family:Calibri,sans-serif;line-height:1.2">${lhDisplayName}</div>
+            ${showMotto&&motto?`<div style="color:${hdrTxt};font-size:11px;font-style:italic;font-weight:700;margin-top:3px">${motto}</div>`:''}
+            ${showAddr&&addrLine?`<div style="color:${hdrTxt};opacity:.8;font-size:10px;margin-top:3px">${addrLine}</div>`:''}
+          </div>
+          ${contactBlock}
+        </div>`;
+    }
   }
 
   // Footer text
@@ -1726,11 +1835,33 @@ function setStatus(i, val) {
   renderDash();
 }
 
+function isSettingsComplete() {
+  const s = APP.settings || {};
+  return !!(s.company && s.name && s.email && s.tel);
+}
+
 function renderDash() {
   // Show folder button only when launched via local server
   const folderBtn = document.getElementById('folder-btn-wrap');
   if (folderBtn) {
     folderBtn.style.display = window.location.hostname === 'localhost' ? 'block' : 'none';
+  }
+
+  // Settings completion banner
+  let setupBanner = document.getElementById('setup-banner');
+  if (!setupBanner) {
+    setupBanner = document.createElement('div');
+    setupBanner.id = 'setup-banner';
+    const dashBody = document.getElementById('dash-body');
+    if (dashBody) dashBody.insertBefore(setupBanner, dashBody.querySelector('.page-wrap'));
+  }
+  if (!isSettingsComplete()) {
+    setupBanner.innerHTML = `<div style="background:#b8913a;color:#1e2d40;font-size:.85rem;padding:.65rem 1.25rem;text-align:center;font-weight:600">
+      ⚙️ Before your first quote, set up your company profile — your name and details will appear on every document.
+      <button onclick="showSettings()" style="margin-left:.75rem;background:#1e2d40;color:#d4aa5a;border:none;padding:.3rem .85rem;border-radius:5px;cursor:pointer;font-size:.8rem;font-weight:700;font-family:'Source Sans 3',sans-serif">Set Up Now →</button>
+    </div>`;
+  } else {
+    setupBanner.innerHTML = '';
   }
 
   // Trial status bar
@@ -1802,7 +1933,49 @@ function esc(s) {
 }
 
 function newJob() {
-  guardUnsaved(_startNewJob);
+  guardUnsaved(() => {
+    const realJobs = APP.jobs.filter(j => !j._sample);
+    if (realJobs.length > 0) {
+      const last = realJobs[realJobs.length - 1];
+      const modal = document.getElementById('copy-last-modal');
+      if (modal) {
+        document.getElementById('copy-last-client').textContent = last.clientName || 'previous job';
+        modal.style.display = 'flex';
+        return;
+      }
+    }
+    _startNewJob();
+  });
+}
+
+function newJobFresh() {
+  document.getElementById('copy-last-modal').style.display = 'none';
+  _startNewJob();
+}
+
+function newJobCopyLast() {
+  document.getElementById('copy-last-modal').style.display = 'none';
+  const realJobs = APP.jobs.filter(j => !j._sample);
+  if (!realJobs.length) { _startNewJob(); return; }
+  const last = realJobs[realJobs.length - 1];
+  _startNewJob();
+  if (CUR && last) {
+    CUR.basedOn      = last.basedOn     ? JSON.parse(JSON.stringify(last.basedOn))    : CUR.basedOn;
+    CUR.prepText     = last.prepText    || CUR.prepText;
+    CUR.pressureWash = last.pressureWash|| false;
+    CUR.paintBrand   = last.paintBrand  || CUR.paintBrand;
+    CUR.surfaces     = last.surfaces    ? JSON.parse(JSON.stringify(last.surfaces))   : CUR.surfaces;
+    CUR.pleaseNote   = last.pleaseNote  ? JSON.parse(JSON.stringify(last.pleaseNote)) : CUR.pleaseNote;
+    CUR.scopeMode    = last.scopeMode   || CUR.scopeMode;
+    CUR.scopeSimple  = last.scopeSimple || '';
+    CUR.scopeInt     = last.scopeInt    ? [...last.scopeInt]   : [];
+    CUR.scopeExt     = last.scopeExt    ? [...last.scopeExt]   : [];
+    CUR.vatMode      = last.vatMode     || CUR.vatMode;
+    CUR.vatRate      = last.vatRate     || CUR.vatRate;
+    CUR.paper        = last.paper       || 'A4';
+    CUR.preprinted   = last.preprinted  || false;
+    toast('Details copied from last job — amounts and client left blank');
+  }
 }
 
 function cancelNewQuote() {
@@ -1835,7 +2008,7 @@ function _startNewJob() {
     prepText: defaultPrepText(false), paintBrand:'Dulux Trade', pressureWash: false,
     surfaces: defaultSurfaces(),
     pleaseNote:{enabled:false, items:[], extras:[]},
-    colours:{mode:'match', statement:'', intRows:[{}], extRows:[{}]},
+    colours:{mode:'table', statement:'', intRows:[{}], extRows:[{}]},
     timing:{mode:'open', from:'', start:'', end:''},
     vatMode:'exclusive', vatRate:'20',
     amounts:[{desc:'',net:''}],
@@ -1886,6 +2059,7 @@ function resetSampleJob(i) {
 
 function openBuilder(step) {
   CUR_STEP = step;
+  VISITED_STEPS = new Set([step]);
   show('s-builder');
   renderStep();
 }
@@ -2036,7 +2210,7 @@ function loadDemoData() {
       hdrBg:'#1e2d40', hdrTxt:'#ffffff', accent:'#b8913a', accTxt:'#ffffff', shdgBg:'#3d5a80', shdgTxt:'#ffffff',
       nextRef:89037, refPfx:'',
       tc:'link', tcUrl:'https://www.hollowaypainting.co.uk/terms',
-      paintBrands:["Dulux Trade","Johnstone's","Crown Trade","Farrow & Ball","Little Greene","Zinsser"],
+      paintBrands:["Dulux Trade","Johnstone's","Crown Trade","Farrow & Ball","Trade","Zinsser"],
     },
     jobs: [{
       id:1700000001, _idx:0, _sample:true,
@@ -2177,14 +2351,33 @@ function handleFp() {
 // STEP RENDERER — all 14 wizard steps
 // ══════════════════════════════════════════════════════
 
+// Approximate minutes per step for time estimate
+const STEP_MINS = [1,2,2,1,2,1,1,1,1,1,1,1,1,1];
+
 function renderStep() {
   const step = STEPS[CUR_STEP];
+  VISITED_STEPS.add(CUR_STEP);
   document.getElementById('step-cur').textContent = CUR_STEP + 1;
   document.getElementById('step-tot').textContent = STEPS.length;
   document.getElementById('step-nam').textContent = step.name;
-  // Progress bar
+
+  // Time remaining estimate
+  const minsLeft = STEP_MINS.slice(CUR_STEP + 1).reduce((a,b) => a+b, 0);
+  const timeLabel = minsLeft <= 0 ? 'Almost done' : `About ${minsLeft} min${minsLeft===1?'':'s'} remaining`;
+  const timeEl = document.getElementById('prog-time');
+  if (timeEl) timeEl.textContent = timeLabel;
+
+  // Progress bar — clickable for visited steps
   document.getElementById('prog-steps').innerHTML =
-    STEPS.map((_,i) => `<div class="prog-step ${i<CUR_STEP?'done':i===CUR_STEP?'active':''}"></div>`).join('');
+    STEPS.map((_,i) => {
+      const cls = i < CUR_STEP ? 'done' : i === CUR_STEP ? 'active' : '';
+      const canClick = VISITED_STEPS.has(i) && i !== CUR_STEP;
+      const style = canClick ? 'cursor:pointer;' : '';
+      const onclick = canClick ? `onclick="jumpToStep(${i})"` : '';
+      const title = canClick ? `title="${STEPS[i].name}"` : '';
+      return `<div class="prog-step ${cls}" style="${style}" ${onclick} ${title}></div>`;
+    }).join('');
+
   // Buttons
   document.getElementById('btn-back').style.visibility = CUR_STEP===0?'hidden':'visible';
   document.getElementById('cancel-strip').style.display = CUR_STEP===0?'flex':'none';
@@ -2194,6 +2387,7 @@ function renderStep() {
     cb.onmouseover=()=>{cb.style.background=acc;cb.style.color='#1a2636';};
     cb.onmouseout=()=>{cb.style.background='transparent';cb.style.color=acc;cb.style.borderColor=acc;}; }
   document.getElementById('btn-next').textContent = CUR_STEP===STEPS.length-1 ? '✓ Generate Document' : 'Next →';
+
   // Render
   const renders = {
     doc:     stepDoc,
@@ -2215,6 +2409,13 @@ function renderStep() {
   inner.innerHTML = '';
   (renders[step.id] || (() => {}))();
   window.scrollTo(0,0);
+}
+
+function jumpToStep(i) {
+  if (!VISITED_STEPS.has(i)) return;
+  collectStep();
+  CUR_STEP = i;
+  renderStep();
 }
 
 function card(n, title, body) {
@@ -2362,6 +2563,8 @@ function collectStep() {
     const col = CUR.colours;
     col.mode      = v('f-colmode');
     col.statement = v('f-col-stmt');
+    col.showInt = document.getElementById('col-show-int')?.checked !== false;
+    col.showExt = document.getElementById('col-show-ext')?.checked !== false;
     col.intRows = collectColourRows('cri');
     col.extRows = collectColourRows('cre');
   }
@@ -2744,31 +2947,65 @@ function autoReLine(c, job) {
 function stepClient() {
   const c = CUR.customer || {};
   const addrTypes = [
-    ['individual','Individual (Mr/Mrs/Ms etc.)'],
-    ['company','Company only'],
-    ['company-contact','Company + Attention:'],
-    ['body-corporate','Body Corporate / Owners Corporation'],
-    ['care-of','Care of (c/o Managing Agent)'],
+    ['individual','Individual (Mr/Mrs/Ms etc.)','addr-tip-ind'],
+    ['company','Company only','addr-tip-co'],
+    ['company-contact','Company + Attention:','addr-tip-cocon'],
+    ['body-corporate','Body Corporate / Owners Corporation','addr-tip-bc'],
+    ['care-of','Care of (c/o Managing Agent)','addr-tip-careof'],
   ];
   const cur = c.addrType || 'individual';
   document.getElementById('builder-inner').innerHTML = card(3,'Customer Details',`
     <div class="fg"><label class="lbl">Addressee Type</label>
       <div id="addr-grp">
-        ${addrTypes.map(([v,l])=>`
-          <div class="radio-opt ${cur===v?'sel':''}" onclick="setAddrType('${v}')" style="position:relative">
-            <input type="radio" name="at" value="${v}" ${cur===v?'checked':''}> 
-            <div class="radio-lbl">${l}</div>
-            ${v==='company-contact'?`<span onclick="event.stopPropagation();togglePopup('co-contact-tip')" style="margin-left:auto;width:18px;height:18px;border-radius:50%;background:#3d5a80;color:#fff;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">?</span>
-            <div id="co-contact-tip" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);background:#1e2d40;color:#e8edf4;font-size:.78rem;line-height:1.5;border-radius:8px;padding:.75rem 1rem;z-index:50;box-shadow:0 4px 16px rgba(0,0,0,.3)">
-              <strong style="color:#b8913a">When to use this type:</strong><br>
-              Use <em>Company + Attention:</em> when quoting to a <strong>builder, developer, renovation company, or larger painting firm</strong> — where the quote is addressed to the business but a specific contact needs to receive it.<br><br>
-              The works address (the project site) may be different from the company's office address — use the Works Address toggle below to enter it, and it will appear in the Re: line.<br><br>
-              <em>Examples: house builders, commercial fit-out firms, property developers, facilities managers.</em>
-              <div style="text-align:right;margin-top:.5rem"><span onclick="togglePopup('co-contact-tip')" style="color:#b8913a;cursor:pointer;font-size:.75rem">Close ✕</span></div>
-            </div>`:``}
+        ${addrTypes.map(([v,l,tip])=>`
+          <div class="radio-opt ${cur===v?'sel':''}" onclick="setAddrType('${v}')" style="align-items:center">
+            <input type="radio" name="at" value="${v}" ${cur===v?'checked':''}>
+            <div class="radio-lbl" style="flex:1">${l}</div>
+            <button onclick="event.stopPropagation();togglePopup('${tip}')" style="width:18px;height:18px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.7rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:.35rem">?</button>
           </div>`).join('')}
       </div>
       <input type="hidden" id="f-addrtype" value="${cur}">
+    </div>
+
+    <div id="addr-tip-ind" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+        <button onclick="document.getElementById('addr-tip-ind').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+        <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">When to use: Individual</div>
+        <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this when you are quoting to a homeowner or private individual, for example Mr and Mrs Smith at their home address. The quote will be addressed directly to the person by name. This is the most common type for residential painting and decorating work.</div>
+        <button onclick="document.getElementById('addr-tip-ind').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+      </div>
+    </div>
+    <div id="addr-tip-co" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+        <button onclick="document.getElementById('addr-tip-co').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+        <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">When to use: Company Only</div>
+        <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this when the quote is addressed to a business or organisation with no specific named contact, for example a property management company or a letting agent. The company name appears at the top of the address block. Use this when you do not know or do not need a named contact.</div>
+        <button onclick="document.getElementById('addr-tip-co').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+      </div>
+    </div>
+    <div id="addr-tip-cocon" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+        <button onclick="document.getElementById('addr-tip-cocon').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+        <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">When to use: Company + Attention</div>
+        <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this when quoting to a builder, developer, renovation company, or larger painting firm, where the quote is addressed to the business but a specific contact needs to receive it. The works address (the project site) may be different from the company office address. Use the Works Address toggle below to add it. Examples: house builders, commercial fit-out firms, property developers, facilities managers.</div>
+        <button onclick="document.getElementById('addr-tip-cocon').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+      </div>
+    </div>
+    <div id="addr-tip-bc" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+        <button onclick="document.getElementById('addr-tip-bc').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+        <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">When to use: Body Corporate</div>
+        <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this for strata-titled properties such as blocks of flats or apartment complexes where the body corporate or owners corporation is the client. The site address (the building being decorated) is entered separately and appears in the Re: line. Common for exterior repaints of apartment blocks and common area works.</div>
+        <button onclick="document.getElementById('addr-tip-bc').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+      </div>
+    </div>
+    <div id="addr-tip-careof" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+        <button onclick="document.getElementById('addr-tip-careof').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+        <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">When to use: Care Of</div>
+        <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this when the instruction comes through a managing agent or property manager acting on behalf of an owner. The quote is addressed to the property owner but sent care of the agent. The site address is entered separately. Common for landlord-instructed works managed by a letting or estate agent.</div>
+        <button onclick="document.getElementById('addr-tip-careof').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+      </div>
     </div>
 
     <div id="ind-fields" style="${cur==='individual'?'':'display:none'}">
@@ -2829,21 +3066,28 @@ function stepClient() {
     </div>
 
     <div class="sec-div"><span>Property Type</span></div>
-    <div class="hint" style="margin-bottom:.75rem">Select the property type — this shapes the <strong>Re:</strong> line, which appears as the subject heading at the top of the final document.</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem .5rem;margin-bottom:.75rem">
-      ${['Flat','Apartment','House','Home','Property','Commercial Office','Factory','Warehouse','Business Premises','School','College','Block of Flats','Block of Apartments'].map(t=>`
-        <div class="check-item"><input type="checkbox" class="pt-item" value="${t}" ${(c.propTypes||[]).includes(t)?'checked':''} onchange="ptTypeChange(this)"><span class="check-txt">${t}</span></div>`).join('')}
+    <div style="background:#e8eef5;border-left:4px solid #b8913a;border-radius:6px;padding:.6rem .9rem;margin-bottom:.75rem;font-size:.85rem;color:#1e2d40;font-weight:600">Select the property type — this shapes the <strong>Re:</strong> line, which appears as the subject heading at the top of the final document.</div>
+    <div id="pt-defaults-container" style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem .5rem;margin-bottom:.75rem">
+      ${renderPtDefaults(c)}
     </div>
     <div id="pt-extras-container">
       ${renderPtExtras(c.propExtras||[])}
     </div>
     <button class="btn-outline" onclick="ptAddExtra()" style="font-size:.82rem;padding:.45rem .9rem;margin-bottom:.5rem">+ Add Custom</button>
 
-    <div class="sec-div"><span>Salutation &amp; Re: Line</span></div>
+    <div style="background:#e8eef5;border-left:4px solid #b8913a;border-radius:6px;padding:.6rem .9rem;margin-bottom:.75rem;font-size:.85rem;color:#1e2d40;font-weight:600">Salutation &amp; Re: Line</div>
     <div class="hint" style="margin-bottom:.75rem">Auto-filled from the details above — edit freely.</div>
     <div class="toggle-row" style="margin-bottom:.75rem">
-      <div class="tgl-info"><div class="tgl-lbl">Use "your" before property type</div><div class="tgl-sub">e.g. "your house at…" instead of "House at…"</div></div>
+      <div class="tgl-info"><div class="tgl-lbl" style="display:flex;align-items:center;gap:.4rem">Use &quot;your&quot; before property type<button onclick="event.stopPropagation();togglePopup('yourprop-tip')" style="width:18px;height:18px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.7rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">?</button></div><div class="tgl-sub">e.g. "your house at&hellip;" instead of "House at&hellip;"</div></div>
       <label class="toggle"><input type="checkbox" id="f-yourprop" ${c.yourProp?'checked':''} onchange="refreshReLine()"><span class="tgl-sl"></span></label>
+    </div>
+    <div id="yourprop-tip" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+        <button onclick="document.getElementById('yourprop-tip').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+        <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Why use &quot;your&quot;?</div>
+        <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Writing "your house at 14 Oak Street" instead of "House at 14 Oak Street" makes the quote feel personal and warm. It shows the client you are talking directly to them, not filling in a form. Small touches like this build trust and make your quote stand out from a generic template. Clients who feel valued are more likely to accept.</div>
+        <button onclick="document.getElementById('yourprop-tip').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+      </div>
     </div>
     <div id="ind-sal-picker" style="background:#f0f4f8;border:1.5px solid #c8d4e4;border-radius:10px;padding:1rem 1.1rem;margin-bottom:.75rem">
       <div style="font-size:.82rem;color:#9aa6b2">Enter a first name or surname above to set the salutation.</div>
@@ -2851,7 +3095,8 @@ function stepClient() {
     <input type="text" id="f-salutation" value="${esc(c.salutation||'')}" placeholder="Leave blank for no salutation" style="display:none;margin-bottom:.75rem">
     <div id="sal-preview" style="display:none"><span id="sal-preview-text"></span></div>
     <div id="sal-warn" style="display:none"></div>
-    <div class="fg"><label class="lbl">Re: Line</label>
+    <div style="background:#e8eef5;border-left:4px solid #b8913a;border-radius:6px;padding:.6rem .9rem;margin-bottom:.75rem;font-size:.85rem;color:#1e2d40;font-weight:600">This is what you will see on your Re: (regarding) line at the top of your Quote or Estimate.</div>
+    <div class="fg">
       <input type="text" id="f-reline" value="${esc(c.reLine || autoReLine(c, CUR))}">
     </div>
   `);
@@ -2946,6 +3191,28 @@ function refreshReLine() {
   const propLabel = useYour ? 'your ' + rawLabel.charAt(0).toLowerCase() + rawLabel.slice(1) : rawLabel;
   const docType = CUR.docType || 'Quotation';
   rl.value = `Specifications & ${docType} for Painting & Decorating Works for ${propLabel} at ${addr || '[Address]'}`;
+}
+
+function renderPtDefaults(c) {
+  const defaults = ['Flat','Apartment','House','Home','Property','Commercial Office','Factory','Warehouse','Business Premises','School','College','Block of Flats','Block of Apartments'];
+  const active = (c.propDefaults !== undefined) ? c.propDefaults : [...defaults];
+  return active.map(t => `
+    <div class="check-item" style="display:flex;align-items:center;gap:.35rem">
+      <input type="checkbox" class="pt-item" value="${t}" ${(c.propTypes||[]).includes(t)?'checked':''} onchange="ptTypeChange(this)">
+      <span class="check-txt" style="flex:1">${t}</span>
+      <button onclick="ptDeleteDefault('${t}')" title="Remove" style="background:none;border:none;color:#9aa6b2;cursor:pointer;font-size:.75rem;padding:0 .2rem;line-height:1;flex-shrink:0">&#x2715;</button>
+    </div>`).join('');
+}
+
+function ptDeleteDefault(type) {
+  const c = CUR.customer;
+  const defaults = ['Flat','Apartment','House','Home','Property','Commercial Office','Factory','Warehouse','Business Premises','School','College','Block of Flats','Block of Apartments'];
+  if (!c.propDefaults) c.propDefaults = [...defaults];
+  c.propDefaults = c.propDefaults.filter(t => t !== type);
+  // Also remove from selected types if it was checked
+  if (c.propTypes) c.propTypes = c.propTypes.filter(t => t !== type);
+  document.getElementById('pt-defaults-container').innerHTML = renderPtDefaults(c);
+  refreshReLine();
 }
 
 function renderPtExtras(extras) {
@@ -3045,8 +3312,15 @@ function stepScope() {
   }
 
   document.getElementById('builder-inner').innerHTML = card(4,'Scope of Works',`
-    <div class="sec-div"><span>Works Type</span></div>
-    <div class="hint" style="margin-bottom:.75rem">Select the nature of the works — this shapes the wording throughout the document.</div>
+    <div style="background:#e8eef5;border-left:4px solid #b8913a;border-radius:6px;padding:.6rem .9rem;margin-bottom:.75rem;font-size:.85rem;color:#1e2d40;font-weight:600;display:flex;align-items:center;gap:.5rem">Works Type<button onclick="togglePopup('works-type-tip')" style="width:18px;height:18px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.7rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">?</button></div>
+    <div id="works-type-tip" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+        <button onclick="document.getElementById('works-type-tip').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+        <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Works Type</div>
+        <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Select whether this is a repaint of existing surfaces or new work on previously unpainted surfaces. This affects the language used in parts of the document.</div>
+        <button onclick="document.getElementById('works-type-tip').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+      </div>
+    </div>
     <div style="display:flex;flex-direction:column;gap:.45rem;margin-bottom:1.25rem">
       ${[
         ['repaint',      '🔄 Repaint',               'All surfaces have been previously painted. Standard redecoration.'],
@@ -3093,7 +3367,8 @@ function stepScope() {
       </div>
       <button onclick="switchToManualScope()" style="margin-top:1rem;width:100%;padding:.75rem 1rem;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1e2d40;font-family:'Source Sans 3',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(184,145,58,.3);transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">⚙ Specify Scope Manually</button>
 
-      <div class="sec-div" style="margin-top:1.25rem"><span>Exclusions</span></div>
+      <div style="background:#e8eef5;border-left:4px solid #b8913a;border-radius:6px;padding:.6rem .9rem;margin-top:1.25rem;margin-bottom:.75rem;font-size:.85rem;color:#1e2d40;font-weight:600;display:flex;align-items:center;gap:.5rem">Exclusions<button onclick="togglePopup('excl-tip')" style="width:18px;height:18px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.7rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">?</button></div>
+      <div id="excl-tip" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center"><div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto"><button onclick="document.getElementById('excl-tip').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button><div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Exclusions</div><div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">List anything that is specifically NOT included in this quote. For example: Gates, Fences, Garage Door. Exclusions appear in the document and protect you from scope creep and disputes later.</div><button onclick="document.getElementById('excl-tip').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button></div></div>
       <div class="fg" style="margin-bottom:0">
         <label class="lbl">Items specifically excluded from this scope (optional)</label>
         <textarea id="f-plans-exclusions" rows="2" placeholder="e.g. Garage floor, pool house, basement stairwell">${esc(CUR.scopePlansExclusions||'')}</textarea>
@@ -3114,15 +3389,21 @@ function stepScope() {
     <div class="fg" ${(CUR.worksType==='newbuild'||CUR.worksType==='renovation')?`id="scope-manual-inner" style="${CUR.scopePlansMode==='manual'?'':'display:none'}"`:''}>
       <label class="lbl">Mode</label>
       <div>
-        ${[['simple','Simple statement','One sentence describing all works'],
-           ['structured','Structured checklist','Tick interior & exterior items'],
-           ['rooms','Interior — Room by Room','Specify surfaces per room — ideal for whole-house repaints'],
-           ['elevations','Exterior — Elevation by Elevation','Specify surfaces per elevation — ideal for full exterior repaints'],
-           ['freeform','Interior & Exterior Free-form','Type your own bullet points and exclusions']].map(([val,lbl,sub])=>`
-          <div class="radio-opt ${m===val?'sel':''}" onclick="setScopeMode('${val}')">
+        ${[['simple','Simple statement','One sentence describing all works','scope-tip-simple'],
+           ['structured','Structured checklist','Tick interior & exterior items','scope-tip-structured'],
+           ['rooms','Interior — Room by Room','Specify surfaces per room — ideal for whole-house repaints','scope-tip-rooms'],
+           ['elevations','Exterior — Elevation by Elevation','Specify surfaces per elevation — ideal for full exterior repaints','scope-tip-elevations'],
+           ['freeform','Interior & Exterior Free-form','Type your own bullet points and exclusions','scope-tip-freeform']].map(([val,lbl,sub,tid])=>`
+          <div class="radio-opt ${m===val?'sel':''}" onclick="setScopeMode('${val}')" style="align-items:center">
             <input type="radio" name="sm" value="${val}" ${m===val?'checked':''}>
-            <div><div class="radio-lbl">${lbl}</div><div class="radio-sub">${sub}</div></div>
+            <div style="flex:1"><div class="radio-lbl">${lbl}</div><div class="radio-sub">${sub}</div></div>
+            <button onclick="event.stopPropagation();togglePopup('${tid}')" style="width:18px;height:18px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.7rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:.35rem">?</button>
           </div>`).join('')}
+        <div id="scope-tip-simple" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center"><div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto"><button onclick="document.getElementById('scope-tip-simple').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button><div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Simple Statement</div><div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this for straightforward jobs where a single sentence or short paragraph describes the full scope. Best for small residential jobs.</div><button onclick="document.getElementById('scope-tip-simple').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button></div></div>
+        <div id="scope-tip-structured" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center"><div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto"><button onclick="document.getElementById('scope-tip-structured').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button><div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Structured Checklist</div><div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this to select specific surfaces from a checklist of common interior and exterior items. Good for most standard residential and commercial repaints.</div><button onclick="document.getElementById('scope-tip-structured').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button></div></div>
+        <div id="scope-tip-rooms" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center"><div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto"><button onclick="document.getElementById('scope-tip-rooms').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button><div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Room by Room</div><div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this to list the scope room by room. Best for interior-only jobs where the client wants to see exactly what is happening in each space.</div><button onclick="document.getElementById('scope-tip-rooms').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button></div></div>
+        <div id="scope-tip-elevations" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center"><div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto"><button onclick="document.getElementById('scope-tip-elevations').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button><div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Elevations</div><div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this for exterior jobs where you want to describe work elevation by elevation, for example Front, Rear, Left Side, Right Side.</div><button onclick="document.getElementById('scope-tip-elevations').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button></div></div>
+        <div id="scope-tip-freeform" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center"><div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto"><button onclick="document.getElementById('scope-tip-freeform').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button><div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Freeform</div><div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Type the scope in your own words. Use this when none of the structured options fit the job.</div><button onclick="document.getElementById('scope-tip-freeform').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button></div></div>
       </div>
     </div>
 
@@ -3646,7 +3927,7 @@ function stepBasedOn() {
         </div>` : `
         <textarea id="bon-t-${k}" rows="2" style="flex:1;border:none;background:transparent;font-size:.86rem;color:#1e2d40;resize:none;outline:none;line-height:1.5">${esc(b[k+'_t']||(defaultText[k]||''))}</textarea>`;
       return `
-        <div class="toggle-row bon-drag-row" draggable="true" data-key="${k}" style="align-items:${isCS?'flex-start':'center'};gap:.75rem;cursor:default">
+        <div class="toggle-row bon-drag-row" draggable="true" data-key="${k}" style="align-items:${isCS?'flex-start':'center'};gap:.75rem;cursor:default;padding:.45rem .9rem">
           <span class="bon-drag-handle" title="Drag to reorder" style="cursor:grab;font-size:1rem;color:#b0bec5;user-select:none;padding:.2rem .1rem;flex-shrink:0;margin-top:${isCS?'.3rem':'0'}">⠿</span>
           ${inner}
           <label class="toggle" style="${isCS?'margin-top:.25rem':''}"><input type="checkbox" id="bon-${k}" ${b[k]?'checked':''}><span class="tgl-sl"></span></label>
@@ -3655,7 +3936,7 @@ function stepBasedOn() {
   }
 
   document.getElementById('builder-inner').innerHTML = card(5,'This Quote is Based On',`
-    <p style="color:#4a5568;font-size:.83rem;margin-bottom:1rem">Toggle each item on or off. Edit the text freely. Drag <span style="font-size:.95rem">⠿</span> to reorder.</p>
+    <div style="background:#e8eef5;border-left:4px solid #b8913a;border-radius:6px;padding:.6rem .9rem;margin-bottom:.75rem;font-size:.85rem;color:#1e2d40;font-weight:600;line-height:1.5">This section builds the &ldquo;This Quote is Based On&rdquo; block that appears near the top of your document. It is a list of the key conditions and inclusions that underpin your price. Toggle each item on or off. Edit the text freely to match your business. Drag the handle (the dotted grid icon) to reorder items. Everything toggled on will appear as a bullet point in the document. This section sets expectations clearly and reduces the chance of disputes later.</div>
     <div id="bon-list">${renderBonRows()}</div>
   `);
 
@@ -3728,13 +4009,14 @@ function updateColourSysText() {
 // ── Step 6: Prep ─────────────────────────────────────
 function stepPrep() {
   const pw = CUR.pressureWash || false;
-  const brands = APP.settings.paintBrands || ["Dulux Trade","Johnstone's","Crown Trade","Farrow & Ball","Little Greene","Zinsser"];
+  const brands = APP.settings.paintBrands || ["Dulux Trade","Johnstone's","Crown Trade","Farrow & Ball","Trade","Zinsser"];
   const sel = CUR.paintBrand || '';
   const escQ = s => s.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
 
   document.getElementById('builder-inner').innerHTML = card(6,'Surface Preparation',`
     <div class="fg"><label class="lbl">Preparation Text</label>
       <textarea id="f-preptext" rows="7">${esc(CUR.prepText||defaultPrepText(false))}</textarea>
+      <div class="hint" style="margin-top:.35rem">This is a sample. You may use your own.</div>
     </div>
     <div class="toggle-row" style="margin-bottom:1rem">
       <div>
@@ -4015,8 +4297,16 @@ function stepNotes() {
   }
 
   document.getElementById('builder-inner').innerHTML = card(8,'Please Note (Optional)',`
+    <div id="pn-tip" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+        <button onclick="document.getElementById('pn-tip').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+        <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">What is the Please Note section?</div>
+        <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">This is an optional section that appears near the end of your document, after the pricing. Use it to set out any specific conditions, courtesies, or practical arrangements for the job. Examples include: parking requirements, pet safety, dust management, snagging terms, and viewing conditions for finished work. Anything you toggle on here will appear as a bullet point in the Please Note section of your quote or estimate. It protects you by setting clear expectations before work begins.</div>
+        <button onclick="document.getElementById('pn-tip').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+      </div>
+    </div>
     <div class="toggle-row" style="margin-bottom:1rem">
-      <div class="tgl-info"><div class="tgl-lbl">Include a "Please Note" section?</div></div>
+      <div class="tgl-info"><div class="tgl-lbl" style="display:flex;align-items:center;gap:.4rem">Include a &quot;Please Note&quot; section?<button onclick="event.stopPropagation();togglePopup('pn-tip')" style="width:18px;height:18px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.7rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">?</button></div></div>
       <label class="toggle"><input type="checkbox" id="pn-on" ${pn.enabled?'checked':''} onchange="document.getElementById('pn-body').style.display=this.checked?'':'none'"><span class="tgl-sl"></span></label>
     </div>
     <div id="pn-body" style="${pn.enabled?'':'display:none'}">
@@ -4072,10 +4362,10 @@ function stepColours() {
   // Set counters to after existing rows
   criCount = (col.intRows||[{}]).length;
   creCount = (col.extRows||[{}]).length;
-  const BRANDS = ["Dulux","Johnstone's","Crown","Farrow & Ball","Little Greene","Zinsser","Other"];
+  const BRANDS = ["Dulux","Johnstone's","Crown","Farrow & Ball","Trade","Zinsser","Other"];
   const SHEENS = ['Matt','Soft Sheen','Satin','Semi-Gloss','Gloss','High Gloss'];
   const SURFS  = ['Ceilings','Walls','Woodwork','Skirting Boards','Fascias','Doors','Windows','Other'];
-  const cm = col.mode || 'match';
+  const cm = col.mode || 'table';
 
   function colRow(r,i,pfx) {
     return `<tr id="cr-${pfx}-${i}">
@@ -4089,38 +4379,55 @@ function stepColours() {
 
   document.getElementById('builder-inner').innerHTML = card(9,'Colour Scheme',`
     <div class="fg">
-      ${[['match','To match existing','Simple one-liner'],
-         ['statement','Colour statement','One free-text sentence'],
-         ['tbc','To be confirmed','Colours not yet decided'],
-         ['table','Full colour schedule','Surface-by-surface table']].map(([v,l,s])=>`
-        <div class="radio-opt ${cm===v?'sel':''}" onclick="setColMode('${v}')">
+      ${[['match','To match existing','Simple one-liner','col-tip-match'],
+         ['statement','Colour statement','One free-text sentence','col-tip-statement'],
+         ['tbc','To be confirmed','Colours not yet decided','col-tip-tbc'],
+         ['table','Full colour schedule','Surface-by-surface table','col-tip-table']].map(([v,l,s,tid])=>`
+        <div class="radio-opt ${cm===v?'sel':''}" onclick="setColMode('${v}')" style="align-items:center">
           <input type="radio" name="cm" value="${v}" ${cm===v?'checked':''}>
-          <div><div class="radio-lbl">${l}</div><div class="radio-sub">${s}</div></div>
+          <div style="flex:1"><div class="radio-lbl">${l}</div><div class="radio-sub">${s}</div></div>
+          <button onclick="event.stopPropagation();togglePopup('${tid}')" style="width:18px;height:18px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.7rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:.35rem">?</button>
         </div>`).join('')}
       <input type="hidden" id="f-colmode" value="${cm}">
     </div>
+    <div id="col-tip-match" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center"><div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto"><button onclick="document.getElementById('col-tip-match').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button><div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">To match existing</div><div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this when the client wants all surfaces painted to match what is already there. The document will include a simple one-line statement: "Colours: To match existing." No colour schedule is needed. Good for straightforward repaints where no colour changes are planned.</div><button onclick="document.getElementById('col-tip-match').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button></div></div>
+    <div id="col-tip-statement" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center"><div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto"><button onclick="document.getElementById('col-tip-statement').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button><div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Colour statement</div><div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this to include a single free-text sentence describing the colour scheme. For example: "All walls in Dulux Chic Shadow, ceilings in Brilliant White." Good for simple jobs where you know the colours but do not need a full surface-by-surface table.</div><button onclick="document.getElementById('col-tip-statement').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button></div></div>
+    <div id="col-tip-tbc" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center"><div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto"><button onclick="document.getElementById('col-tip-tbc').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button><div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">To be confirmed</div><div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this when the colour scheme has not yet been decided. The document will state: "Colour scheme to be confirmed prior to commencement of works." This is common when quoting early in a project before the client has chosen colours. It protects you from being held to a price before colours are finalised.</div><button onclick="document.getElementById('col-tip-tbc').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button></div></div>
+    <div id="col-tip-table" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center"><div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto"><button onclick="document.getElementById('col-tip-table').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button><div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Full colour schedule</div><div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Use this to include a detailed surface-by-surface colour table in the document. You can specify the surface, paint brand, colour name or code, and sheen level for each area. This is the most professional option and is recommended for larger jobs, colour-sensitive clients, or anywhere a clear written record of the agreed colours is important.</div><button onclick="document.getElementById('col-tip-table').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button></div></div>
     <div id="col-match"     style="${cm==='match'?'':'display:none'}"><div class="info-box">Colours: To match existing.</div></div>
     <div id="col-statement" style="${cm==='statement'?'':'display:none'}">
       <div class="fg"><label class="lbl">Colour Statement</label><textarea id="f-col-stmt" rows="2" placeholder="e.g. All walls Dulux Chic Shadow, ceilings Brilliant White">${esc(col.statement||'')}</textarea></div>
     </div>
     <div id="col-tbc"   style="${cm==='tbc'?'':'display:none'}"><div class="info-box">Colour scheme to be confirmed prior to commencement of works.</div></div>
     <div id="col-table" style="${cm==='table'?'':'display:none'}">
-      <div class="sec-div"><span>Interior</span></div>
-      <table class="dyn-table"><thead><tr><th>Surface</th><th>Brand</th><th>Colour</th><th>Sheen</th><th></th></tr></thead>
-        <tbody id="cri-body">${(col.intRows||[{}]).map((r,i)=>colRow(r,i,'cri')).join('')}</tbody>
-      </table>
-      <button class="add-row" onclick="addCRow('cri')">+ Add Interior Row</button>
-      <div class="sec-div" style="margin-top:1.1rem"><span>Exterior</span></div>
-      <table class="dyn-table"><thead><tr><th>Surface</th><th>Brand</th><th>Colour</th><th>Sheen</th><th></th></tr></thead>
-        <tbody id="cre-body">${(col.extRows||[{}]).map((r,i)=>colRow(r,i,'cre')).join('')}</tbody>
-      </table>
-      <button class="add-row" onclick="addCRow('cre')">+ Add Exterior Row</button>
+      <div class="toggle-row" style="margin-bottom:.65rem">
+        <div class="tgl-info"><div class="tgl-lbl">Include Interior colours</div><div class="tgl-sub">Shows interior surface colour schedule in the document</div></div>
+        <label class="toggle"><input type="checkbox" id="col-show-int" ${col.showInt!==false?'checked':''} onchange="document.getElementById('col-int-section').style.display=this.checked?'':'none'"><span class="tgl-sl"></span></label>
+      </div>
+      <div id="col-int-section" style="${col.showInt!==false?'':'display:none'}">
+        <div class="sec-div"><span>Interior</span></div>
+        <table class="dyn-table"><thead><tr><th>Surface</th><th>Brand</th><th>Colour</th><th>Sheen</th><th></th></tr></thead>
+          <tbody id="cri-body">${(col.intRows||[{}]).map((r,i)=>colRow(r,i,'cri')).join('')}</tbody>
+        </table>
+        <button class="add-row" onclick="addCRow('cri')">+ Add Interior Row</button>
+      </div>
+      <div class="toggle-row" style="margin-top:.75rem;margin-bottom:.65rem">
+        <div class="tgl-info"><div class="tgl-lbl">Include Exterior colours</div><div class="tgl-sub">Shows exterior surface colour schedule in the document</div></div>
+        <label class="toggle"><input type="checkbox" id="col-show-ext" ${col.showExt!==false?'checked':''} onchange="document.getElementById('col-ext-section').style.display=this.checked?'':'none'"><span class="tgl-sl"></span></label>
+      </div>
+      <div id="col-ext-section" style="${col.showExt!==false?'':'display:none'}">
+        <div class="sec-div" style="margin-top:.1rem"><span>Exterior</span></div>
+        <table class="dyn-table"><thead><tr><th>Surface</th><th>Brand</th><th>Colour</th><th>Sheen</th><th></th></tr></thead>
+          <tbody id="cre-body">${(col.extRows||[{}]).map((r,i)=>colRow(r,i,'cre')).join('')}</tbody>
+        </table>
+        <button class="add-row" onclick="addCRow('cre')">+ Add Exterior Row</button>
+      </div>
     </div>
   `);
 }
 
 function addCRow(pfx) {
-  const BRANDS=["Dulux","Johnstone's","Crown","Farrow & Ball","Little Greene","Zinsser","Other"];
+  const BRANDS=["Dulux","Johnstone's","Crown","Farrow & Ball","Trade","Zinsser","Other"];
   const SHEENS=['Matt','Soft Sheen','Satin','Semi-Gloss','Gloss','High Gloss'];
   const i = pfx==='cri' ? criCount++ : creCount++;
   const html = `<tr id="cr-${pfx}-${i}">
@@ -4190,19 +4497,41 @@ function stepAmounts() {
   document.getElementById('builder-inner').innerHTML = card(11,'Amounts & VAT',`
     <div class="fg"><label class="lbl">VAT Display Format</label>
       <div>
-        ${[['exclusive','£9,989 + VAT (most common)',''],
-           ['inclusive','£11,987 inclusive of VAT',''],
+        ${[['exclusive','Price + VAT (most common)',''],
+           ['inclusive','Price inclusive of VAT',''],
            ['breakdown','Net + VAT amount = Total',''],
-           ['notvat','Not VAT registered','No VAT shown']].map(([v,l,s])=>`
-          <div class="radio-opt ${vm===v?'sel':''}" onclick="setVatMode('${v}')">
+           ['notvat','Not VAT registered','No VAT shown'],
+           ['reversecharge','Reverse Charge (CIS subcontractor)','No VAT charged — buyer accounts for it']].map(([v,l,s])=>`
+          <div class="radio-opt ${vm===v?'sel':''}" onclick="setVatMode('${v}')" style="align-items:center">
             <input type="radio" name="vm" value="${v}" ${vm===v?'checked':''}>
-            <div><div class="radio-lbl">${l}</div>${s?`<div class="radio-sub">${s}</div>`:''}</div>
+            <div style="flex:1"><div class="radio-lbl">${l}</div>${s?`<div class="radio-sub">${s}</div>`:''}</div>
+            ${v==='reversecharge'?`<button onclick="event.stopPropagation();togglePopup('vat-rc-tip')" style="width:18px;height:18px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.7rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:.35rem">?</button>`:''}
           </div>`).join('')}
         <input type="hidden" id="f-vatmode" value="${vm}">
       </div>
+      <div id="vat-rc-tip" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+        <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+          <button onclick="document.getElementById('vat-rc-tip').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+          <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">What is Reverse Charge?</div>
+          <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">The domestic VAT reverse charge applies when you are working as a VAT-registered subcontractor for a VAT-registered main contractor under the Construction Industry Scheme (CIS). In this case, you do not charge VAT on your invoice. Instead, the main contractor accounts for the VAT themselves on their VAT return. This has been mandatory since March 2021. If you are unsure whether this applies to your job, check with your accountant. Do not use this option for work directly with homeowners or end clients.</div>
+          <button onclick="document.getElementById('vat-rc-tip').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+        </div>
+      </div>
     </div>
-    <div id="vat-rate-row" style="${vm==='notvat'?'display:none':''}">
-      <div class="fg"><label class="lbl">VAT Rate</label>
+    <div id="vat-rate-row" style="${(vm==='notvat'||vm==='reversecharge')?'display:none':''}">
+      <div class="fg">
+        <div style="display:flex;align-items:center;gap:.35rem;margin-bottom:.35rem">
+          <label class="lbl" style="margin-bottom:0">VAT Rate</label>
+          <button onclick="togglePopup('vat-rate-tip')" style="width:18px;height:18px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.7rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">?</button>
+        </div>
+        <div id="vat-rate-tip" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+          <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+            <button onclick="document.getElementById('vat-rate-tip').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+            <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Which VAT rate applies?</div>
+            <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Most painting and decorating work on existing buildings is charged at 20% (standard rate). The 5% reduced rate applies to residential properties that have been empty for 2 or more years, and to conversions of non-residential buildings into dwellings. The 0% zero rate applies to new build residential properties, where a decorator working on a brand new house charges no VAT on labour or materials. If you are unsure, check with your accountant or HMRC.</div>
+            <button onclick="document.getElementById('vat-rate-tip').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+          </div>
+        </div>
         <select id="f-vatrate">
           <option value="20" ${(CUR.vatRate||'20')==='20'?'selected':''}>20% (standard)</option>
           <option value="5"  ${CUR.vatRate==='5'?'selected':''}>5% (reduced — certain renovation works)</option>
@@ -4210,7 +4539,15 @@ function stepAmounts() {
         </select>
       </div>
     </div>
-    <div class="sec-div"><span>Line Items</span></div>
+    <div style="background:#e8eef5;border-left:4px solid #b8913a;border-radius:6px;padding:.6rem .9rem;margin-bottom:.75rem;font-size:.85rem;color:#1e2d40;font-weight:600;display:flex;align-items:center;gap:.5rem">Line Items<button onclick="togglePopup('lineitems-tip')" style="width:18px;height:18px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.7rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">?</button></div>
+    <div id="lineitems-tip" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+        <button onclick="document.getElementById('lineitems-tip').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+        <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">What are Line Items?</div>
+        <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Line items are the individual priced entries that appear in the Amounts section of your quote or estimate. Each line has a description (for example, Interior Works or Exterior Works) and a net price. You can add as many lines as you need. They appear in a price table in your document, with the VAT treatment you have selected applied to the sub-total.</div>
+        <button onclick="document.getElementById('lineitems-tip').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+      </div>
+    </div>
     <div id="amt-list">
       ${(CUR.amounts||[{desc:'',net:''}]).map((a,i)=>amtRowHtml(a,i)).join('')}
     </div>
@@ -4272,7 +4609,7 @@ function addAmt() { document.getElementById('amt-list').insertAdjacentHTML('befo
 function delAmt(i) { const r=document.querySelector(`.amt-row-item[data-i="${i}"]`); if(r){r.remove();calcAmtTotal();} }
 function setVatMode(v){
   document.getElementById('f-vatmode').value=v;
-  document.getElementById('vat-rate-row').style.display=v==='notvat'?'none':'';
+  document.getElementById('vat-rate-row').style.display=(v==='notvat'||v==='reversecharge')?'none':'';
   document.querySelectorAll('[name="vm"]').forEach(r=>r.checked=r.value===v);
   document.querySelectorAll('#builder-inner .radio-opt').forEach(el=>{if(el.querySelector('[name="vm"]'))el.classList.toggle('sel',el.querySelector('input').value===v);});
   calcAmtTotal();
@@ -4291,6 +4628,7 @@ function calcAmtTotal() {
   if(vm==='exclusive') s=`Sub-total: ${fmt(sub)} + VAT`;
   else if(vm==='inclusive') s=`Total (inc. VAT): ${fmt(tot)}`;
   else if(vm==='breakdown') s=`Net: ${fmt(sub)} + VAT ${fmt(vat)} = Total ${fmt(tot)}`;
+  else if(vm==='reversecharge') s=`Reverse Charge applies — VAT accounted for by the main contractor. Total: ${fmt(sub)}`;
   else s=`Total: ${fmt(sub)} (not VAT registered)`;
   const el=document.getElementById('amt-total'); if(el) el.textContent=s;
 }
@@ -4371,15 +4709,32 @@ function stepPreview() {
   const alreadyDownloaded = !!(CUR && CUR._downloaded);
   const badge = alreadyDownloaded ? '' : trialBadgeHtml();
   document.getElementById('builder-inner').innerHTML = card(14,'Preview & Generate',`
-    <p style="color:#4a5568;font-size:.83rem;margin-bottom:1rem">Review your document below, then generate the Word file.</p>
+    <div id="preview-tip" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+        <button onclick="document.getElementById('preview-tip').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+        <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">What is this page for?</div>
+        <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">This is your final review before the document is created. Check the preview below carefully, including the client name, address, reference number, date, scope, and amounts. When you are happy, click Download Document. This creates a fully formatted Word file (.docx) that downloads to your computer. That file is your quote or estimate, ready to send to the client. Once downloaded, open it in Microsoft Word, Google Docs, or any compatible app to view, print, or email it.</div>
+        <button onclick="document.getElementById('preview-tip').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+      </div>
+    </div>
+    <p style="color:#4a5568;font-size:.83rem;margin-bottom:1rem;display:flex;align-items:center;gap:.4rem">Review your document below, then generate the Word file.<button onclick="togglePopup('preview-tip')" style="width:18px;height:18px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.7rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">?</button></p>
     <div class="preview-doc">${esc(txt)}</div>
     ${badge}
     <div style="display:flex;gap:.9rem;flex-wrap:wrap;margin-top:1.25rem">
       <button class="btn-gold" onclick="generateDocx()" style="flex:1;padding:.85rem;font-size:.92rem">📄 Download Document</button>
       <button class="btn-outline" onclick="builderSaveExit()" style="flex:1;padding:.85rem">💾 Save &amp; Return to Dashboard</button>
     </div>
-    <div style="margin-top:.65rem;font-size:.75rem;color:#6a80a0">
-      💡 No Microsoft Word? Open free in <strong>Google Docs</strong> (upload to drive.google.com) or <strong>LibreOffice</strong> (libreoffice.org)
+    <div style="margin-top:.75rem;display:flex;align-items:center;gap:.5rem">
+      <div style="background:#e8eef5;border-left:4px solid #b8913a;border-radius:6px;padding:.6rem .9rem;font-size:.85rem;color:#1e2d40;font-weight:600;flex:1">No Microsoft Word?</div>
+      <button onclick="togglePopup('no-word-tip')" style="width:28px;height:28px;border-radius:50%;border:1.5px solid #6a80a0;background:transparent;color:#6a80a0;font-size:.8rem;font-weight:700;cursor:pointer;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">?</button>
+    </div>
+    <div id="no-word-tip" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:14px;padding:1.75rem 2rem;max-width:420px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;max-height:80vh;overflow-y:auto">
+        <button onclick="document.getElementById('no-word-tip').style.display='none'" style="position:absolute;top:.75rem;right:.9rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#6a80a0;line-height:1">&#x2715;</button>
+        <div style="font-size:1rem;font-weight:700;color:#1e2d40;margin-bottom:.9rem">Opening your document without Microsoft Word</div>
+        <div style="font-size:.85rem;color:#3a4a5a;line-height:1.7">Once you have clicked Download Document and the file has downloaded to your computer, you can open it for free using Google Docs. Go to drive.google.com and sign in with your Google account. Drag the downloaded file onto the page to upload it. Then right-click the file and choose Open with Google Docs. Your quote will appear as a formatted document you can view, print, and share.</div>
+        <button onclick="document.getElementById('no-word-tip').style.display='none'" style="margin-top:1.25rem;width:100%;padding:.55rem;background:#3d5a80;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Got it</button>
+      </div>
     </div>
   `);
 }
@@ -4475,14 +4830,17 @@ function buildDocText() {
     (pn.extras||[]).filter(ex=>ex.on&&ex.text).forEach(ex=>lines.push('  '+ex.text));
     lines.push('');
   }
-  lines.push('COLOURS:');
   const col=j.colours||{};
+  const _colHas = col.mode!=='table'||(col.showInt!==false&&(col.intRows||[]).length)||(col.showExt!==false&&(col.extRows||[]).length);
+  if(_colHas){
+  lines.push('COLOURS:');
   if(col.mode==='match') lines.push('To match existing.');
   else if(col.mode==='statement') lines.push(col.statement||'');
   else if(col.mode==='tbc') lines.push('To be confirmed prior to commencement.');
   else if(col.mode==='table'){
-    if((col.intRows||[]).length){lines.push('Interior:');col.intRows.forEach(r=>lines.push(`  ${r.surface||''} | ${r.brand||''} | ${r.colour||''} | ${r.sheen||''}`))}
-    if((col.extRows||[]).length){lines.push('Exterior:');col.extRows.forEach(r=>lines.push(`  ${r.surface||''} | ${r.brand||''} | ${r.colour||''} | ${r.sheen||''}`))}
+    if(col.showInt!==false&&(col.intRows||[]).length){lines.push('Interior:');col.intRows.forEach(r=>lines.push(`  ${r.surface||''} | ${r.brand||''} | ${r.colour||''} | ${r.sheen||''}`))}
+    if(col.showExt!==false&&(col.extRows||[]).length){lines.push('Exterior:');col.extRows.forEach(r=>lines.push(`  ${r.surface||''} | ${r.brand||''} | ${r.colour||''} | ${r.sheen||''}`))}
+  }
   }
   lines.push('');
   lines.push('TIMING:');
@@ -4653,6 +5011,7 @@ async function generateDocx() {
   const showMotto = s.showMotto || false;
   const motto     = s.motto || '';
   const addrStr   = [s.addr1, s.town, s.postcode].filter(Boolean).join('  ·  ');
+  const lhLayout  = s.lhLayout || 'left';
 
   // Letterhead display name: trading name is primary, company name is fallback
   const lhName = s.trading || s.company || '';
@@ -4664,7 +5023,43 @@ async function generateDocx() {
     s.email ? new Paragraph({alignment:AlignmentType.RIGHT,spacing:{before:0,after:0},children:[new TextRun({text:s.email,size:18,color:acc,font:'Calibri'})]}) : null,
   ].filter(Boolean);
 
-  if (logoImgRun) {
+  if (lhLayout === 'centre') {
+    // ── CENTRED STACK: logo + name centred, contact inline below ────────────
+    const centreChildren = [];
+    if (logoImgRun) centreChildren.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:60},children:[logoImgRun]}));
+    centreChildren.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:showMotto||showAddr?40:0},children:[new TextRun({text:lhName,bold:true,size:28,color:txt,font:'Calibri'})]}));
+    if (showMotto&&motto) centreChildren.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:showAddr?24:0},children:[new TextRun({text:motto,size:16,bold:true,italics:true,color:txt,font:'Calibri'})]}));
+    if (showAddr&&addrStr) centreChildren.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:0,after:0},children:[new TextRun({text:addrStr,size:16,color:txt,font:'Calibri'})]}));
+    if (s.tel||s.email) {
+      const contactParts = [s.tel?'T: '+s.tel:'',s.email||''].filter(Boolean).join('  ·  ');
+      centreChildren.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:40,after:0},children:[new TextRun({text:contactParts,size:16,color:txt,font:'Calibri'})]}));
+    }
+    children.push(new Table({
+      width:{size:9746,type:WidthType.DXA},columnWidths:[9746],
+      rows:[new TableRow({children:[new TableCell({
+        shading:{fill:bg,type:ShadingType.CLEAR},borders,
+        width:{size:9746,type:WidthType.DXA},
+        margins:{top:240,bottom:240,left:200,right:200},
+        verticalAlign:'center',
+        children:centreChildren
+      })]})]
+    }));
+  } else if (lhLayout === 'textonly') {
+    // ── TEXT ONLY: 2 columns, no logo slot ──────────────────────────────────
+    const nameColW = 5360, ctctColW = 4386;
+    const nameSize = (!showMotto && !showAddr) ? 36 : (showMotto && showAddr) ? 28 : 32;
+    const nameChildren = [
+      new Paragraph({spacing:{before:0,after:showMotto||showAddr?40:0},children:[new TextRun({text:lhName,bold:true,size:nameSize,color:txt,font:'Calibri'})]}),
+      showMotto&&motto ? new Paragraph({spacing:{before:0,after:showAddr?24:0},children:[new TextRun({text:motto,size:18,bold:true,italics:true,color:txt,font:'Calibri'})]}) : null,
+      showAddr&&addrStr ? new Paragraph({spacing:{before:0,after:0},children:[new TextRun({text:addrStr,size:18,color:txt,font:'Calibri'})]}) : null,
+    ].filter(Boolean);
+    children.push(new Table({
+      width:{size:9746,type:WidthType.DXA},columnWidths:[nameColW,ctctColW],
+      rows:[new TableRow({children:[
+        new TableCell({shading:{fill:bg,type:ShadingType.CLEAR},borders,width:{size:nameColW,type:WidthType.DXA},margins:{top:240,bottom:240,left:200,right:80},verticalAlign:'center',children:nameChildren}),
+        new TableCell({shading:{fill:bg,type:ShadingType.CLEAR},borders,width:{size:ctctColW,type:WidthType.DXA},margins:{top:240,bottom:240,left:80,right:200},verticalAlign:'center',children:rightChildren.length?rightChildren:[new Paragraph({children:[]})]}),
+      ]})]}));
+  } else if (logoImgRun) {
     // ── WITH LOGO: 3 columns — [logo] [name+motto+addr] [contacts] ──────────
     // Column widths: logo ~2200, name middle ~4346, contacts ~3200  (total 9746)
     const logoColW = 2200;
@@ -5098,6 +5493,8 @@ async function generateDocx() {
 
   // Colours
   const col=j.colours||{};
+  const colTableHasContent = col.mode!=='table' || (col.showInt!==false&&(col.intRows||[]).length) || (col.showExt!==false&&(col.extRows||[]).length);
+  if(colTableHasContent){
   children.push(SH('COLOURS'));
   children.push(KP(80));
   if(col.mode==='match') children.push(P('To match existing.',{after:80}));
@@ -5111,10 +5508,11 @@ async function generateDocx() {
         ...(rows||[]).map((r,ri)=>new TableRow({children:[r.surface||'',r.brand||'',r.colour||'',r.sheen||''].map(t=>new TableCell({shading:{fill:'FFFFFF',type:ShadingType.CLEAR},borders:thinBorders,width:{size:2436,type:WidthType.DXA},margins:{top:60,bottom:60,left:80,right:80},children:[new Paragraph({children:[new TextRun({text:t,size:DS.smallSize,font:DS.font,color:'444444'})]})]}))  }))
       ]
     });
-    if((col.intRows||[]).length){children.push(P('Interior:',{bold:true,after:60}));children.push(makeColTable(col.intRows));children.push(new Paragraph({spacing:{before:0,after:100},children:[]}));}
-    if((col.extRows||[]).length){children.push(P('Exterior:',{bold:true,after:60}));children.push(makeColTable(col.extRows));children.push(new Paragraph({spacing:{before:0,after:100},children:[]}));}
+    if(col.showInt!==false&&(col.intRows||[]).length){children.push(P('Interior:',{bold:true,after:60}));children.push(makeColTable(col.intRows));children.push(new Paragraph({spacing:{before:0,after:100},children:[]}));}
+    if(col.showExt!==false&&(col.extRows||[]).length){children.push(P('Exterior:',{bold:true,after:60}));children.push(makeColTable(col.extRows));children.push(new Paragraph({spacing:{before:0,after:100},children:[]}));}
   }
   children.push(new Paragraph({spacing:{before:0,after:160},children:[]}));
+  } // end colTableHasContent
 
   // Timing
   const t=j.timing||{};
